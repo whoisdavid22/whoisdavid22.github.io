@@ -1858,6 +1858,7 @@ async function guardarLecturaSupabase(datos, decision) {
   if (!currentUser) return;
   try {
     await sb.from('Lecturas').insert({
+      user_id: currentUser.id,
       ndvi: datos.ndvi,
       temperatura_c: datos.temperatura_c,
       humedad_suelo_pct: datos.humedad_suelo_pct,
