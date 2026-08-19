@@ -1824,7 +1824,7 @@ async function attemptLogin() {
 }
 
 async function loginWithGoogle() {
-  await sb.auth.signInWithOAuth({ provider: 'google' });
+  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: 'https://whoisdavid22.github.io/agrosentinel/' } });
 }
 
 async function logout() {
