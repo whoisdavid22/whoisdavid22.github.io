@@ -1,0 +1,2446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgroSentinel — Monitor de Estrés Hídrico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ============================================================
+   AgroSentinel — reconstrucción visual completa (Aug 2026)
+   Mundo: "The Agronomist's Terminal, in Costa Rican Earth"
+   Paleta pergamino/café + Grano Maduro como único acento de marca.
+   Ver DESIGN.md para el sistema completo de tokens y reglas.
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f7f2e7; --bg-panel: #fffdf8; --bg-card: #fbf6ec; --bg-card-alt: #f1e8d6;
+  --border: #e6dcc6; --border-strong: #d3c4a3;
+  --text-primary: #2e2013; --text-secondary: #6b5642; --text-muted: #a3927c;
+  --green: #268a4a; --green-dark: #1c6b38; --green-dim: #e6f2e9; --green-line: #bfdfc9;
+  --amber: #b8791f; --amber-dim: #fbf0dd; --amber-line: #edd4a6;
+  --red: #b23a2c; --red-dim: #f9e8e4; --red-line: #e8c2b8;
+  --blue: #2d6e8f; --blue-dim: #e5f0f4; --blue-line: #bcd8e3;
+  --brand: #7d2c44; --brand-dark: #5e2033; --brand-dim: #f5e7ea; --brand-line: #e3c3cb;
+  --accent: #7d2c44;
+  --shadow: 0 1px 2px rgba(35,22,13,0.05), 0 1px 8px rgba(35,22,13,0.04);
+  --shadow-lift: 0 8px 28px rgba(35,22,13,0.14), 0 2px 8px rgba(35,22,13,0.08);
+  --mono: 'JetBrains Mono', monospace; --sans: 'Inter', sans-serif;
+  --ease: cubic-bezier(.22,1,.36,1);
+  --ease-spring: cubic-bezier(.34,1.4,.5,1);
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+html { scrollbar-color: var(--border-strong) transparent; }
+body {
+  background: var(--bg); color: var(--text-primary); font-family: var(--sans); min-height: 100vh; overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 900px 500px at 12% -10%, rgba(125,44,68,0.05), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 0%, rgba(38,138,74,0.05), transparent 55%);
+  background-attachment: fixed;
+}
+::selection { background: var(--brand); color: #fff; }
+
+/* -------- entrance choreography -------- */
+@keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.topbar, .left-panel > *, .statusbar { animation: rise-in 0.5s var(--ease) both; }
+.left-panel > *:nth-child(1) { animation-delay: 0.02s; }
+.left-panel > *:nth-child(2) { animation-delay: 0.08s; }
+.left-panel > *:nth-child(3) { animation-delay: 0.14s; }
+.statusbar { animation-delay: 0.2s; }
+
+/* -------- topbar -------- */
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; height: 58px; border-bottom: 1px solid var(--border); background: var(--bg-panel); position: sticky; top: 0; z-index: 100; gap: 1rem; box-shadow: var(--shadow); }
+.logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo-mark { width: 30px; height: 30px; background: linear-gradient(135deg, var(--brand), var(--brand-dark)); border-radius: 9px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(94,32,51,0.35); transition: transform 0.3s var(--ease-spring); }
+.logo:hover .logo-mark { transform: rotate(-8deg) scale(1.06); }
+.logo-mark svg { width: 16px; height: 16px; fill: none; stroke: white; stroke-width: 2; stroke-linecap: round; }
+.logo-text { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; color: var(--text-primary); }
+.logo-sub { font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.02em; }
+.topbar-right { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.live-indicator { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); font-family: var(--mono); }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse-dot 2s ease-in-out infinite; box-shadow: 0 0 0 0 rgba(38,138,74,0.5); }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1);box-shadow:0 0 0 0 rgba(38,138,74,0.45)} 50%{opacity:0.85;transform:scale(1.15);box-shadow:0 0 0 4px rgba(38,138,74,0)} }
+.topbar-btn { padding: 6px 13px; border-radius: 7px; font-size: 11.5px; font-family: var(--mono); font-weight: 500; border: 1px solid var(--border-strong); background: var(--bg-panel); color: var(--text-primary); cursor: pointer; transition: all 0.18s var(--ease); white-space: nowrap; }
+.topbar-btn:hover { background: var(--bg-card-alt); border-color: var(--brand-line); transform: translateY(-1px); box-shadow: 0 3px 8px rgba(35,22,13,0.1); }
+.topbar-btn:active { transform: translateY(0) scale(0.97); }
+.topbar-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+.topbar-btn.auto-on { background: var(--brand-dim); border-color: var(--brand); color: var(--brand-dark); animation: soft-glow 2.4s ease-in-out infinite; }
+@keyframes soft-glow { 0%,100%{box-shadow:0 0 0 0 rgba(125,44,68,0)} 50%{box-shadow:0 0 0 3px rgba(125,44,68,0.12)} }
+.topbar-btn.export-btn { border-color: var(--blue-line); color: var(--blue); }
+.topbar-btn.export-btn:hover { background: var(--blue-dim); }
+.auto-controls { display: flex; align-items: center; gap: 6px; }
+.auto-controls select { background: var(--bg-panel); color: var(--text-secondary); border: 1px solid var(--border-strong); border-radius: 7px; font-family: var(--mono); font-size: 10.5px; padding: 5px 6px; cursor: pointer; }
+.auto-countdown { font-family: var(--mono); font-size: 11px; color: var(--text-muted); min-width: 34px; }
+
+/* -------- layout -------- */
+.hero-strip { position: relative; height: 108px; overflow: hidden; flex-shrink: 0; }
+.hero-strip img { width: 100%; height: 100%; object-fit: cover; object-position: center 60%; display: block; }
+.hero-strip-overlay { position: absolute; inset: 0; background: linear-gradient(100deg, rgba(46,32,19,0.82) 0%, rgba(94,32,51,0.62) 42%, rgba(94,32,51,0.15) 75%, transparent 100%); }
+.hero-strip-caption { position: absolute; left: 1.6rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 3px; }
+.hero-strip-kicker { font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,253,248,0.75); }
+.hero-strip-title { font-size: 16px; font-weight: 700; color: #fffdf8; letter-spacing: 0.01em; text-shadow: 0 1px 8px rgba(0,0,0,0.25); }
+.hero-strip.hero-strip-noimg { background: linear-gradient(115deg, var(--brand-dark), var(--brand)); }
+.hero-strip.hero-strip-noimg img { display: none; }
+.hero-strip.hero-strip-noimg .hero-strip-overlay { display: none; }
+.main { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 58px - 32px - 108px); }
+.left-panel { border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; background: var(--bg-panel); }
+.left-panel::-webkit-scrollbar { width: 5px; }
+.left-panel::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+/* -------- valve status console -------- */
+.valve-section { padding: 1.35rem 1.5rem; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+.section-label { font-size: 10px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 6px; }
+.section-label::before { content: ''; width: 3px; height: 11px; border-radius: 2px; background: var(--border-strong); }
+.valve-visual { display: flex; align-items: center; gap: 1.1rem; }
+.valve-orb-wrap { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
+.valve-orb-cloud { position: absolute; inset: -16px; border-radius: 50%; background: radial-gradient(circle, var(--border-strong) 0%, transparent 70%); opacity: 0.4; filter: blur(2px); animation: cloud-pulse 3.6s ease-in-out infinite; transition: background 0.6s var(--ease); }
+.valve-visual:has(.valve-state-text.open) .valve-orb-cloud { background: radial-gradient(circle, var(--green) 0%, transparent 70%); opacity: 0.5; }
+.valve-visual:has(.valve-state-text.closed) .valve-orb-cloud { background: radial-gradient(circle, var(--red) 0%, transparent 70%); opacity: 0.28; }
+@keyframes cloud-pulse { 0%,100%{ transform: scale(0.94); } 50%{ transform: scale(1.06); } }
+.valve-orb-ring { position: absolute; inset: -6px; border-radius: 50%; border: 1.5px solid var(--brand-line); opacity: 0.5; animation: breathe 3.6s ease-in-out infinite; transition: border-color 0.6s var(--ease); }
+.valve-visual:has(.valve-state-text.open) .valve-orb-ring { border-color: var(--green); }
+.valve-visual:has(.valve-state-text.closed) .valve-orb-ring { border-color: var(--red-line); }
+@keyframes breathe { 0%,100%{ transform: scale(1); opacity: 0.35; } 50%{ transform: scale(1.08); opacity: 0.65; } }
+#valve3d-mini { position: relative; z-index: 1; width: 76px; height: 76px; flex-shrink: 0; border-radius: 50%; overflow: hidden; background: radial-gradient(circle, var(--bg-card) 0%, var(--bg-card-alt) 100%); cursor: pointer; box-shadow: inset 0 0 0 1px var(--border), 0 4px 14px rgba(35,22,13,0.12); transition: transform 0.25s var(--ease-spring); }
+#valve3d-mini:hover { transform: scale(1.05); }
+.valve-info { flex: 1; }
+.valve-state-text { font-family: var(--mono); font-size: 18px; font-weight: 600; letter-spacing: 0.04em; transition: color 0.4s; }
+.valve-state-text.open { color: var(--green-dark); } .valve-state-text.closed { color: var(--red); }
+.valve-sublabel { font-size: 10.5px; color: var(--text-muted); font-family: var(--mono); margin-top: 2px; }
+
+/* -------- alert gauge -------- */
+.alert-section { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); }
+.alert-bar { display: flex; gap: 4px; margin-bottom: 0.6rem; }
+.alert-segment { flex: 1; height: 6px; border-radius: 4px; background: var(--border-strong); transition: background 0.5s var(--ease), box-shadow 0.5s var(--ease); }
+.alert-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 6px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; transition: all 0.4s var(--ease); }
+.alert-badge.normal { background: var(--green-dim); color: var(--green-dark); border: 1px solid var(--green-line); }
+.alert-badge.leve { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-line); }
+.alert-badge.severo { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-line); animation: alert-pulse 1.4s ease-in-out infinite; }
+@keyframes alert-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(178,58,44,0.25)} 50%{box-shadow:0 0 0 5px rgba(178,58,44,0)} }
+
+/* -------- input console -------- */
+.input-section { padding: 1.1rem 1.5rem; }
+.slider-group { margin-bottom: 1.1rem; min-width: 0; }
+.slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.slider-label { font-size: 10px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
+.slider-value-display { font-size: 13px; font-family: var(--mono); font-weight: 600; color: var(--text-primary); transition: color 0.2s; }
+.slider-value-display .unit { font-size: 10px; color: var(--text-muted); font-weight: 400; }
+input[type=range] { width: 100%; height: 5px; appearance: none; -webkit-appearance: none; background: linear-gradient(to right, var(--brand) 0%, var(--brand) var(--fill, 50%), var(--border-strong) var(--fill, 50%), var(--border-strong) 100%); border-radius: 3px; outline: none; cursor: pointer; transition: box-shadow 0.15s; }
+input[type=range]:hover { box-shadow: 0 0 0 4px var(--brand-dim); }
+input[type=range]::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--brand); border: 2.5px solid white; box-shadow: 0 1px 4px rgba(35,22,13,0.3); cursor: pointer; transition: transform 0.15s var(--ease-spring); }
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--brand); border: 2.5px solid white; box-shadow: 0 1px 4px rgba(35,22,13,0.3); cursor: pointer; }
+input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; background: var(--border-strong); }
+.slider-range { display: flex; justify-content: space-between; font-size: 9px; font-family: var(--mono); color: var(--text-muted); margin-top: 4px; }
+.analyze-btn { position: relative; overflow: hidden; width: 100%; padding: 12px; border-radius: 9px; border: none; background: linear-gradient(135deg, var(--brand), var(--brand-dark)); color: white; font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; transition: filter 0.2s, transform 0.15s; margin-top: 0.5rem; box-shadow: var(--shadow-lift); }
+.analyze-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.25) 50%, transparent 60%); transform: translateX(-120%); }
+.analyze-btn:hover::after { transform: translateX(120%); transition: transform 0.7s var(--ease); }
+.analyze-btn:hover { filter: brightness(1.08); }
+.analyze-btn:active { transform: scale(0.98); }
+.analyze-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.preset-row { display: flex; gap: 6px; margin-top: 0.85rem; flex-wrap: wrap; }
+.preset-btn { flex: 1; min-width: 70px; padding: 7px 8px; border-radius: 7px; border: 1px solid var(--border-strong); background: var(--bg-card); color: var(--text-secondary); font-family: var(--mono); font-size: 9.5px; font-weight: 500; cursor: pointer; transition: all 0.18s var(--ease); text-align: center; }
+.preset-btn:hover { border-color: var(--brand-line); background: var(--brand-dim); color: var(--brand-dark); transform: translateY(-1px); }
+.field-select { width: 100%; padding: 9px 10px; border-radius: 7px; border: 1px solid var(--border-strong); background: var(--bg-card); color: var(--text-primary); font-family: var(--sans); font-size: 12px; cursor: pointer; }
+.optional-toggle { display: flex; align-items: center; justify-content: space-between; margin-top: 0.6rem; padding: 8px 11px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 7px; cursor: pointer; font-size: 10.5px; font-family: var(--mono); font-weight: 600; color: var(--text-secondary); transition: border-color 0.2s; }
+.optional-toggle:hover { border-color: var(--brand-line); }
+.optional-toggle span:last-child { transition: transform 0.25s var(--ease); display: inline-block; }
+.optional-panel { display: grid; grid-template-rows: 0fr; opacity: 0; margin-top: 0; transition: grid-template-rows 0.35s var(--ease), opacity 0.3s, margin-top 0.35s; }
+.optional-panel > * { overflow: hidden; }
+.optional-panel.active { display: grid; grid-template-rows: 1fr; opacity: 1; margin-top: 0.65rem; }
+.optional-panel-inner { min-height: 0; padding: 0.8rem; background: var(--bg-card-alt); border-radius: 9px; }
+.opt-check-row { margin-bottom: 7px; }
+.opt-check { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--text-secondary); cursor: pointer; }
+.opt-check input { accent-color: var(--brand); width: 14px; height: 14px; cursor: pointer; }
+.opt-field { margin-bottom: 9px; }
+.limiting-factor-card { display: flex; align-items: center; gap: 10px; padding: 11px 12px; background: var(--red-dim); border: 1px solid var(--red-line); border-radius: 9px; margin-top: 0.8rem; animation: rise-in 0.35s var(--ease); }
+.limiting-factor-badge { width: 32px; height: 32px; border-radius: 50%; background: var(--red); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; font-weight: 700; }
+.limiting-factor-text { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; }
+.limiting-factor-text b { color: var(--red); font-family: var(--mono); text-transform: capitalize; }
+
+/* -------- right stage -------- */
+.right-panel { display: flex; flex-direction: column; overflow: hidden; }
+.tab-nav { position: relative; border-bottom: 1px solid var(--border); background: var(--bg-panel); flex-shrink: 0; z-index: 50; }
+.tab-nav-trigger { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 13px 1.25rem; border: none; background: transparent; cursor: pointer; font-family: var(--mono); text-align: left; transition: background 0.15s; }
+.tab-nav-trigger:hover { background: var(--bg-card); }
+.tab-nav-current-wrap { display: flex; align-items: baseline; gap: 9px; }
+.tab-nav-eyebrow { font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+.tab-nav-current { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.tab-nav-chevron { width: 12px; height: 12px; stroke: var(--text-muted); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s var(--ease); flex-shrink: 0; }
+.tab-nav.open .tab-nav-chevron { transform: rotate(180deg); }
+.tab-nav-list { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-panel); border-bottom: 1px solid var(--border); box-shadow: var(--shadow-lift); display: grid; grid-template-rows: 0fr; opacity: 0; overflow: hidden; transition: grid-template-rows 0.3s var(--ease), opacity 0.25s; }
+.tab-nav.open .tab-nav-list { grid-template-rows: 1fr; opacity: 1; }
+.tab-nav-list-inner { min-height: 0; padding: 6px; display: flex; flex-direction: column; }
+.tab-btn { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-size: 11px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.03em; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; transition: background 0.15s, color 0.15s; text-align: left; }
+.tab-btn:hover { background: var(--bg-card); color: var(--text-primary); }
+.tab-btn.active { background: var(--brand-dim); color: var(--brand-dark); }
+.tab-btn .tab-btn-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border-strong); flex-shrink: 0; transition: background 0.15s; }
+.tab-btn.active .tab-btn-dot { background: var(--brand); }
+.tab-content { display: none; flex: 1; overflow: hidden; flex-direction: column; }
+@keyframes tab-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.tab-content.active { display: flex; animation: tab-in 0.4s var(--ease) both; }
+.scrollable { overflow-y: auto; }
+.scrollable::-webkit-scrollbar, .tab-content ::-webkit-scrollbar { width: 5px; }
+.scrollable::-webkit-scrollbar-thumb, .tab-content ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+.decision-section { padding: 1.4rem 1.6rem; border-bottom: 1px solid var(--border); position: relative; background: var(--bg-panel); }
+.loading-overlay { position: absolute; inset: 0; background: rgba(255,253,248,0.88); display: flex; align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity 0.25s; overflow: hidden; }
+.loading-overlay::before { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(125,44,68,0.06) 50%, transparent 70%); background-size: 200% 100%; }
+.loading-overlay.active { opacity: 1; pointer-events: all; }
+.loading-overlay.active::before { animation: shimmer-sweep 1.4s linear infinite; }
+@keyframes shimmer-sweep { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.spinner { width: 26px; height: 26px; border: 3px solid var(--border-strong); border-top-color: var(--brand); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.decision-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.decision-action { font-size: 15px; font-weight: 600; color: var(--text-primary); line-height: 1.4; max-width: 65%; transition: opacity 0.2s; }
+.decision-meta { text-align: right; flex-shrink: 0; }
+.decision-time { font-size: 10.5px; font-family: var(--mono); color: var(--text-muted); }
+.decision-justification { margin-top: 0.8rem; padding: 0.9rem 1.05rem; background: var(--bg-card); border-left: 3px solid var(--accent); border-radius: 0 9px 9px 0; font-size: 12.5px; line-height: 1.7; color: var(--text-secondary); transition: opacity 0.2s; }
+.reasoning-toggle { display: flex; align-items: center; gap: 6px; margin-top: 0.9rem; padding: 7px 11px; background: var(--blue-dim); border: 1px solid var(--blue-line); border-radius: 7px; cursor: pointer; width: fit-content; font-size: 10.5px; font-family: var(--mono); font-weight: 600; color: var(--blue); transition: all 0.18s; }
+.reasoning-toggle:hover { background: #d6e7ee; transform: translateY(-1px); }
+.reasoning-panel { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.35s var(--ease), opacity 0.3s; }
+.reasoning-panel > * { overflow: hidden; }
+.reasoning-panel.active { grid-template-rows: 1fr; opacity: 1; margin-top: 0.75rem; }
+.reasoning-panel-inner { min-height: 0; }
+.reasoning-item { display: grid; grid-template-columns: 110px 55px 1fr; gap: 0.65rem; align-items: start; padding: 8px 0; border-bottom: 1px solid var(--border); opacity: 0; animation: rise-in 0.4s var(--ease) both; }
+.reasoning-panel.active .reasoning-item:nth-child(1) { animation-delay: 0.03s; } .reasoning-panel.active .reasoning-item:nth-child(2) { animation-delay: 0.08s; }
+.reasoning-panel.active .reasoning-item:nth-child(3) { animation-delay: 0.13s; } .reasoning-panel.active .reasoning-item:nth-child(4) { animation-delay: 0.18s; }
+.reasoning-panel.active .reasoning-item:nth-child(5) { animation-delay: 0.23s; } .reasoning-panel.active .reasoning-item:nth-child(n+6) { animation-delay: 0.28s; }
+.reasoning-factor { font-size: 11px; font-family: var(--mono); font-weight: 600; color: var(--text-primary); text-transform: capitalize; }
+.reasoning-weight { font-size: 9px; font-family: var(--mono); font-weight: 700; padding: 2px 7px; border-radius: 5px; text-align: center; height: fit-content; }
+.reasoning-weight.alto { background: var(--red-dim); color: var(--red); }
+.reasoning-weight.medio { background: var(--amber-dim); color: var(--amber); }
+.reasoning-weight.bajo { background: var(--green-dim); color: var(--green-dark); }
+.reasoning-analysis { font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; }
+
+.predictions-section { padding: 1.1rem 1.6rem; border-bottom: 1px solid var(--border); }
+.pred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 0.8rem; }
+.pred-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 11px; padding: 11px 13px; transition: transform 0.2s, box-shadow 0.2s; }
+.pred-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.pred-card-label { font-size: 9px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.pred-card-value { font-size: 20px; font-family: var(--mono); font-weight: 700; line-height: 1; transition: color 0.3s; }
+.pred-card-sub { font-size: 10px; color: var(--text-muted); font-family: var(--mono); margin-top: 4px; }
+
+.log-section { flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 0 1.6rem 1rem; }
+.log-header { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
+.log-count { font-size: 10px; font-family: var(--mono); color: var(--text-muted); }
+.log-entries { flex: 1; overflow-y: auto; padding-top: 0.55rem; }
+.log-entry { display: grid; grid-template-columns: 68px 68px 1fr; gap: 0.75rem; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: start; animation: slide-in 0.35s var(--ease); }
+@keyframes slide-in { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+.log-time { font-size: 10px; font-family: var(--mono); color: var(--text-muted); }
+.log-valve { font-size: 10px; font-family: var(--mono); font-weight: 700; }
+.log-valve.open { color: var(--green-dark); } .log-valve.closed { color: var(--red); }
+.log-action { font-size: 11.5px; color: var(--text-secondary); }
+.log-alert-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.log-empty { text-align: center; padding: 2.2rem 0; color: var(--text-muted); font-size: 12px; font-family: var(--mono); }
+
+.charts-tab, .pred-tab, .map-tab, .edge-tab, .compare-tab { flex: 1; overflow-y: auto; padding: 1.35rem 1.6rem; display: flex; flex-direction: column; gap: 1.1rem; }
+.chart-card, .pred-big-card, .field-map, .ods-card, .edge-card, .compare-header-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 13px; padding: 1.15rem; box-shadow: var(--shadow); transition: box-shadow 0.25s; }
+.chart-card:hover, .pred-big-card:hover, .field-map:hover, .ods-card:hover { box-shadow: var(--shadow-lift); }
+.chart-card-title, .pred-big-title { font-size: 10px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.8rem; }
+.chart-wrapper { position: relative; height: 155px; }
+.charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+
+.timeline-item { display: grid; grid-template-columns: 80px 16px 1fr; gap: 0.75rem; align-items: start; padding: 8px 0; }
+.timeline-time { font-size: 11px; font-family: var(--mono); font-weight: 600; color: var(--text-muted); text-align: right; padding-top: 2px; }
+.timeline-dot-col { display: flex; flex-direction: column; align-items: center; }
+.timeline-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; box-shadow: 0 0 0 3px var(--bg-panel), 0 0 0 4px var(--border); }
+.timeline-line { width: 1px; flex: 1; background: var(--border-strong); min-height: 20px; margin-top: 2px; }
+.timeline-content { padding-bottom: 8px; }
+.timeline-label { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
+.timeline-desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; line-height: 1.5; }
+
+.humidity-forecast { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; margin-top: 0.8rem; }
+.forecast-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.forecast-bar-wrap { height: 84px; display: flex; align-items: flex-end; width: 100%; background: var(--bg-card); border-radius: 4px; overflow: hidden; }
+.forecast-bar { width: 100%; border-radius: 4px 4px 0 0; transition: height 0.7s var(--ease); }
+.forecast-val { font-size: 9px; font-family: var(--mono); font-weight: 600; color: var(--text-secondary); }
+.forecast-hour { font-size: 9px; font-family: var(--mono); color: var(--text-muted); }
+
+.field-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; margin-top: 0.8rem; }
+.field-cell { aspect-ratio: 1; border-radius: 5px; cursor: pointer; transition: transform 0.2s var(--ease-spring), box-shadow 0.2s; }
+.field-cell:hover { transform: scale(1.14); z-index: 2; position: relative; box-shadow: 0 3px 10px rgba(35,22,13,0.18); }
+.field-cell.zone-ok { background: #cdeed9; border: 1px solid var(--green-line); }
+.field-cell.zone-leve { background: #f7e2ba; border: 1px solid var(--amber-line); }
+.field-cell.zone-severo { background: #f2c9c4; border: 1px solid var(--red-line); }
+.map-legend { display: flex; gap: 1.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-family: var(--mono); color: var(--text-secondary); }
+.legend-dot { width: 9px; height: 9px; border-radius: 3px; }
+.map-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; margin-top: 0.8rem; }
+.map-stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 9px; padding: 10px; text-align: center; }
+.map-stat-val { font-size: 20px; font-family: var(--mono); font-weight: 700; }
+.map-stat-lbl { font-size: 9px; font-family: var(--mono); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+.field-tooltip { position: fixed; background: var(--text-primary); border-radius: 7px; padding: 6px 10px; font-size: 10px; font-family: var(--mono); color: white; pointer-events: none; z-index: 999; display: none; box-shadow: var(--shadow-lift); }
+
+.edge-case-btn { display: block; width: 100%; text-align: left; padding: 13px 15px; margin-bottom: 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 11px; cursor: pointer; transition: all 0.18s var(--ease); }
+.edge-case-btn:hover { border-color: var(--brand-line); background: var(--brand-dim); transform: translateX(3px); }
+.edge-case-title { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
+.edge-case-desc { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+.photo-banner { position: relative; border-radius: 13px; overflow: hidden; height: 140px; box-shadow: var(--shadow); }
+.photo-banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-banner-caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.9rem 1.1rem; background: linear-gradient(0deg, rgba(46,32,19,0.82) 0%, rgba(46,32,19,0.35) 65%, transparent 100%); color: #fffdf8; font-size: 12px; line-height: 1.5; }
+.photo-banner-caption b { color: #fff; }
+.compare-cols { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: stretch; margin-top: 1rem; }
+.compare-col { border-radius: 11px; padding: 1rem; border: 1px solid; }
+.compare-col.no-agent { background: var(--red-dim); border-color: var(--red-line); }
+.compare-col.with-agent { background: var(--green-dim); border-color: var(--green-line); }
+.compare-col-title { font-size: 10px; font-family: var(--mono); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.compare-col.no-agent .compare-col-title { color: var(--red); }
+.compare-col.with-agent .compare-col-title { color: var(--green-dark); }
+.compare-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 11.5px; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.compare-row:last-child { border-bottom: none; }
+.compare-row-label { color: var(--text-secondary); }
+.compare-row-val { font-family: var(--mono); font-weight: 700; }
+.compare-col.no-agent .compare-row-val { color: var(--red); }
+.compare-col.with-agent .compare-row-val { color: var(--green-dark); }
+.compare-vs { display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 700; color: var(--text-muted); font-size: 12px; }
+.water-saved-banner { display: flex; align-items: center; gap: 10px; padding: 11px 12px; background: var(--blue-dim); border: 1px solid var(--blue-line); border-radius: 10px; margin-top: 0.9rem; }
+.water-saved-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--blue); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.water-saved-icon svg { width: 16px; height: 16px; stroke: white; fill: none; stroke-width: 2; }
+.water-saved-text { font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; }
+
+.ods-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+.ods-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px; background: var(--bg-card); border-radius: 11px; border: 1px solid var(--border); transition: transform 0.2s; }
+.ods-item:hover { transform: translateY(-2px); }
+.ods-badge { width: 40px; height: 40px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 700; font-size: 13px; color: white; flex-shrink: 0; }
+.ods-badge.ods2 { background: #d3a029; }
+.ods-badge.ods6 { background: #26bde2; }
+.ods-badge.ods13 { background: #3f7e44; }
+.ods-title { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+.ods-desc { font-size: 11px; color: var(--text-secondary); margin-top: 3px; line-height: 1.5; }
+
+.statusbar { display: flex; align-items: center; gap: 1.5rem; padding: 0 1.5rem; height: 32px; border-top: 1px solid var(--border); background: var(--bg-panel); font-size: 10px; font-family: var(--mono); color: var(--text-muted); flex-shrink: 0; }
+.status-item { display: flex; align-items: center; gap: 5px; }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; }
+.status-dot.ok { background: var(--green); } .status-dot.error { background: var(--red); }
+
+.copilot-btn { position: fixed; right: 22px; bottom: 22px; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--brand-dark)); border: none; box-shadow: 0 4px 16px rgba(35,22,13,0.28); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 500; transition: transform 0.2s var(--ease-spring); }
+.copilot-btn:hover { transform: scale(1.08) rotate(-4deg); }
+.copilot-btn svg { width: 24px; height: 24px; stroke: white; fill: none; stroke-width: 2; }
+.copilot-panel { position: fixed; right: 22px; bottom: 86px; width: 320px; max-height: 440px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 15px; box-shadow: 0 16px 40px rgba(35,22,13,0.22); display: flex; flex-direction: column; overflow: hidden; z-index: 500; transform: scale(0.9) translateY(10px); opacity: 0; pointer-events: none; transition: transform 0.28s var(--ease-spring), opacity 0.22s; transform-origin: bottom right; }
+.copilot-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+.copilot-header { padding: 13px 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); }
+.copilot-title { font-size: 12.5px; font-weight: 700; color: var(--text-primary); }
+.copilot-sub { font-size: 9.5px; color: var(--text-muted); font-family: var(--mono); }
+.copilot-close { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 16px; line-height: 1; transition: color 0.15s; }
+.copilot-close:hover { color: var(--text-primary); }
+.copilot-messages { flex: 1; overflow-y: auto; padding: 13px 15px; display: flex; flex-direction: column; gap: 8px; min-height: 200px; max-height: 300px; }
+.copilot-msg { font-size: 12px; line-height: 1.5; padding: 8px 11px; border-radius: 10px; max-width: 88%; animation: rise-in 0.25s var(--ease); }
+.copilot-msg.user { align-self: flex-end; background: var(--brand-dim); color: var(--brand-dark); border-bottom-right-radius: 3px; }
+.copilot-msg.bot { align-self: flex-start; background: var(--bg-card); color: var(--text-secondary); border-bottom-left-radius: 3px; }
+.copilot-input-row { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--border); }
+.copilot-input-row input { flex: 1; padding: 9px 11px; border-radius: 9px; border: 1px solid var(--border-strong); font-size: 12px; font-family: var(--sans); background: var(--bg-card); color: var(--text-primary); }
+.copilot-input-row button { padding: 9px 13px; border-radius: 9px; border: none; background: var(--brand); color: white; font-size: 12px; cursor: pointer; transition: filter 0.15s; }
+.copilot-input-row button:hover { filter: brightness(1.1); }
+
+/* -------- login gate -------- */
+.login-screen { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; background: var(--bg); background-image: radial-gradient(ellipse 900px 600px at 20% 10%, rgba(125,44,68,0.08), transparent 60%), radial-gradient(ellipse 800px 600px at 85% 90%, rgba(38,138,74,0.07), transparent 55%); animation: rise-in 0.4s var(--ease); }
+.login-screen.hidden { display: none; }
+.login-card { width: 100%; max-width: 340px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 16px; padding: 2rem 1.75rem; box-shadow: var(--shadow-lift); }
+.login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 1.6rem; }
+.login-logo .logo-mark { width: 38px; height: 38px; }
+.login-logo .logo-mark svg { width: 20px; height: 20px; }
+.login-logo .logo-text { font-size: 16px; }
+.login-field { margin-bottom: 1rem; }
+.login-field label { display: block; margin-bottom: 5px; }
+.login-input { width: 100%; min-width: 0; padding: 10px 12px; border-radius: 9px; border: 1px solid var(--border-strong); font-size: 13px; font-family: var(--sans); background: var(--bg-card); color: var(--text-primary); transition: border-color 0.15s, box-shadow 0.15s; }
+.login-input:focus { outline: none; border-color: var(--brand-line); box-shadow: 0 0 0 3px var(--brand-dim); }
+.login-status { margin-top: 0.85rem; font-size: 11.5px; line-height: 1.6; color: var(--text-muted); min-height: 1em; }
+.login-status.error { color: var(--red); }
+.login-guest-btn { width: 100%; margin-top: 0.6rem; padding: 9px; border-radius: 9px; border: 1px dashed var(--border-strong); background: transparent; color: var(--text-secondary); font-family: var(--mono); font-size: 10.5px; cursor: pointer; transition: all 0.15s; }
+.login-guest-btn:hover { border-color: var(--brand-line); color: var(--brand-dark); background: var(--brand-dim); }
+
+.session-chip { display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 11px; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border); font-family: var(--mono); font-size: 11px; color: var(--text-secondary); }
+.session-logout { width: 20px; height: 20px; border-radius: 50%; border: none; background: var(--bg-card-alt); color: var(--text-muted); cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.session-logout:hover { background: var(--red-dim); color: var(--red); }
+</style>
+</head>
+<body>
+<!--
+THESIS: A full rebuild of the presentation layer on the incumbent product logic — the
+  n8n/Claude integration, charts and PDF export are untouched; HTML, CSS, and motion are new.
+OWN-WORLD: Costa Rican agriculture — Pergamino parchment neutrals, Tierra warm-black text,
+  Grano Maduro (coffee-cherry wine) as the sole brand accent; JetBrains Mono + Inter.
+STORY: An agricultor scans a dense operational console that now breathes — entrance stagger,
+  a sliding tab indicator, a reasoning cascade on each decision, a valve that pulses with state.
+FIRST VIEWPORT: Same information architecture as the incumbent (two-column console, decision
+  tab first) — Operate mode: composition stays legible, motion narrates state, never decorates.
+FORM: Redesign per explicit user request ("frontend desde cero, con animaciones, con los
+  colores que dije") — brief pinned, no concept tournament; business logic preserved verbatim.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review,
+  the verdict, DESIGN.md, and every shipping raster carrying its provenance.
+-->
+
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16"><path d="M8 2 C5 2 2 5 2 8 C2 11 5 14 8 14"/><path d="M8 5 L8 8 L10 10" stroke-linejoin="round"/><circle cx="8" cy="8" r="1" fill="white" stroke="none"/></svg></div>
+      <div><div class="logo-text">AgroSentinel</div><div class="logo-sub" id="login-title">Iniciar sesión</div></div>
+    </div>
+
+    <button class="login-guest-btn" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0 0 1.1rem;border-style:solid;background:#ffffff;color:#1a1a1a;font-family:var(--sans);font-size:13px;font-weight:500" onclick="loginWithGoogle()">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.4 0 6.4 1.2 8.8 3.5l6.5-6.5C35.3 2.7 30 0.5 24 0.5 14.9 0.5 7.1 5.9 3.4 13.7l7.6 5.9C12.7 13.5 17.9 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.5 3-2.2 5.5-4.7 7.2l7.3 5.7c4.3-4 6.8-9.9 6.8-17.4z"/><path fill="#FBBC05" d="M11 28.6c-.5-1.5-.8-3-.8-4.6s.3-3.1.8-4.6l-7.6-5.9C1.5 16.7.5 20.2.5 24s1 7.3 2.9 10.5l7.6-5.9z"/><path fill="#34A853" d="M24 47.5c6 0 11.3-2 15.1-5.4l-7.3-5.7c-2 1.4-4.6 2.2-7.8 2.2-6.1 0-11.3-4-13-9.6l-7.6 5.9C7.1 42.1 14.9 47.5 24 47.5z"/></svg>
+      Continuar con Google
+    </button>
+
+    <div style="display:flex;align-items:center;gap:10px;margin:0 0 1.1rem;font-size:10px;color:var(--text-muted);font-family:var(--mono)">
+      <div style="flex:1;height:1px;background:var(--border)"></div>o con correo<div style="flex:1;height:1px;background:var(--border)"></div>
+    </div>
+
+    <div class="login-field">
+      <label class="slider-label">Correo electrónico</label>
+      <input type="email" id="login-user" class="login-input" placeholder="tu@correo.com" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label class="slider-label">Contraseña</label>
+      <input type="password" id="login-pass" class="login-input" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')attemptLogin()">
+    </div>
+    <button class="analyze-btn" id="login-btn" onclick="attemptLogin()">Iniciar sesión</button>
+    <div class="login-status" id="login-status"></div>
+    <div style="text-align:center;margin-top:1.1rem;font-size:11.5px;color:var(--text-secondary)" id="login-switch-text">
+      ¿No tienes cuenta? <a onclick="toggleAuthMode()" style="color:var(--accent, #7d2c44);cursor:pointer;font-weight:600">Regístrate</a>
+    </div>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 16 16"><path d="M8 2 C5 2 2 5 2 8 C2 11 5 14 8 14"/><path d="M8 5 L8 8 L10 10" stroke-linejoin="round"/><circle cx="8" cy="8" r="1" fill="white" stroke="none"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">AgroSentinel</div>
+      <div class="logo-sub">Monitor de Estrés Hídrico — IA Autónoma</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="auto-controls">
+      <button class="topbar-btn" id="auto-btn" onclick="toggleAuto()">Auto: OFF</button>
+      <select id="auto-interval" onchange="updateInterval()">
+        <option value="60">1 min</option>
+        <option value="120">2 min</option>
+        <option value="300">5 min</option>
+      </select>
+      <span class="auto-countdown" id="auto-countdown"></span>
+    </div>
+    <button class="topbar-btn" id="demo-btn" style="border-color:#8f5da6;color:#8f5da6" onclick="runDemoMode()">Modo demo</button>
+    <button class="topbar-btn export-btn" onclick="exportPDF()">Exportar PDF</button>
+    <div class="live-indicator">
+      <div class="live-dot"></div>
+      <span id="last-update">—</span>
+    </div>
+    <div class="session-chip" id="session-chip" style="display:none">
+      <span id="session-user">—</span>
+      <button class="session-logout" onclick="logout()" title="Cerrar sesión">⏻</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero-strip">
+  <img src="https://images.unsplash.com/photo-1600412173573-3418330a4c72?w=1600&q=70&auto=format&fit=crop" alt="Paisaje agrícola de Costa Rica" loading="eager" onerror="this.closest('.hero-strip').classList.add('hero-strip-noimg')">
+  <div class="hero-strip-overlay"></div>
+  <div class="hero-strip-caption">
+    <span class="hero-strip-kicker">Costa Rica</span>
+    <span class="hero-strip-title">Agricultura de precisión, decidida por IA</span>
+  </div>
+</div>
+
+<div class="main">
+  <aside class="left-panel">
+    <div class="valve-section">
+      <div class="section-label">Estado de válvula</div>
+      <div class="valve-visual">
+        <div class="valve-orb-wrap">
+          <div class="valve-orb-cloud"></div>
+          <div class="valve-orb-ring"></div>
+          <div id="valve3d-mini" onclick="document.querySelectorAll('.tab-btn').forEach(b=>{ if(b.getAttribute('onclick') && b.getAttribute('onclick').indexOf('valve3d')!==-1) b.click(); })" title="Ver en grande"></div>
+        </div>
+        <div class="valve-info">
+          <div class="valve-state-text closed" id="valve-text">CERRADA</div>
+          <div class="valve-sublabel" id="valve-sub">Sin flujo activo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-section">
+      <div class="section-label">Nivel de alerta</div>
+      <div class="alert-bar">
+        <div class="alert-segment" id="seg-1"></div>
+        <div class="alert-segment" id="seg-2"></div>
+        <div class="alert-segment" id="seg-3"></div>
+      </div>
+      <div class="alert-badge normal" id="alert-badge"><span id="alert-text">EN ESPERA</span></div>
+    </div>
+
+    <div class="input-section">
+      <div class="section-label">Datos de entrada del campo</div>
+
+      <div class="slider-group">
+        <div class="slider-header"><span class="slider-label">NDVI</span><span class="slider-value-display"><span id="val-ndvi">0.60</span></span></div>
+        <input type="range" min="0" max="100" value="60" id="sl-ndvi" oninput="updateSlider('ndvi',this.value/100)">
+        <div class="slider-range"><span>0.00 Muerto</span><span>1.00 Óptimo</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header"><span class="slider-label">Temperatura</span><span class="slider-value-display"><span id="val-temp">25.0</span><span class="unit">°C</span></span></div>
+        <input type="range" min="0" max="500" value="250" id="sl-temp" oninput="updateSlider('temp',this.value/10)">
+        <div class="slider-range"><span>0°C</span><span>50°C</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header"><span class="slider-label">Humedad del suelo</span><span class="slider-value-display"><span id="val-hum">50</span><span class="unit">%</span></span></div>
+        <input type="range" min="0" max="100" value="50" id="sl-hum" oninput="updateSlider('hum',this.value)">
+        <div class="slider-range"><span>0% Seco</span><span>100% Saturado</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header"><span class="slider-label">Precipitación</span><span class="slider-value-display"><span id="val-prec">5.0</span><span class="unit">mm</span></span></div>
+        <input type="range" min="0" max="300" value="50" id="sl-prec" oninput="updateSlider('prec',this.value/10)">
+        <div class="slider-range"><span>0 mm</span><span>30 mm</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header"><span class="slider-label">Días sin lluvia</span><span class="slider-value-display"><span id="val-dias">5</span><span class="unit"> días</span></span></div>
+        <input type="range" min="0" max="30" value="5" id="sl-dias" oninput="updateSlider('dias',this.value)">
+        <div class="slider-range"><span>0 días</span><span>30 días</span></div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header"><span class="slider-label">Etapa fenológica</span></div>
+        <select id="sl-etapa" class="field-select" onchange="currentData.etapa_fenologica=this.value">
+          <option value="germinacion">Germinación / establecimiento</option>
+          <option value="vegetativo" selected>Crecimiento vegetativo</option>
+          <option value="floracion">Floración</option>
+          <option value="fructificacion">Fructificación / llenado</option>
+          <option value="maduracion">Maduración / cosecha</option>
+        </select>
+        <div class="slider-range"><span>Ajusta la sensibilidad al estrés hídrico</span><span></span></div>
+      </div>
+
+      <div class="optional-toggle" onclick="toggleOptionalData()">
+        <span>Datos opcionales avanzados</span>
+        <span id="optional-arrow">▾</span>
+      </div>
+      <div class="optional-panel" id="optional-panel"><div class="optional-panel-inner">
+        <div class="opt-check-row">
+          <label class="opt-check"><input type="checkbox" id="chk-radiacion" onchange="toggleOptField('radiacion')"> Tengo dato de radiación solar</label>
+        </div>
+        <div class="slider-group opt-field" id="field-radiacion" style="display:none">
+          <div class="slider-header"><span class="slider-label">Radiación solar</span><span class="slider-value-display"><span id="val-radiacion">18.0</span><span class="unit">MJ/m²/día</span></span></div>
+          <input type="range" min="0" max="350" value="180" id="sl-radiacion" oninput="updateSlider('radiacion',this.value/10)">
+          <div class="slider-range"><span>0</span><span>35 MJ/m²/día</span></div>
+        </div>
+
+        <div class="opt-check-row">
+          <label class="opt-check"><input type="checkbox" id="chk-dron" onchange="toggleOptField('dron')"> Tengo imágenes de dron / multiespectrales</label>
+        </div>
+        <div class="opt-field" id="field-dron" style="display:none">
+          <textarea id="txt-dron" placeholder="Describe lo observado: ej. zonas amarillentas en el sector noreste, patrón irregular de NDVI, clorosis en hojas jóvenes..." rows="3" style="width:100%;padding:8px;border-radius:7px;border:1px solid var(--border-strong);font-family:var(--sans);font-size:11.5px;color:var(--text-primary);background:var(--bg-card);resize:vertical;margin-bottom:8px"></textarea>
+          <label style="font-size:10.5px;color:var(--text-muted);display:block;margin-bottom:4px">O sube una foto para que Claude la analice directamente:</label>
+          <input type="file" id="img-cultivo" accept="image/*" style="font-size:11px;width:100%;margin-bottom:6px" onchange="previewCropImage(event)">
+          <img id="img-preview" style="display:none;max-width:100%;border-radius:7px;margin-bottom:6px;border:1px solid var(--border)">
+          <button class="topbar-btn" style="width:100%" onclick="analyzeImage()" id="img-analyze-btn">Analizar imagen con Claude</button>
+          <div id="img-result" style="margin-top:8px;font-size:11.5px;color:var(--text-secondary);line-height:1.6;display:none;padding:8px;background:var(--bg-card);border-radius:7px;border-left:3px solid var(--accent)"></div>
+        </div>
+
+        <div class="opt-check-row">
+          <label class="opt-check"><input type="checkbox" id="chk-nasa" onchange="toggleOptField('nasa')"> Enriquecer con datos climáticos NASA POWER</label>
+        </div>
+        <div class="opt-field" id="field-nasa" style="display:none">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+            <input type="text" id="txt-lat" placeholder="Latitud" style="width:100%;min-width:0;padding:7px;border-radius:7px;border:1px solid var(--border-strong);font-size:11px;background:var(--bg-card);color:var(--text-primary)">
+            <input type="text" id="txt-lon" placeholder="Longitud" style="width:100%;min-width:0;padding:7px;border-radius:7px;border:1px solid var(--border-strong);font-size:11px;background:var(--bg-card);color:var(--text-primary)">
+          </div>
+          <button class="topbar-btn" style="width:100%" onclick="useMyLocation()">Usar mi ubicación actual</button>
+          <div style="font-size:9.5px;color:var(--text-muted);margin-top:4px">n8n consultará radiación, precipitación y temperatura histórica de la NASA para estas coordenadas.</div>
+        </div>
+        <div style="font-size:10px;color:var(--text-muted);line-height:1.5;margin-top:4px">
+          Estos datos son opcionales — el análisis funciona sin ellos, pero mejora la precisión si están disponibles.
+        </div>
+      </div></div>
+
+      <button class="analyze-btn" id="analyze-btn" onclick="fetchData()">Analizar con Claude AI</button>
+
+      <div class="preset-row">
+        <button class="preset-btn" onclick="applyPreset('optimo')">Óptimo</button>
+        <button class="preset-btn" onclick="applyPreset('leve')">Leve</button>
+        <button class="preset-btn" onclick="applyPreset('severo')">Severo</button>
+        <button class="preset-btn" onclick="applyPreset('ambiguo')">Ambiguo</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="right-panel">
+    <div class="tab-nav" id="tab-nav">
+      <button class="tab-nav-trigger" id="tab-nav-trigger" onclick="toggleTabMenu()">
+        <div class="tab-nav-current-wrap">
+          <span class="tab-nav-eyebrow">Sección</span>
+          <span class="tab-nav-current" id="tab-nav-current">Decisión</span>
+        </div>
+        <svg class="tab-nav-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="tab-nav-list" id="tab-nav-list"><div class="tab-nav-list-inner">
+        <button class="tab-btn active" onclick="switchTab('decision',this)"><span class="tab-btn-dot"></span>Decisión</button>
+        <button class="tab-btn" onclick="switchTab('valve3d',this)"><span class="tab-btn-dot"></span>Válvula 3D</button>
+        <button class="tab-btn" onclick="switchTab('compare',this)"><span class="tab-btn-dot"></span>Impacto y ODS</button>
+        <button class="tab-btn" onclick="switchTab('predictions',this)"><span class="tab-btn-dot"></span>Predicciones</button>
+        <button class="tab-btn" onclick="switchTab('charts',this)"><span class="tab-btn-dot"></span>Gráficas</button>
+        <button class="tab-btn" onclick="switchTab('map',this)"><span class="tab-btn-dot"></span>Mapa</button>
+        <button class="tab-btn" onclick="switchTab('edge',this)"><span class="tab-btn-dot"></span>Casos límite</button>
+        <button class="tab-btn" onclick="switchTab('simulador',this)"><span class="tab-btn-dot"></span>Simulador</button>
+        <button class="tab-btn" onclick="switchTab('red',this)"><span class="tab-btn-dot"></span>Red de Parcelas</button>
+      </div></div>
+    </div>
+
+    <div class="tab-content active" id="tab-decision">
+      <div class="scrollable" style="flex:1;display:flex;flex-direction:column;">
+        <div class="decision-section">
+          <div class="loading-overlay" id="loading-overlay"><div class="spinner"></div></div>
+          <div class="section-label">Decisión autónoma</div>
+          <div class="decision-header">
+            <div class="decision-action" id="decision-action">Ajusta los sliders y presiona Analizar.</div>
+            <div class="decision-meta">
+              <div class="decision-time" id="decision-time">—</div>
+              <div style="font-size:9px;font-family:var(--mono);color:var(--text-muted);margin-top:2px">claude-sonnet-4-6</div>
+            </div>
+          </div>
+          <div class="decision-justification" id="decision-just" style="color:var(--text-muted);font-style:italic">
+            El agente analizará los datos que ingreses y tomará una decisión autónoma de riego.
+          </div>
+          <div class="reasoning-toggle" id="reasoning-toggle" onclick="toggleReasoning()" style="display:none">
+            <span>Ver razonamiento del agente</span>
+            <span id="reasoning-arrow">▾</span>
+          </div>
+          <div class="reasoning-panel" id="reasoning-panel"></div>
+          <div id="limiting-factor-wrap"></div>
+        </div>
+
+        <div class="predictions-section">
+          <div class="section-label">Predicciones del agente</div>
+          <div class="pred-grid">
+            <div class="pred-card">
+              <div class="pred-card-label">Días hasta estrés crítico</div>
+              <div class="pred-card-value" id="pred-dias" style="color:var(--amber)">—</div>
+              <div class="pred-card-sub" id="pred-dias-sub">Sin análisis aún</div>
+            </div>
+            <div class="pred-card">
+              <div class="pred-card-label">Humedad en 24 horas</div>
+              <div class="pred-card-value" id="pred-hum24" style="color:var(--blue)">—</div>
+              <div class="pred-card-sub" id="pred-hum24-sub">Sin análisis aún</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="log-section">
+          <div class="log-header">
+            <div class="section-label" style="margin:0">Historial de decisiones</div>
+            <div class="log-count" id="log-count">0 registros</div>
+          </div>
+          <div class="log-entries" id="log-entries"><div class="log-empty">Sin registros aún</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-valve3d">
+      <div style="flex:1;overflow-y:auto;padding:1.35rem 1.6rem;display:flex;flex-direction:column;gap:1rem;">
+        <div class="chart-card" style="padding:1rem;">
+          <div class="chart-card-title" style="margin-bottom:0.5rem">Actuador virtual</div>
+          <div id="valve3d-full" style="width:100%;height:min(560px,62vh);border-radius:11px;overflow:hidden;background:linear-gradient(180deg,#1b140f,#0f0a07);cursor:grab;"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.75rem;">
+            <div style="font-size:11px;color:var(--text-muted);font-family:var(--mono)">Arrastra para rotar la cámara.</div>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:12px;font-family:var(--mono);color:var(--text-muted)">Caudal:</span>
+                <span id="valve3d-flow-label" style="font-size:13px;font-family:var(--mono);font-weight:700;color:var(--blue)">0.00 L/min</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:12px;font-family:var(--mono);color:var(--text-muted)">Estado:</span>
+                <span id="valve3d-state-label" style="font-size:13px;font-family:var(--mono);font-weight:700;color:var(--red)">CERRADA</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-compare">
+      <div class="compare-tab">
+        <div class="photo-banner">
+          <img src="https://images.unsplash.com/photo-1576758597367-2840b9dc1a2b?w=900&q=70&auto=format&fit=crop" alt="Cerezas de café maduras" loading="eager" onerror="this.closest('.photo-banner').style.display='none'">
+          <div class="photo-banner-caption"><b>Grano Maduro</b> — cada decisión de riego protege el punto exacto de maduración del cultivo, no un cronograma genérico.</div>
+        </div>
+        <div class="compare-header-card">
+          <div class="section-label" style="margin-bottom:0">Comparación: sin agente vs con AgroSentinel</div>
+          <div class="compare-cols">
+            <div class="compare-col no-agent">
+              <div class="compare-col-title">✕ Sin intervención</div>
+              <div class="compare-row"><span class="compare-row-label">Riego</span><span class="compare-row-val">Cronograma fijo</span></div>
+              <div class="compare-row"><span class="compare-row-label">Detección de estrés</span><span class="compare-row-val">Manual / tardía</span></div>
+              <div class="compare-row"><span class="compare-row-label">Días hasta daño irreversible</span><span class="compare-row-val" id="cmp-dias-no">—</span></div>
+              <div class="compare-row"><span class="compare-row-label">Agua usada</span><span class="compare-row-val">100% (fija)</span></div>
+            </div>
+            <div class="compare-vs">VS</div>
+            <div class="compare-col with-agent">
+              <div class="compare-col-title">✓ Con AgroSentinel</div>
+              <div class="compare-row"><span class="compare-row-label">Riego</span><span class="compare-row-val">Bajo demanda real</span></div>
+              <div class="compare-row"><span class="compare-row-label">Detección de estrés</span><span class="compare-row-val">Continua / autónoma</span></div>
+              <div class="compare-row"><span class="compare-row-label">Días hasta daño irreversible</span><span class="compare-row-val" id="cmp-dias-yes">Prevenido</span></div>
+              <div class="compare-row"><span class="compare-row-label">Agua usada</span><span class="compare-row-val" id="cmp-agua-yes">Optimizada</span></div>
+            </div>
+          </div>
+          <div class="water-saved-banner">
+            <div class="water-saved-icon"><svg viewBox="0 0 24 24"><path d="M12 2 C12 2 5 10 5 15 a7 7 0 0 0 14 0 C19 10 12 2 12 2 Z"/></svg></div>
+            <div class="water-saved-text">Ahorro estimado de agua con riego basado en datos reales: <b id="water-saved-val">— litros/m²</b> comparado con riego por cronograma fijo en este ciclo.</div>
+          </div>
+          <div class="water-saved-banner" style="margin-top:8px;background:var(--green-dim);border-color:var(--green-line)">
+            <div class="water-saved-icon" style="background:var(--green)"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg></div>
+            <div class="water-saved-text">Ahorro acumulado en esta sesión (<span id="acumulado-count">0</span> análisis): <b id="water-saved-acumulado" style="color:var(--green-dark)">0 litros/m²</b></div>
+          </div>
+        </div>
+
+        <div class="ods-card">
+          <div class="section-label" style="margin-bottom:0">Alineación con Objetivos de Desarrollo Sostenible</div>
+          <div class="ods-grid">
+            <div class="ods-item">
+              <div class="ods-badge ods2">2</div>
+              <div><div class="ods-title">Hambre Cero</div><div class="ods-desc">Optimiza el rendimiento del cultivo al prevenir estrés hídrico antes de que dañe la producción.</div></div>
+            </div>
+            <div class="ods-item">
+              <div class="ods-badge ods6">6</div>
+              <div><div class="ods-title">Agua Limpia y Saneamiento</div><div class="ods-desc">Reduce el desperdicio de agua al regar solo cuando los datos lo justifican, no por horario fijo.</div></div>
+            </div>
+            <div class="ods-item">
+              <div class="ods-badge ods13">13</div>
+              <div><div class="ods-title">Acción por el Clima</div><div class="ods-desc">Ayuda a los cultivos a adaptarse a condiciones climáticas cada vez más variables e impredecibles.</div></div>
+            </div>
+            <div class="ods-item">
+              <div class="ods-badge" style="background:#8f5da6">A</div>
+              <div><div class="ods-title">Autonomía real</div><div class="ods-desc">Todo el ciclo percibir-decidir-actuar ocurre sin intervención humana, con IA razonando en tiempo real.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-predictions">
+      <div class="pred-tab">
+        <div class="pred-big-card">
+          <div class="pred-big-title">Proyección de humedad del suelo — próximas 8 horas</div>
+          <div class="humidity-forecast" id="forecast-bars"></div>
+        </div>
+        <div class="pred-big-card">
+          <div class="pred-big-title">Línea de tiempo de riesgo</div>
+          <div class="timeline" id="risk-timeline">
+            <div style="color:var(--text-muted);font-size:12px;font-family:var(--mono);padding:1rem 0">Realiza un análisis para ver la proyección de riesgo.</div>
+          </div>
+        </div>
+        <div class="pred-big-card">
+          <div class="pred-big-title">Recomendación de ventana de riego</div>
+          <div id="irrigation-window" style="color:var(--text-muted);font-size:12.5px;padding:0.5rem 0;line-height:1.8">
+            Sin datos disponibles. Realiza un análisis primero.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-charts">
+      <div class="charts-tab">
+        <div class="chart-card">
+          <div class="chart-card-title">Humedad del suelo y NDVI — histórico de sesión</div>
+          <div class="chart-wrapper"><canvas id="chart-main"></canvas></div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-card-title">Temperatura (°C)</div>
+            <div class="chart-wrapper"><canvas id="chart-temp"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-title">Precipitación (mm)</div>
+            <div class="chart-wrapper"><canvas id="chart-prec"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-map">
+      <div class="map-tab">
+        <div class="field-map">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <div class="section-label" style="margin-bottom:0">Mapa de zonas del campo — 8×8 sectores</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span id="map-source-note" style="font-size:10px;font-family:var(--mono);color:var(--text-muted)">Simulación basada en el promedio del campo</span>
+              <button class="topbar-btn" style="padding:4px 10px;font-size:10px" onclick="resetMapToSimulation()">Volver a simulación</button>
+            </div>
+          </div>
+          <div class="map-stats">
+            <div class="map-stat"><div class="map-stat-val" id="map-ok" style="color:var(--green-dark)">—</div><div class="map-stat-lbl">Normal</div></div>
+            <div class="map-stat"><div class="map-stat-val" id="map-leve" style="color:var(--amber)">—</div><div class="map-stat-lbl">Estrés leve</div></div>
+            <div class="map-stat"><div class="map-stat-val" id="map-sev" style="color:var(--red)">—</div><div class="map-stat-lbl">Estrés severo</div></div>
+          </div>
+          <div class="field-grid" id="field-grid"></div>
+          <div class="map-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#a8dfba"></div>Normal</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#efc885"></div>Estrés leve</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#e8a89f"></div>Estrés severo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-edge">
+      <div class="edge-tab">
+        <div class="edge-card">
+          <div class="section-label" style="margin-bottom:0.75rem">Casos límite y datos contradictorios</div>
+          <div style="font-size:11.5px;color:var(--text-secondary);margin-bottom:1rem;line-height:1.6">
+            Estos escenarios ponen a prueba cómo Claude resuelve tensión entre variables que apuntan en direcciones opuestas, en vez de aplicar reglas fijas.
+          </div>
+
+          <button class="edge-case-btn" onclick="applyEdgeCase('ndvi_alto_hum_baja')">
+            <div class="edge-case-title">NDVI alto, humedad crítica</div>
+            <div class="edge-case-desc">La vegetación aún se ve saludable, pero el suelo ya está en niveles peligrosos. ¿El agente actúa preventivamente o espera a que el NDVI caiga?</div>
+          </button>
+
+          <button class="edge-case-btn" onclick="applyEdgeCase('lluvia_reciente_dias_altos')">
+            <div class="edge-case-title">Lluvia reciente alta, pero muchos días sin lluvia previos</div>
+            <div class="edge-case-desc">Llovió fuerte hoy después de tres semanas de sequía. ¿Es suficiente para cerrar la válvula o el daño acumulado ya requiere riego?</div>
+          </button>
+
+          <button class="edge-case-btn" onclick="applyEdgeCase('temp_extrema_hum_ok')">
+            <div class="edge-case-title">Temperatura extrema con humedad aceptable</div>
+            <div class="edge-case-desc">El suelo tiene humedad suficiente hoy, pero el calor es extremo. ¿El agente anticipa la evapotranspiración acelerada?</div>
+          </button>
+
+          <button class="edge-case-btn" onclick="applyEdgeCase('todo_limite')">
+            <div class="edge-case-title">Todos los valores justo en el límite</div>
+            <div class="edge-case-desc">Cada variable está exactamente en el borde entre NORMAL y LEVE. Caso de máxima ambigüedad para observar el desempate del modelo.</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-simulador">
+      <div class="pred-tab">
+        <div class="pred-big-card">
+          <div class="pred-big-title">Simulador de escenarios — ¿qué pasaría si...?</div>
+          <div style="font-size:11.5px;color:var(--text-secondary);margin-bottom:1rem;line-height:1.6">
+            Proyecta la humedad del suelo hacia adelante según tus condiciones actuales, comparando qué pasaría con y sin una política de riego definida. Este cálculo es local (heurístico), no requiere llamar a Claude.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+            <div class="slider-group" style="margin-bottom:0">
+              <div class="slider-header"><span class="slider-label">Días a proyectar</span><span class="slider-value-display"><span id="val-sim-dias">10</span></span></div>
+              <input type="range" min="1" max="30" value="10" id="sl-sim-dias" oninput="document.getElementById('val-sim-dias').textContent=this.value">
+            </div>
+            <div class="slider-group" style="margin-bottom:0">
+              <div class="slider-header"><span class="slider-label">Lluvia esperada</span></div>
+              <select id="sl-sim-lluvia" class="field-select">
+                <option value="0">Ninguna (sequía)</option>
+                <option value="0.3">Baja / ocasional</option>
+                <option value="1" selected>Normal para la zona</option>
+              </select>
+            </div>
+            <div class="slider-group" style="margin-bottom:0">
+              <div class="slider-header"><span class="slider-label">Riego cada</span><span class="slider-value-display"><span id="val-sim-freq">3</span><span class="unit"> días</span></span></div>
+              <input type="range" min="1" max="15" value="3" id="sl-sim-freq" oninput="document.getElementById('val-sim-freq').textContent=this.value">
+            </div>
+            <div class="slider-group" style="margin-bottom:0">
+              <div class="slider-header"><span class="slider-label">Riego aplicado</span><span class="slider-value-display"><span id="val-sim-mm">15</span><span class="unit">%</span></span></div>
+              <input type="range" min="5" max="50" value="15" id="sl-sim-mm" oninput="document.getElementById('val-sim-mm').textContent=this.value">
+            </div>
+          </div>
+          <button class="analyze-btn" style="width:auto;padding:9px 18px" onclick="runSimulation()">Simular proyección</button>
+          <div class="chart-wrapper" style="height:220px;margin-top:1rem;"><canvas id="chart-sim"></canvas></div>
+          <div id="sim-summary" style="margin-top:0.75rem;font-size:12px;color:var(--text-secondary);line-height:1.7"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-red">
+      <div class="pred-tab">
+        <div class="pred-big-card">
+          <div class="pred-big-title">Red de parcelas de la cuenca</div>
+          <div style="font-size:11.5px;color:var(--text-secondary);margin-bottom:1rem;line-height:1.6">
+            Comparte tus lecturas de forma anónima con otras parcelas de tu misma cuenca hidrográfica para construir un historial regional más amplio. Nadie ve tu nombre ni tu ubicación exacta — solo la cuenca y los valores del sensor.
+          </div>
+          <div class="opt-check-row">
+            <label class="opt-check"><input type="checkbox" id="chk-red-share"> Compartir mis datos anónimamente con mi cuenca</label>
+          </div>
+          <div class="slider-group" id="red-cuenca-field" style="display:none;margin-top:0.5rem">
+            <div class="slider-header"><span class="slider-label">Nombre de la cuenca / cooperativa</span></div>
+            <input type="text" id="txt-cuenca" placeholder="ej. Cuenca Río Virilla, Cooperativa Los Santos..." style="width:100%;padding:8px 10px;border-radius:7px;border:1px solid var(--border-strong);font-family:var(--sans);font-size:12px;background:var(--bg-card);color:var(--text-primary)">
+          </div>
+          <div style="display:flex;gap:8px;margin-top:1rem;">
+            <button class="topbar-btn" onclick="shareToNetwork()">Compartir última lectura</button>
+            <button class="topbar-btn" onclick="fetchNetworkStats()">Actualizar red</button>
+          </div>
+          <div id="red-status" style="margin-top:1rem;font-size:12px;color:var(--text-muted);line-height:1.7;padding:0.875rem;background:var(--bg-card);border-radius:9px;">
+            La red de parcelas requiere un endpoint adicional en n8n (ver README del proyecto). Mientras no esté configurado, esta pestaña queda lista para usarse en cuanto lo publiques.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="statusbar">
+      <div class="status-item"><div class="status-dot ok" id="api-dot"></div><span id="api-status">API Claude</span></div>
+      <div class="status-item"><div class="status-dot ok"></div><span>n8n workflow</span></div>
+      <div class="status-item" style="margin-left:auto"><span id="status-sensors">NDVI: — | Temp: — | Hum: —</span></div>
+    </div>
+  </main>
+</div>
+
+<div class="field-tooltip" id="field-tooltip"></div>
+
+<button class="copilot-btn" onclick="toggleCopilot()" title="Preguntar al agente">
+  <svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-7 7c0 2.1.9 3.9 2.3 5.2L7 21l4.2-1.5a7 7 0 1 0 .8-13.5Z"/><circle cx="9" cy="10" r="1" fill="white" stroke="none"/><circle cx="12" cy="10" r="1" fill="white" stroke="none"/><circle cx="15" cy="10" r="1" fill="white" stroke="none"/></svg>
+</button>
+<div class="copilot-panel" id="copilot-panel">
+  <div class="copilot-header">
+    <div><div class="copilot-title">Copiloto AgroSentinel</div><div class="copilot-sub">Powered by Claude</div></div>
+    <button class="copilot-close" onclick="toggleCopilot()">✕</button>
+  </div>
+  <div class="copilot-messages" id="copilot-messages">
+    <div class="copilot-msg bot">Hola, soy el copiloto de AgroSentinel. Puedo responder preguntas sobre la decisión actual, los datos del campo, o el proyecto en general.</div>
+  </div>
+  <div class="copilot-input-row">
+    <input type="text" id="copilot-input" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter')sendCopilotMessage()">
+    <button onclick="sendCopilotMessage()">Enviar</button>
+  </div>
+</div>
+
+<script>
+const WEBHOOK_URL = 'https://innowgp13.app.n8n.cloud/webhook/agente-hidrico';
+const SHARED_SHARE_URL = ''; // Completar con la URL de 'red-compartir' cuando publiques el flujo en n8n (ver README)
+const SHARED_STATS_URL = ''; // Completar con la URL de 'red-stats' cuando publiques el flujo en n8n (ver README)
+const CHAT_WEBHOOK_URL = 'https://innowgp13.app.n8n.cloud/webhook/copiloto-agrosentinel';
+const IMAGE_WEBHOOK_URL = 'https://innowgp13.app.n8n.cloud/webhook/analizar-imagen';
+const API_TOKEN = 'Agrosentinel-$VD-1234'; // Debe coincidir con el valor validado en n8n. No es seguridad real (es visible en el HTML), solo un freno básico contra llamadas casuales al webhook.
+let isLoading = false;
+let logEntries = [];
+let aguaAhorradaAcumulada = 0;
+let analisisAcumulados = 0;
+let decisionesHistorial = [];
+let autoActive = false;
+let autoInterval = 60;
+let autoTimer = null;
+let countdownTimer = null;
+function resetMapToSimulation() {
+  usingImageZones = false;
+  const mapNote = document.getElementById('map-source-note');
+  if (mapNote) mapNote.textContent = 'Simulación basada en el promedio del campo';
+  updateMapFromData();
+}
+
+let fieldZones = [];
+let lastResponse = null;
+
+let currentData = { ndvi: 0.60, temperatura_c: 25.0, humedad_suelo_pct: 50, precipitacion_mm: 5.0, dias_sin_lluvia: 5, etapa_fenologica: 'vegetativo' };
+
+function updateSlider(key, value) {
+  const v = parseFloat(value);
+  if (key === 'ndvi') { currentData.ndvi = v; document.getElementById('val-ndvi').textContent = v.toFixed(2); }
+  else if (key === 'temp') { currentData.temperatura_c = v; document.getElementById('val-temp').textContent = v.toFixed(1); }
+  else if (key === 'hum') { currentData.humedad_suelo_pct = v; document.getElementById('val-hum').textContent = v; }
+  else if (key === 'prec') { currentData.precipitacion_mm = v; document.getElementById('val-prec').textContent = v.toFixed(1); }
+  else if (key === 'dias') { currentData.dias_sin_lluvia = v; document.getElementById('val-dias').textContent = v; }
+  else if (key === 'radiacion') { currentData.radiacion_solar = v; document.getElementById('val-radiacion').textContent = v.toFixed(1); }
+  document.getElementById('status-sensors').textContent = `NDVI: ${currentData.ndvi.toFixed(2)} | Temp: ${currentData.temperatura_c.toFixed(1)}°C | Hum: ${currentData.humedad_suelo_pct}%`;
+  updateMapFromData();
+}
+
+function toggleOptionalData() {
+  const panel = document.getElementById('optional-panel');
+  const arrow = document.getElementById('optional-arrow');
+  panel.classList.toggle('active');
+  arrow.textContent = panel.classList.contains('active') ? '▴' : '▾';
+}
+
+function toggleOptField(name) {
+  if (name === 'radiacion') {
+    const on = document.getElementById('chk-radiacion').checked;
+    document.getElementById('field-radiacion').style.display = on ? 'block' : 'none';
+    if (on) currentData.radiacion_solar = parseFloat(document.getElementById('sl-radiacion').value) / 10;
+    else delete currentData.radiacion_solar;
+  }
+  if (name === 'dron') {
+    const on = document.getElementById('chk-dron').checked;
+    document.getElementById('field-dron').style.display = on ? 'block' : 'none';
+    if (!on) delete currentData.observacion_dron;
+  }
+  if (name === 'nasa') {
+    const on = document.getElementById('chk-nasa').checked;
+    document.getElementById('field-nasa').style.display = on ? 'block' : 'none';
+    if (!on) { delete currentData.lat; delete currentData.lon; }
+  }
+}
+
+function useMyLocation() {
+  if (!navigator.geolocation) { alert('Tu navegador no soporta geolocalización.'); return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    document.getElementById('txt-lat').value = pos.coords.latitude.toFixed(4);
+    document.getElementById('txt-lon').value = pos.coords.longitude.toFixed(4);
+    currentData.lat = pos.coords.latitude;
+    currentData.lon = pos.coords.longitude;
+  }, () => alert('No se pudo obtener tu ubicación. Ingrésala manualmente.'));
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target && e.target.id === 'txt-lat') currentData.lat = parseFloat(e.target.value) || undefined;
+  if (e.target && e.target.id === 'txt-lon') currentData.lon = parseFloat(e.target.value) || undefined;
+});
+
+let cropImageBase64 = null;
+let cropImageMediaType = null;
+
+function previewCropImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  cropImageMediaType = file.type;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    cropImageBase64 = e.target.result.split(',')[1];
+    const img = document.getElementById('img-preview');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('img-result').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function analyzeImage() {
+  const resultBox = document.getElementById('img-result');
+  const btn = document.getElementById('img-analyze-btn');
+  if (!cropImageBase64) { alert('Selecciona una imagen primero.'); return; }
+  if (!IMAGE_WEBHOOK_URL) {
+    resultBox.style.display = 'block';
+    resultBox.style.color = 'var(--text-muted)';
+    resultBox.textContent = 'El análisis de imágenes aún no está configurado (falta publicar el flujo "analizar-imagen" en n8n — ver README).';
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Analizando imagen...';
+  resultBox.style.display = 'block';
+  resultBox.style.color = 'var(--text-secondary)';
+  resultBox.textContent = 'Enviando imagen a Claude Vision...';
+  try {
+    const res = await fetch(IMAGE_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image_base64: cropImageBase64, media_type: cropImageMediaType, token: API_TOKEN })
+    });
+    let data = await res.json();
+    if (typeof data === 'string') data = JSON.parse(data);
+    resultBox.textContent = data.analisis || 'No se obtuvo un análisis claro.';
+    if (data.analisis) currentData.observacion_dron = ((currentData.observacion_dron || '') + ' ' + data.analisis).trim();
+    if (data.zonas && Array.isArray(data.zonas) && data.zonas.length > 0) {
+      applyImageZonesToMap(data.zonas);
+      resultBox.textContent += ' — el mapa de campo se actualizó con estas zonas.';
+    }
+  } catch (err) {
+    resultBox.textContent = 'No se pudo analizar la imagen. Verifica el endpoint "analizar-imagen".';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Analizar imagen con Claude';
+  }
+}
+
+let usingImageZones = false;
+
+const REGION_RANGES = {
+  noroeste: { rows: [0,2], cols: [0,2] }, norte:    { rows: [0,2], cols: [3,4] }, noreste:  { rows: [0,2], cols: [5,7] },
+  oeste:    { rows: [3,4], cols: [0,2] }, centro:   { rows: [3,4], cols: [3,4] }, este:     { rows: [3,4], cols: [5,7] },
+  suroeste: { rows: [5,7], cols: [0,2] }, sur:      { rows: [5,7], cols: [3,4] }, sureste:  { rows: [5,7], cols: [5,7] }
+};
+
+function applyImageZonesToMap(zonas) {
+  const cells = document.querySelectorAll('.field-cell');
+  if (!cells.length) return;
+  usingImageZones = true;
+  zonas.forEach(z => {
+    const range = REGION_RANGES[(z.region || '').toLowerCase()];
+    if (!range) return;
+    const estado = ['normal','leve','severo'].includes(z.estado) ? z.estado : 'normal';
+    const zoneClass = estado === 'normal' ? 'ok' : estado;
+    for (let row = range.rows[0]; row <= range.rows[1]; row++) {
+      for (let col = range.cols[0]; col <= range.cols[1]; col++) {
+        const idx = row * 8 + col;
+        const cell = cells[idx];
+        if (!cell) continue;
+        cell.className = 'field-cell zone-' + zoneClass;
+        cell.dataset.zone = zoneClass;
+        fieldZones[idx] = zoneClass;
+      }
+    }
+  });
+  updateMapStats();
+  const mapNote = document.getElementById('map-source-note');
+  if (mapNote) mapNote.textContent = 'Mapa basado en el análisis real de la imagen subida.';
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target && e.target.id === 'txt-dron') {
+    currentData.observacion_dron = e.target.value || undefined;
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const chkRed = document.getElementById('chk-red-share');
+  if (chkRed) chkRed.addEventListener('change', function() {
+    document.getElementById('red-cuenca-field').style.display = this.checked ? 'block' : 'none';
+  });
+});
+
+function setSliders(d) {
+  currentData = {...currentData, ...d};
+  document.getElementById('sl-ndvi').value = Math.round(d.ndvi*100);
+  document.getElementById('sl-temp').value = Math.round(d.temperatura_c*10);
+  document.getElementById('sl-hum').value = d.humedad_suelo_pct;
+  document.getElementById('sl-prec').value = Math.round(d.precipitacion_mm*10);
+  document.getElementById('sl-dias').value = d.dias_sin_lluvia;
+  document.getElementById('val-ndvi').textContent = d.ndvi.toFixed(2);
+  document.getElementById('val-temp').textContent = d.temperatura_c.toFixed(1);
+  document.getElementById('val-hum').textContent = d.humedad_suelo_pct;
+  document.getElementById('val-prec').textContent = d.precipitacion_mm.toFixed(1);
+  document.getElementById('val-dias').textContent = d.dias_sin_lluvia;
+  document.getElementById('status-sensors').textContent = `NDVI: ${d.ndvi.toFixed(2)} | Temp: ${d.temperatura_c.toFixed(1)}°C | Hum: ${d.humedad_suelo_pct}%`;
+  updateMapFromData();
+}
+
+function applyPreset(name) {
+  const presets = {
+    optimo:  { ndvi:0.78, temperatura_c:23.5, humedad_suelo_pct:70, precipitacion_mm:14, dias_sin_lluvia:1 },
+    leve:    { ndvi:0.48, temperatura_c:31.0, humedad_suelo_pct:38, precipitacion_mm:1.2, dias_sin_lluvia:8 },
+    severo:  { ndvi:0.20, temperatura_c:39.0, humedad_suelo_pct:13, precipitacion_mm:0, dias_sin_lluvia:22 },
+    ambiguo: { ndvi:0.60, temperatura_c:33.0, humedad_suelo_pct:28, precipitacion_mm:0.5, dias_sin_lluvia:6 }
+  };
+  setSliders(presets[name]);
+}
+
+let demoRunning = false;
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function runDemoMode() {
+  if (demoRunning) return;
+  demoRunning = true;
+  const btn = document.getElementById('demo-btn');
+  btn.disabled = true;
+  const originalText = btn.textContent;
+
+  const pasos = [
+    { label: 'Paso 1/3 — Estrés severo', preset: 'severo', espera: 4000 },
+    { label: 'Paso 2/3 — Riego aplicado, mejora parcial', preset: 'leve', espera: 4000 },
+    { label: 'Paso 3/3 — Cultivo normalizado', preset: 'optimo', espera: 0 }
+  ];
+
+  document.querySelectorAll('.tab-btn').forEach(b => { if (b.getAttribute('onclick').indexOf("'decision'") !== -1) b.click(); });
+
+  for (const paso of pasos) {
+    btn.textContent = paso.label;
+    applyPreset(paso.preset);
+    await sleep(700);
+    await fetchData();
+    if (paso.espera) await sleep(paso.espera);
+  }
+
+  btn.textContent = originalText;
+  btn.disabled = false;
+  demoRunning = false;
+}
+
+function applyEdgeCase(name) {
+  const cases = {
+    ndvi_alto_hum_baja:        { ndvi:0.75, temperatura_c:29.0, humedad_suelo_pct:19, precipitacion_mm:0, dias_sin_lluvia:11 },
+    lluvia_reciente_dias_altos:{ ndvi:0.35, temperatura_c:26.0, humedad_suelo_pct:33, precipitacion_mm:22, dias_sin_lluvia:19 },
+    temp_extrema_hum_ok:       { ndvi:0.58, temperatura_c:41.5, humedad_suelo_pct:55, precipitacion_mm:0, dias_sin_lluvia:4 },
+    todo_limite:               { ndvi:0.45, temperatura_c:30.0, humedad_suelo_pct:40, precipitacion_mm:2, dias_sin_lluvia:7 }
+  };
+  setSliders(cases[name]);
+  document.querySelectorAll('.tab-btn').forEach(b => { if (b.getAttribute('onclick').indexOf("'decision'") !== -1) b.click(); });
+  fetchData();
+}
+
+const chartLabels = [], humHistory = [], ndviHistory = [], tempHistory = [], precHistory = [];
+const chartDefaults = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { ticks: { color: '#a3927c', font: { family: 'JetBrains Mono', size: 9 }, maxTicksLimit: 8 }, grid: { color: '#f1e8d6' } },
+    y: { ticks: { color: '#a3927c', font: { family: 'JetBrains Mono', size: 9 } }, grid: { color: '#f1e8d6' } }
+  }
+};
+const chartMain = new Chart(document.getElementById('chart-main'), {
+  type: 'line',
+  data: { labels: chartLabels, datasets: [
+    { label: 'Humedad %', data: humHistory, borderColor: '#268a4a', backgroundColor: 'rgba(38,138,74,0.08)', tension: 0.4, pointRadius: 3, pointBackgroundColor: '#268a4a', fill: true, yAxisID: 'y' },
+    { label: 'NDVI×100', data: ndviHistory, borderColor: '#2d6e8f', backgroundColor: 'rgba(45,110,143,0.08)', tension: 0.4, pointRadius: 3, pointBackgroundColor: '#2d6e8f', fill: true, yAxisID: 'y' }
+  ]},
+  options: { ...chartDefaults, plugins: { legend: { display: true, labels: { color: '#6b5642', font: { family: 'JetBrains Mono', size: 9 }, boxWidth: 10 } } }, scales: { x: chartDefaults.scales.x, y: { ...chartDefaults.scales.y, min: 0, max: 100 } } }
+});
+const chartTemp = new Chart(document.getElementById('chart-temp'), {
+  type: 'bar', data: { labels: chartLabels, datasets: [{ data: tempHistory, backgroundColor: 'rgba(184,121,31,0.35)', borderColor: '#b8791f', borderWidth: 1, borderRadius: 3 }] },
+  options: { ...chartDefaults, scales: { x: chartDefaults.scales.x, y: { ...chartDefaults.scales.y, min: 0, max: 50 } } }
+});
+const chartPrec = new Chart(document.getElementById('chart-prec'), {
+  type: 'bar', data: { labels: chartLabels, datasets: [{ data: precHistory, backgroundColor: 'rgba(45,110,143,0.35)', borderColor: '#2d6e8f', borderWidth: 1, borderRadius: 3 }] },
+  options: { ...chartDefaults, scales: { x: chartDefaults.scales.x, y: { ...chartDefaults.scales.y, min: 0 } } }
+});
+function updateCharts() {
+  if (chartLabels.length > 12) { chartLabels.shift(); humHistory.shift(); ndviHistory.shift(); tempHistory.shift(); precHistory.shift(); }
+  const t = new Date().toLocaleTimeString('es-CR', {hour:'2-digit',minute:'2-digit'});
+  chartLabels.push(t);
+  humHistory.push(currentData.humedad_suelo_pct);
+  ndviHistory.push(Math.round(currentData.ndvi * 100));
+  tempHistory.push(currentData.temperatura_c);
+  precHistory.push(currentData.precipitacion_mm);
+  chartMain.update(); chartTemp.update(); chartPrec.update();
+}
+
+function computePredictions(data, nivel_alerta, claudeData) {
+  const hum = parseFloat(data.humedad_suelo_pct);
+  const temp = parseFloat(data.temperatura_c);
+  const ndvi = parseFloat(data.ndvi);
+  const dias = parseFloat(data.dias_sin_lluvia);
+
+  const etRate = (temp > 35 ? 3.5 : temp > 28 ? 2.5 : temp > 22 ? 1.8 : 1.2) + (dias > 10 ? 0.5 : 0);
+  const humIn24 = Math.max(0, hum - etRate).toFixed(1);
+
+  let diasCriticos = claudeData && claudeData.dias_sin_intervencion !== undefined ? claudeData.dias_sin_intervencion : null;
+  if (diasCriticos === null) {
+    diasCriticos = hum > 25 ? Math.round((hum - 25) / etRate) : 0;
+  }
+
+  document.getElementById('pred-dias').textContent = diasCriticos + 'd';
+  document.getElementById('pred-dias').style.color = diasCriticos <= 1 ? 'var(--red)' : diasCriticos <= 5 ? 'var(--amber)' : 'var(--green-dark)';
+  document.getElementById('pred-dias-sub').textContent = diasCriticos <= 1 ? 'Ya en estrés crítico' : 'Sin intervención, estimado IA';
+  document.getElementById('pred-hum24').textContent = humIn24 + '%';
+  document.getElementById('pred-hum24').style.color = humIn24 < 30 ? 'var(--red)' : humIn24 < 50 ? 'var(--amber)' : 'var(--blue)';
+  document.getElementById('pred-hum24-sub').textContent = humIn24 < 30 ? 'Nivel crítico proyectado' : 'Dentro del rango';
+
+  const bars = document.getElementById('forecast-bars');
+  bars.innerHTML = '';
+  for (let h = 0; h <= 7; h++) {
+    const projected = Math.max(0, hum - etRate * h * 0.25);
+    const pct = Math.min(100, projected);
+    const color = pct < 25 ? '#b23a2c' : pct < 40 ? '#b8791f' : '#268a4a';
+    bars.innerHTML += `<div class="forecast-col">
+      <div class="forecast-bar-wrap"><div class="forecast-bar" style="height:${pct}%;background:${color};opacity:0.75"></div></div>
+      <div class="forecast-val">${projected.toFixed(0)}%</div>
+      <div class="forecast-hour">+${h}h</div>
+    </div>`;
+  }
+
+  const timeline = document.getElementById('risk-timeline');
+  const events = [];
+  if (hum > 25) {
+    const daysToLeve = hum > 40 ? Math.round((hum - 40) / etRate) : 0;
+    const daysToCrit = diasCriticos;
+    if (daysToLeve > 0) events.push({ label: 'Inicio estrés leve', time: 'En ' + daysToLeve + ' días', desc: 'Humedad proyectada: 40%', color: '#b8791f' });
+    if (daysToCrit > 0) events.push({ label: 'Estrés crítico', time: 'En ' + daysToCrit + ' días', desc: 'Humedad por debajo del umbral del 25%', color: '#b23a2c' });
+  } else {
+    events.push({ label: 'Estrés crítico activo', time: 'Ahora', desc: 'Se requiere intervención inmediata', color: '#b23a2c' });
+  }
+  events.push({ label: 'Revisión recomendada', time: 'En 24 horas', desc: 'Verificar condiciones del cultivo', color: '#2d6e8f' });
+
+  timeline.innerHTML = events.map((ev, i) => `
+    <div class="timeline-item">
+      <div class="timeline-time">${ev.time}</div>
+      <div class="timeline-dot-col"><div class="timeline-dot" style="background:${ev.color}"></div>${i < events.length-1 ? '<div class="timeline-line"></div>' : ''}</div>
+      <div class="timeline-content"><div class="timeline-label">${ev.label}</div><div class="timeline-desc">${ev.desc}</div></div>
+    </div>`).join('');
+
+  const irrWin = document.getElementById('irrigation-window');
+  if (nivel_alerta === 'NORMAL') {
+    irrWin.innerHTML = `<span style="color:var(--green-dark);font-weight:600">Sin necesidad de riego en este momento.</span><br><br>
+    <span style="color:var(--text-secondary)">Humedad actual en ${hum}% — dentro del rango óptimo.<br>Próxima ventana sugerida: cuando la humedad caiga por debajo del 45%.</span>`;
+  } else if (nivel_alerta === 'LEVE') {
+    irrWin.innerHTML = `<span style="color:var(--amber);font-weight:600">Riego recomendado en las próximas horas.</span><br><br>
+    <span style="color:var(--text-secondary)">Ventana óptima: horas de la madrugada, menor evapotranspiración.<br>Temperatura actual de ${temp}°C — regar en horas de menor calor reduce pérdida por evaporación.</span>`;
+  } else {
+    irrWin.innerHTML = `<span style="color:var(--red);font-weight:600">Riego de emergencia requerido de inmediato.</span><br><br>
+    <span style="color:var(--text-secondary)">Humedad en ${hum}% — por debajo del punto de marchitez permanente para la mayoría de cultivos.<br>NDVI ${ndvi.toFixed(2)} indica posible daño foliar — evaluar cultivo en campo.</span>`;
+  }
+}
+
+function updateImpact(claudeData, nivel_alerta) {
+  const diasNo = claudeData && claudeData.dias_sin_intervencion !== undefined ? claudeData.dias_sin_intervencion : '—';
+  const litros = claudeData && claudeData.litros_ahorrados_estimados !== undefined ? claudeData.litros_ahorrados_estimados : 0;
+  document.getElementById('cmp-dias-no').textContent = diasNo === 0 ? 'Crítico ahora' : diasNo + ' días';
+  document.getElementById('water-saved-val').textContent = litros + ' litros/m²';
+  document.getElementById('cmp-agua-yes').textContent = litros > 0 ? ('−' + litros + ' L/m²') : 'Riego activado';
+}
+
+function initMap() {
+  const grid = document.getElementById('field-grid');
+  grid.innerHTML = '';
+  fieldZones = [];
+  for (let i = 0; i < 64; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'field-cell zone-ok';
+    cell.dataset.idx = i;
+    cell.addEventListener('mouseenter', e => showTooltip(e, cell.dataset.zone, i));
+    cell.addEventListener('mouseleave', hideTooltip);
+    grid.appendChild(cell);
+    fieldZones.push('ok');
+  }
+  updateMapStats();
+}
+function updateMapFromData() {
+  if (usingImageZones) return;
+  const hum = currentData.humedad_suelo_pct;
+  const ndvi = currentData.ndvi;
+  const cells = document.querySelectorAll('.field-cell');
+  cells.forEach((cell, i) => {
+    const row = Math.floor(i / 8), col = i % 8;
+    const localVariance = (Math.sin(row * 1.3 + col * 0.7) * 12) + (Math.cos(row * 0.5 + col * 1.1) * 8);
+    const localHum = Math.max(0, Math.min(100, hum + localVariance));
+    let zone = 'ok';
+    if (localHum < 25 || ndvi < 0.3) zone = 'severo';
+    else if (localHum < 40 || ndvi < 0.5) zone = 'leve';
+    cell.className = 'field-cell zone-' + zone;
+    cell.dataset.zone = zone;
+    fieldZones[i] = zone;
+  });
+  updateMapStats();
+}
+function updateMapStats() {
+  document.getElementById('map-ok').textContent = fieldZones.filter(z => z === 'ok').length;
+  document.getElementById('map-leve').textContent = fieldZones.filter(z => z === 'leve').length;
+  document.getElementById('map-sev').textContent = fieldZones.filter(z => z === 'severo').length;
+}
+function showTooltip(e, zone, idx) {
+  const t = document.getElementById('field-tooltip');
+  const labels = { ok: 'Normal', leve: 'Estrés leve', severo: 'Estrés severo' };
+  const row = Math.floor(idx / 8) + 1, col = (idx % 8) + 1;
+  t.innerHTML = `Sector ${row}-${col} &nbsp;|&nbsp; ${labels[zone] || '—'}`;
+  t.style.display = 'block'; t.style.left = (e.clientX + 12) + 'px'; t.style.top = (e.clientY - 10) + 'px';
+}
+function hideTooltip() { document.getElementById('field-tooltip').style.display = 'none'; }
+
+function updateValve(state, aperturePct) {
+  const text = document.getElementById('valve-text');
+  const sub = document.getElementById('valve-sub');
+  const label3d = document.getElementById('valve3d-state-label');
+  const isOpen = state === 'ABIERTA';
+  const pct = (typeof aperturePct === 'number' && !isNaN(aperturePct)) ? Math.max(0, Math.min(100, aperturePct)) : (isOpen ? 100 : 0);
+  const isPartial = pct > 0 && pct < 100;
+
+  text.className = pct > 0 ? 'valve-state-text open' : 'valve-state-text closed';
+  text.textContent = pct === 0 ? 'CERRADA' : pct === 100 ? 'ABIERTA' : `ABIERTA ${Math.round(pct)}%`;
+  sub.textContent = pct === 0 ? 'Sin flujo activo' : isPartial ? 'Riego dosificado' : 'Riego activo';
+
+  if (label3d) {
+    label3d.textContent = pct === 0 ? 'CERRADA' : pct === 100 ? 'ABIERTA' : `ABIERTA ${Math.round(pct)}%`;
+    label3d.style.color = pct === 0 ? 'var(--red)' : isPartial ? 'var(--amber)' : 'var(--green-dark)';
+  }
+  if (window.setValveAperture3D) window.setValveAperture3D(pct);
+}
+function updateAlert(level) {
+  const badge = document.getElementById('alert-badge');
+  const text = document.getElementById('alert-text');
+  const segs = [document.getElementById('seg-1'),document.getElementById('seg-2'),document.getElementById('seg-3')];
+  segs.forEach(s => s.style.background = 'var(--border-strong)');
+  if (level === 'NORMAL') { badge.className='alert-badge normal'; text.textContent='NORMAL'; segs[0].style.background='var(--green)'; }
+  else if (level === 'LEVE') { badge.className='alert-badge leve'; text.textContent='LEVE'; segs[0].style.background='var(--amber)'; segs[1].style.background='var(--amber)'; }
+  else { badge.className='alert-badge severo'; text.textContent='SEVERO'; segs.forEach(s => s.style.background='var(--red)'); }
+}
+
+function toggleReasoning() {
+  const panel = document.getElementById('reasoning-panel');
+  const arrow = document.getElementById('reasoning-arrow');
+  panel.classList.toggle('active');
+  arrow.textContent = panel.classList.contains('active') ? '▴' : '▾';
+}
+function renderReasoning(razonamiento) {
+  const toggle = document.getElementById('reasoning-toggle');
+  const panel = document.getElementById('reasoning-panel');
+  if (!razonamiento || !Array.isArray(razonamiento) || razonamiento.length === 0) {
+    toggle.style.display = 'none'; panel.classList.remove('active'); return;
+  }
+  toggle.style.display = 'flex';
+  panel.innerHTML = '<div class="reasoning-panel-inner">' + razonamiento.map(r => `
+    <div class="reasoning-item">
+      <div class="reasoning-factor">${r.factor || '—'}</div>
+      <div class="reasoning-weight ${(r.peso||'').toLowerCase()}">${r.peso || '—'}</div>
+      <div class="reasoning-analysis">${r.analisis || ''}</div>
+    </div>`).join('') + '</div>';
+  renderLimitingFactor(razonamiento);
+}
+
+function renderLimitingFactor(razonamiento) {
+  const wrap = document.getElementById('limiting-factor-wrap');
+  if (!razonamiento || !Array.isArray(razonamiento) || razonamiento.length === 0) { wrap.innerHTML = ''; return; }
+  const altos = razonamiento.filter(r => (r.peso || '').toUpperCase() === 'ALTO');
+  if (altos.length === 0) { wrap.innerHTML = ''; return; }
+  const top = altos[0];
+  wrap.innerHTML = `
+    <div class="limiting-factor-card">
+      <div class="limiting-factor-badge">!</div>
+      <div class="limiting-factor-text">Factor limitante identificado: <b>${top.factor}</b><br>${top.analisis || ''}</div>
+    </div>`;
+}
+
+function addLogEntry(data) {
+  const now = new Date();
+  const time = now.toLocaleTimeString('es-CR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  logEntries.unshift({time,...data, snapshot: {...currentData}});
+  const container = document.getElementById('log-entries');
+  const empty = container.querySelector('.log-empty');
+  if (empty) empty.remove();
+  const alertColor = data.nivel_alerta==='NORMAL' ? 'var(--green-dark)' : data.nivel_alerta==='LEVE' ? 'var(--amber)' : 'var(--red)';
+  const valveClass = data.valvula==='ABIERTA' ? 'open' : 'closed';
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = `<div class="log-time">${time}</div><div class="log-valve ${valveClass}">${data.valvula}</div><div class="log-action"><span class="log-alert-dot" style="background:${alertColor}"></span>${data.accion}</div>`;
+  container.insertBefore(entry, container.firstChild);
+  document.getElementById('log-count').textContent = logEntries.length + ' registro' + (logEntries.length !== 1 ? 's' : '');
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'valve3d' && window.resizeValve3D) window.resizeValve3D();
+}
+window.addEventListener('resize', () => { if (window.resizeValve3D) window.resizeValve3D(); });
+
+function toggleAuto() {
+  autoActive = !autoActive;
+  const btn = document.getElementById('auto-btn');
+  if (autoActive) { btn.textContent = 'Auto: ON'; btn.classList.add('auto-on'); startAutoCountdown(); fetchData(); }
+  else { btn.textContent = 'Auto: OFF'; btn.classList.remove('auto-on'); clearTimeout(autoTimer); clearInterval(countdownTimer); document.getElementById('auto-countdown').textContent = ''; }
+}
+function updateInterval() { autoInterval = parseInt(document.getElementById('auto-interval').value); if (autoActive) { clearTimeout(autoTimer); clearInterval(countdownTimer); startAutoCountdown(); } }
+function startAutoCountdown() {
+  let cd = autoInterval;
+  document.getElementById('auto-countdown').textContent = cd + 's';
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(() => { cd--; document.getElementById('auto-countdown').textContent = cd + 's'; if (cd <= 0) clearInterval(countdownTimer); }, 1000);
+  autoTimer = setTimeout(() => { if (autoActive) { fetchData(); startAutoCountdown(); } }, autoInterval * 1000);
+}
+
+const FAILSAFE_MINUTES = 5;
+let failsafeTimer = null;
+
+function scheduleFailsafe(valvula) {
+  if (failsafeTimer) { clearTimeout(failsafeTimer); failsafeTimer = null; }
+  if (valvula !== 'ABIERTA') return;
+  failsafeTimer = setTimeout(() => {
+    triggerFailsafeClose();
+  }, FAILSAFE_MINUTES * 60 * 1000);
+}
+
+function triggerFailsafeClose() {
+  updateValve('CERRADA');
+  updateAlert('NORMAL');
+  document.getElementById('decision-action').textContent = 'Cierre automático de seguridad (failsafe)';
+  document.getElementById('decision-just').textContent = `Pasaron ${FAILSAFE_MINUTES} minutos sin una respuesta nueva del agente mientras la válvula estaba abierta. Por seguridad, el sistema cerró la válvula automáticamente para evitar riego descontrolado por una posible caída de conexión con n8n o Claude.`;
+  document.getElementById('decision-just').style.fontStyle = 'italic';
+  document.getElementById('decision-just').style.color = 'var(--amber)';
+  addLogEntry({ valvula: 'CERRADA', nivel_alerta: 'NORMAL', accion: 'Failsafe: cierre automático por inactividad del agente' });
+}
+
+async function fetchData() {
+  if (isLoading) return;
+  isLoading = true;
+  const btn = document.getElementById('analyze-btn');
+  const overlay = document.getElementById('loading-overlay');
+  btn.disabled = true; btn.textContent = 'Analizando...';
+  overlay.classList.add('active');
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+  try {
+    const paramsObj = {
+      ndvi: currentData.ndvi, temperatura_c: currentData.temperatura_c,
+      humedad_suelo_pct: currentData.humedad_suelo_pct, precipitacion_mm: currentData.precipitacion_mm,
+      dias_sin_lluvia: currentData.dias_sin_lluvia,
+      etapa_fenologica: currentData.etapa_fenologica || 'vegetativo'
+    };
+    if (currentData.radiacion_solar !== undefined) paramsObj.radiacion_solar = currentData.radiacion_solar;
+    if (currentData.observacion_dron) paramsObj.observacion_dron = currentData.observacion_dron;
+    if (currentData.lat !== undefined && currentData.lon !== undefined) {
+      paramsObj.lat = currentData.lat;
+      paramsObj.lon = currentData.lon;
+    }
+    paramsObj.token = API_TOKEN;
+    if (decisionesHistorial.length > 0) {
+      paramsObj.decisiones_previas = JSON.stringify(decisionesHistorial.slice(-3));
+    }
+    const params = new URLSearchParams(paramsObj);
+
+    let res;
+    try {
+      res = await fetch(WEBHOOK_URL + '?' + params.toString(), { signal: controller.signal });
+    } catch (networkErr) {
+      if (networkErr.name === 'AbortError') {
+        throw { tipo: 'timeout', mensaje: `n8n no respondió en 20 segundos. Verifica que el workflow esté publicado (Active) y que tengas conexión a internet.` };
+      }
+      throw { tipo: 'red', mensaje: 'No se pudo contactar a n8n. Verifica tu conexión a internet o que la URL del webhook sea correcta.' };
+    }
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      throw { tipo: 'http', mensaje: `n8n respondió con error HTTP ${res.status}. Revisa el nodo HTTP Request en n8n (posible problema con la API key de Anthropic o el body enviado).` };
+    }
+
+    let data;
+    try {
+      data = await res.json();
+      if (typeof data === 'string') data = JSON.parse(data);
+    } catch (parseErr) {
+      throw { tipo: 'json', mensaje: 'La respuesta de n8n no vino en formato JSON válido. Revisa el nodo Code que limpia la respuesta de Claude — probablemente Claude devolvió texto con formato inesperado.' };
+    }
+
+    if (!data || !data.valvula) {
+      throw { tipo: 'estructura', mensaje: 'La respuesta llegó pero no tiene el formato esperado (falta el campo "valvula"). Revisa el prompt de Claude en n8n.' };
+    }
+
+    lastResponse = data;
+
+    updateValve(data.valvula, data.porcentaje_apertura);
+    updateAlert(data.nivel_alerta);
+    document.getElementById('decision-action').textContent = data.accion;
+    document.getElementById('decision-just').textContent = data.justificacion;
+    document.getElementById('decision-just').style.fontStyle = 'normal';
+    document.getElementById('decision-just').style.color = 'var(--text-secondary)';
+    renderReasoning(data.razonamiento);
+
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('es-CR');
+    document.getElementById('decision-time').textContent = timeStr;
+    document.getElementById('last-update').textContent = timeStr;
+    document.getElementById('api-dot').className = 'status-dot ok';
+    document.getElementById('api-status').textContent = 'API Claude — OK';
+
+    addLogEntry(data);
+    guardarLecturaSupabase(currentData, data);
+    updateCharts();
+    updateMapFromData();
+    computePredictions(currentData, data.nivel_alerta, data);
+    updateImpact(data, data.nivel_alerta);
+
+    decisionesHistorial.push({ valvula: data.valvula, nivel_alerta: data.nivel_alerta, accion: data.accion });
+    if (decisionesHistorial.length > 3) decisionesHistorial.shift();
+
+    if (typeof data.litros_ahorrados_estimados === 'number') {
+      aguaAhorradaAcumulada += data.litros_ahorrados_estimados;
+      analisisAcumulados++;
+      const countEl = document.getElementById('acumulado-count');
+      const valEl = document.getElementById('water-saved-acumulado');
+      if (countEl) countEl.textContent = analisisAcumulados;
+      if (valEl) valEl.textContent = Math.round(aguaAhorradaAcumulada) + ' litros/m²';
+    }
+
+    scheduleFailsafe(data.valvula);
+
+  } catch (err) {
+    clearTimeout(timeoutId);
+    const info = err && err.tipo ? err : { tipo: 'desconocido', mensaje: (err && err.message) || 'Error desconocido al contactar el agente.' };
+    const etiquetas = { timeout: 'Tiempo de espera agotado', red: 'Sin conexión con n8n', http: 'Error de n8n / Claude', json: 'Respuesta mal formada', estructura: 'Formato inesperado', desconocido: 'Error' };
+    document.getElementById('decision-action').textContent = etiquetas[info.tipo] || 'Error de conexión con el agente';
+    document.getElementById('decision-just').textContent = info.mensaje;
+    document.getElementById('decision-just').style.fontStyle = 'italic';
+    document.getElementById('decision-just').style.color = 'var(--red)';
+    document.getElementById('api-dot').className = 'status-dot error';
+    document.getElementById('api-status').textContent = 'API Claude — ' + (etiquetas[info.tipo] || 'Error');
+  } finally {
+    isLoading = false; btn.disabled = false; btn.textContent = 'Analizar';
+    overlay.classList.remove('active');
+  }
+}
+
+function exportPDF() {
+  if (logEntries.length === 0) { alert('No hay registros. Realiza al menos un análisis primero.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFillColor(255,255,255); doc.rect(0,0,210,297,'F');
+  doc.setTextColor(125,44,68); doc.setFontSize(16); doc.setFont('helvetica','bold');
+  doc.text('AgroSentinel', 20, 22);
+  doc.setTextColor(107,86,66); doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text('Monitor de Estres Hidrico — Reporte de Decisiones IA', 20, 29);
+  doc.text('Generado: ' + new Date().toLocaleString('es-CR'), 20, 35);
+  doc.setDrawColor(125,44,68); doc.setLineWidth(0.3); doc.line(20,39,190,39);
+
+  doc.setTextColor(107,86,66); doc.setFontSize(8);
+  doc.text('DATOS INGRESADOS (ultimo analisis)', 20, 47);
+  doc.setTextColor(46,32,19); doc.setFontSize(9);
+  const d = currentData;
+  doc.text(`NDVI: ${d.ndvi.toFixed(2)}   Temp: ${d.temperatura_c}°C   Hum suelo: ${d.humedad_suelo_pct}%   Precip: ${d.precipitacion_mm}mm   Dias sin lluvia: ${d.dias_sin_lluvia}`, 20, 54);
+
+  if (lastResponse && lastResponse.litros_ahorrados_estimados !== undefined) {
+    doc.setTextColor(45,110,143); doc.setFontSize(9);
+    doc.text(`Ahorro estimado de agua: ${lastResponse.litros_ahorrados_estimados} litros/m2`, 20, 60);
+  }
+
+  doc.line(20,64,190,64);
+  doc.setTextColor(107,86,66); doc.setFontSize(8); doc.text('HISTORIAL DE DECISIONES', 20, 71);
+
+  let y = 79;
+  logEntries.slice(0,16).forEach((entry, i) => {
+    if (y > 270) return;
+    const ac = entry.nivel_alerta === 'NORMAL' ? [38,138,74] : entry.nivel_alerta === 'LEVE' ? [184,121,31] : [178,58,44];
+    doc.setFillColor(...ac); doc.circle(23, y-1, 1.5, 'F');
+    doc.setTextColor(107,86,66); doc.setFontSize(8); doc.text(entry.time || '—', 27, y);
+    doc.setTextColor(entry.valvula==='ABIERTA'?38:178, entry.valvula==='ABIERTA'?138:58, entry.valvula==='ABIERTA'?74:44);
+    doc.text(entry.valvula, 60, y);
+    if (entry.snapshot) {
+      doc.setTextColor(107,86,66); doc.setFontSize(7);
+      doc.text(`NDVI:${entry.snapshot.ndvi.toFixed(2)} T:${entry.snapshot.temperatura_c}°C H:${entry.snapshot.humedad_suelo_pct}%`, 95, y);
+    }
+    doc.setTextColor(46,32,19); doc.setFontSize(7);
+    doc.text((entry.accion||'').substring(0,85), 27, y+5);
+    y += 13;
+    if (i < logEntries.length-1) { doc.setDrawColor(230,220,198); doc.setLineWidth(0.1); doc.line(20,y-3,190,y-3); }
+  });
+
+  doc.setTextColor(163,146,124); doc.setFontSize(7);
+  doc.text('AgroSentinel — Intel InNow Technology Fest 2026', 20, 287);
+  doc.save('AgroSentinel_Reporte_' + new Date().toISOString().slice(0,10) + '.pdf');
+}
+
+let simChart = null;
+function runSimulation() {
+  const days = parseInt(document.getElementById('sl-sim-dias').value);
+  const rainFactor = parseFloat(document.getElementById('sl-sim-lluvia').value);
+  const freq = parseInt(document.getElementById('sl-sim-freq').value);
+  const irrigAmt = parseFloat(document.getElementById('sl-sim-mm').value);
+
+  const temp = currentData.temperatura_c;
+  const etRate = (temp > 35 ? 3.5 : temp > 28 ? 2.5 : temp > 22 ? 1.8 : 1.2) + (currentData.dias_sin_lluvia > 10 ? 0.5 : 0);
+  const dailyRainGain = rainFactor * 3;
+
+  const labels = [];
+  const sinRiego = [];
+  const conRiego = [];
+  let humSin = currentData.humedad_suelo_pct;
+  let humCon = currentData.humedad_suelo_pct;
+  let diaCriticoSin = null, diaCriticoCon = null;
+
+  for (let d = 0; d <= days; d++) {
+    labels.push('D' + d);
+    sinRiego.push(Math.round(humSin * 10) / 10);
+    conRiego.push(Math.round(humCon * 10) / 10);
+    if (humSin < 25 && diaCriticoSin === null) diaCriticoSin = d;
+    if (humCon < 25 && diaCriticoCon === null) diaCriticoCon = d;
+
+    humSin = Math.min(100, Math.max(0, humSin - etRate + dailyRainGain));
+    humCon = Math.min(100, Math.max(0, humCon - etRate + dailyRainGain));
+    if (d > 0 && d % freq === 0) humCon = Math.min(100, humCon + irrigAmt);
+  }
+
+  const ctx = document.getElementById('chart-sim');
+  if (simChart) simChart.destroy();
+  simChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [
+      { label: 'Sin riego', data: sinRiego, borderColor: '#b23a2c', backgroundColor: 'rgba(178,58,44,0.06)', tension: 0.35, pointRadius: 0, fill: true },
+      { label: 'Con política de riego', data: conRiego, borderColor: '#268a4a', backgroundColor: 'rgba(38,138,74,0.08)', tension: 0.35, pointRadius: 0, fill: true }
+    ]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: true, labels: { color: '#6b5642', font: { family: 'JetBrains Mono', size: 9 }, boxWidth: 10 } } },
+      scales: {
+        x: { ticks: { color: '#a3927c', font: { family: 'JetBrains Mono', size: 9 }, maxTicksLimit: 10 }, grid: { color: '#f1e8d6' } },
+        y: { min: 0, max: 100, ticks: { color: '#a3927c', font: { family: 'JetBrains Mono', size: 9 } }, grid: { color: '#f1e8d6' } }
+      }
+    }
+  });
+
+  const summary = document.getElementById('sim-summary');
+  const txtSin = diaCriticoSin !== null ? `día ${diaCriticoSin}` : `no se alcanza en ${days} días`;
+  const txtCon = diaCriticoCon !== null ? `día ${diaCriticoCon}` : `no se alcanza en ${days} días`;
+  summary.innerHTML = `<b style="color:var(--red)">Sin riego:</b> estrés crítico proyectado en ${txtSin}.<br><b style="color:var(--green-dark)">Con riego cada ${freq} días (+${irrigAmt}%):</b> estrés crítico proyectado en ${txtCon}.`;
+}
+
+function shareToNetwork() {
+  const checked = document.getElementById('chk-red-share').checked;
+  const status = document.getElementById('red-status');
+  if (!checked) { status.textContent = 'Activa la casilla de compartir antes de enviar tu lectura.'; return; }
+  const cuenca = document.getElementById('txt-cuenca').value.trim();
+  if (!cuenca) { status.textContent = 'Escribe el nombre de tu cuenca o cooperativa antes de compartir.'; return; }
+  if (!SHARED_SHARE_URL) {
+    status.textContent = 'La red de parcelas aún no está configurada (falta publicar el flujo "red-compartir" en n8n — ver README). Tu lectura no se envió a ningún lado, nada se pierde.';
+    return;
+  }
+  status.textContent = 'Enviando lectura anonimizada...';
+  fetch(SHARED_SHARE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ cuenca, ndvi: currentData.ndvi, humedad_suelo_pct: currentData.humedad_suelo_pct, temperatura_c: currentData.temperatura_c, timestamp: new Date().toISOString(), token: API_TOKEN })
+  }).then(r => r.ok ? status.textContent = 'Lectura compartida con la red de tu cuenca.' : Promise.reject())
+    .catch(() => status.textContent = 'No se pudo enviar la lectura. Verifica el endpoint "red-compartir".');
+}
+
+function fetchNetworkStats() {
+  const status = document.getElementById('red-status');
+  if (!SHARED_STATS_URL) {
+    status.textContent = 'La red de parcelas aún no está configurada. Ver README para instrucciones de cómo publicar los flujos "red-compartir" y "red-stats" en n8n con Google Sheets.';
+    return;
+  }
+  status.textContent = 'Consultando red...';
+  fetch(SHARED_STATS_URL + '?token=' + encodeURIComponent(API_TOKEN)).then(r => r.json()).then(d => {
+    let data = d;
+    if (typeof data === 'string') data = JSON.parse(data);
+    if (!data.cuencas || data.cuencas.length === 0) {
+      status.textContent = 'Aún no hay lecturas compartidas en la red. Sé el primero en compartir la tuya.';
+      return;
+    }
+    const rows = data.cuencas.map(c => `
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11.5px">
+        <span style="color:var(--text-secondary)">${c.cuenca}</span>
+        <span style="font-family:var(--mono);color:var(--text-primary)">${c.lecturas} lecturas · hum. ${c.humedad_promedio_pct}% · NDVI ${c.ndvi_promedio}</span>
+      </div>`).join('');
+    status.innerHTML = `<div style="font-size:10.5px;color:var(--text-muted);margin-bottom:6px;font-family:var(--mono)">Total de lecturas (30 días): ${data.total_lecturas}</div>${rows}`;
+  }).catch(() => status.textContent = 'No se pudo consultar la red compartida. Verifica el endpoint "red-stats".');
+}
+
+function toggleCopilot() {
+  document.getElementById('copilot-panel').classList.toggle('open');
+}
+
+function addCopilotMsg(text, who) {
+  const box = document.getElementById('copilot-messages');
+  const div = document.createElement('div');
+  div.className = 'copilot-msg ' + who;
+  div.textContent = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendCopilotMessage() {
+  const input = document.getElementById('copilot-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  addCopilotMsg(msg, 'user');
+  input.value = '';
+
+  if (!CHAT_WEBHOOK_URL) {
+    addCopilotMsg('El chat aún no está conectado — falta publicar el webhook del copiloto en n8n (ver README del proyecto). Mientras tanto, esta ventana funciona pero no tiene a quién preguntarle.', 'bot');
+    return;
+  }
+
+  addCopilotMsg('Pensando...', 'bot');
+  try {
+    const res = await fetch(CHAT_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pregunta: msg,
+        contexto: {
+          ndvi: currentData.ndvi, temperatura_c: currentData.temperatura_c,
+          humedad_suelo_pct: currentData.humedad_suelo_pct, dias_sin_lluvia: currentData.dias_sin_lluvia,
+          ultima_decision: lastResponse ? lastResponse.accion : null
+        },
+        token: API_TOKEN
+      })
+    });
+    const data = await res.json();
+    document.getElementById('copilot-messages').lastChild.remove();
+    addCopilotMsg(data.respuesta || 'No obtuve una respuesta clara, intenta reformular la pregunta.', 'bot');
+  } catch (err) {
+    document.getElementById('copilot-messages').lastChild.remove();
+    addCopilotMsg('No se pudo conectar con el copiloto. Verifica el webhook en n8n.', 'bot');
+  }
+}
+
+initMap();
+updateMapFromData();
+document.getElementById('status-sensors').textContent = `NDVI: ${currentData.ndvi.toFixed(2)} | Temp: ${currentData.temperatura_c}°C | Hum: ${currentData.humedad_suelo_pct}%`;
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// ===== SUPABASE AUTH =====
+const SUPABASE_URL = 'https://facjhtaljvpaadckwxlq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_vx6W8FtzXRYZeQSG7DPSDA_qaiA0D_g';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let authMode = 'login';
+let currentUser = null;
+
+function showApp() { document.getElementById('login-screen').classList.add('hidden'); }
+function showLogin() { document.getElementById('login-screen').classList.remove('hidden'); }
+
+function setSessionChip(nombre) {
+  const chip = document.getElementById('session-chip');
+  const userEl = document.getElementById('session-user');
+  if (nombre) { userEl.textContent = nombre; chip.style.display = 'flex'; }
+  else { chip.style.display = 'none'; }
+}
+
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  const title = document.getElementById('login-title');
+  const btn = document.getElementById('login-btn');
+  const switchText = document.getElementById('login-switch-text');
+  if (title) title.textContent = authMode === 'login' ? 'Iniciar sesión' : 'Crear cuenta';
+  if (btn) btn.textContent = authMode === 'login' ? 'Iniciar sesión' : 'Registrarme';
+  if (switchText) switchText.innerHTML = authMode === 'login'
+    ? '¿No tienes cuenta? <a onclick="toggleAuthMode()">Regístrate</a>'
+    : '¿Ya tienes cuenta? <a onclick="toggleAuthMode()">Inicia sesión</a>';
+  document.getElementById('login-status').textContent = '';
+  document.getElementById('login-status').className = 'login-status';
+}
+
+async function attemptLogin() {
+  const email = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const status = document.getElementById('login-status');
+  const btn = document.getElementById('login-btn');
+  status.className = 'login-status';
+  status.textContent = '';
+
+  if (!email || !pass) {
+    status.textContent = 'Ingresá tu correo y contraseña.';
+    status.classList.add('error');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Procesando...';
+
+  try {
+    if (authMode === 'login') {
+      const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+      if (error) throw error;
+    } else {
+      const { error } = await sb.auth.signUp({ email, password: pass });
+      if (error) throw error;
+      status.classList.remove('error');
+      status.textContent = 'Cuenta creada. Si tu proyecto pide confirmación por correo, revísalo; si no, ya puedes iniciar sesión.';
+    }
+  } catch (err) {
+    status.classList.add('error');
+    status.textContent = err.message || 'Error de autenticación.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = authMode === 'login' ? 'Iniciar sesión' : 'Registrarme';
+  }
+}
+
+async function loginWithGoogle() {
+  await sb.auth.signInWithOAuth({ provider: 'google' });
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
+sb.auth.onAuthStateChange((event, session) => {
+  if (session && session.user) {
+    currentUser = session.user;
+    setSessionChip(session.user.email || 'Usuario');
+    showApp();
+  } else {
+    currentUser = null;
+    setSessionChip(null);
+    showLogin();
+  }
+});
+
+sb.auth.getSession().then(({ data }) => {
+  if (data.session && data.session.user) {
+    currentUser = data.session.user;
+    setSessionChip(data.session.user.email || 'Usuario');
+    showApp();
+  } else {
+    showLogin();
+  }
+});
+
+async function guardarLecturaSupabase(datos, decision) {
+  if (!currentUser) return;
+  try {
+    await sb.from('Lecturas').insert({
+      ndvi: datos.ndvi,
+      temperatura_c: datos.temperatura_c,
+      humedad_suelo_pct: datos.humedad_suelo_pct,
+      precipitacion_mm: datos.precipitacion_mm,
+      dias_sin_lluvia: datos.dias_sin_lluvia,
+      valvula: decision.valvula,
+      nivel_alerta: decision.nivel_alerta,
+      accion: decision.accion
+    });
+  } catch (err) {
+    console.warn('No se pudo guardar la lectura en Supabase:', err);
+  }
+}
+// ===== FIN SUPABASE AUTH =====
+</script>
+
+
+<!--
+  Capa de animación (aditiva, no toca la lógica de negocio de arriba):
+  indicador deslizante de tabs, fill-track en vivo de los sliders, y un
+  pulso visual en valores clave cuando cambian — construida por encima
+  del contrato de IDs/clases existente, sin modificar ninguna función.
+-->
+<script>
+(function() {
+  const tabNav = document.getElementById('tab-nav');
+  const tabNavCurrent = document.getElementById('tab-nav-current');
+  window.toggleTabMenu = function() { tabNav.classList.toggle('open'); };
+  document.addEventListener('click', e => {
+    if (tabNav.classList.contains('open') && !tabNav.contains(e.target)) tabNav.classList.remove('open');
+  });
+  const _origSwitchTab = window.switchTab;
+  window.switchTab = function(name, btn) {
+    _origSwitchTab(name, btn);
+    if (tabNavCurrent && btn) tabNavCurrent.textContent = btn.textContent.trim();
+    tabNav.classList.remove('open');
+  };
+
+  function syncFill(input) {
+    const min = parseFloat(input.min) || 0, max = parseFloat(input.max) || 100;
+    const pct = ((parseFloat(input.value) - min) / (max - min)) * 100;
+    input.style.setProperty('--fill', pct + '%');
+  }
+  function wireFillTrack(input) {
+    input.addEventListener('input', () => syncFill(input));
+    syncFill(input);
+  }
+  function syncAllFills() { document.querySelectorAll('input[type=range]').forEach(syncFill); }
+  document.querySelectorAll('input[type=range]').forEach(wireFillTrack);
+  new MutationObserver(muts => {
+    muts.forEach(m => m.addedNodes.forEach(n => {
+      if (n.nodeType === 1 && n.matches && n.matches('input[type=range]')) wireFillTrack(n);
+    }));
+  }).observe(document.body, { childList: true, subtree: true });
+
+  // setSliders() sets .value programmatically (presets, edge cases, demo mode) — that
+  // does not fire an 'input' event, so the fill-track needs an explicit re-sync here.
+  if (typeof window.setSliders === 'function') {
+    const _origSetSliders = window.setSliders;
+    window.setSliders = function(d) { _origSetSliders(d); syncAllFills(); };
+  }
+
+  function pulseOnChange(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let last = el.textContent;
+    new MutationObserver(() => {
+      if (el.textContent !== last) {
+        last = el.textContent;
+        el.style.animation = 'none';
+        void el.offsetWidth;
+        el.style.animation = 'value-pulse 0.5s var(--ease)';
+      }
+    }).observe(el, { characterData: true, childList: true, subtree: true });
+  }
+  const style = document.createElement('style');
+  style.textContent = '@keyframes value-pulse { 0%{ transform: scale(1); } 35%{ transform: scale(1.12); } 100%{ transform: scale(1); } }';
+  document.head.appendChild(style);
+  ['pred-dias','pred-hum24','map-ok','map-leve','map-sev','decision-time'].forEach(pulseOnChange);
+})();
+</script>
+
+<!--
+  Válvula 3D — implementación adaptada del handoff de Claude Design
+  ("Válvula de bola interactiva 3D"), integrada a la API existente
+  (window.setValveAperture3D / resizeValve3D) con apertura continua
+  0-100% en vez del open/close binario del mockup original.
+-->
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.184.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+const scenes = [];
+
+let sharedNormalMap = null;
+function getBrushedNormal() {
+  if (sharedNormalMap) return sharedNormalMap;
+  const s = 512, c = document.createElement('canvas'); c.width = c.height = s;
+  const g = c.getContext('2d');
+  g.fillStyle = '#8080ff'; g.fillRect(0, 0, s, s);
+  for (let i = 0; i < 2600; i++) {
+    const y = Math.random() * s, w = 0.6 + Math.random() * 2.2;
+    const d = (Math.random() - 0.5) * 36;
+    g.strokeStyle = 'rgb(' + (128 + d) + ',' + (128 - d * 0.25) + ',255)';
+    g.lineWidth = w; g.globalAlpha = 0.35 + Math.random() * 0.4;
+    g.beginPath(); g.moveTo(0, y); g.lineTo(s, y + (Math.random() - 0.5) * 3); g.stroke();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(6, 2);
+  sharedNormalMap = t;
+  return t;
+}
+
+const NOISE_GLSL = `
+vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
+vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
+vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
+vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
+float snoise(vec3 v){
+  const vec2 C=vec2(1.0/6.0,1.0/3.0); const vec4 D=vec4(0.0,0.5,1.0,2.0);
+  vec3 i=floor(v+dot(v,C.yyy)); vec3 x0=v-i+dot(i,C.xxx);
+  vec3 g=step(x0.yzx,x0.xyz); vec3 l=1.0-g;
+  vec3 i1=min(g.xyz,l.zxy); vec3 i2=max(g.xyz,l.zxy);
+  vec3 x1=x0-i1+C.xxx; vec3 x2=x0-i2+C.yyy; vec3 x3=x0-D.yyy;
+  i=mod289(i);
+  vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));
+  float n_=0.142857142857; vec3 ns=n_*D.wyz-D.xzx;
+  vec4 j=p-49.0*floor(p*ns.z*ns.z);
+  vec4 x_=floor(j*ns.z); vec4 y_=floor(j-7.0*x_);
+  vec4 x=x_*ns.x+ns.yyyy; vec4 y=y_*ns.x+ns.yyyy; vec4 h=1.0-abs(x)-abs(y);
+  vec4 b0=vec4(x.xy,y.xy); vec4 b1=vec4(x.zw,y.zw);
+  vec4 s0=floor(b0)*2.0+1.0; vec4 s1=floor(b1)*2.0+1.0; vec4 sh=-step(h,vec4(0.0));
+  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy; vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+  vec3 p0=vec3(a0.xy,h.x); vec3 p1=vec3(a0.zw,h.y); vec3 p2=vec3(a1.xy,h.z); vec3 p3=vec3(a1.zw,h.w);
+  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
+  p0*=norm.x; p1*=norm.y; p2*=norm.z; p3*=norm.w;
+  vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0); m=m*m;
+  return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+}
+float fbm(vec3 p){ float a=0.5,s=0.0; for(int i=0;i<4;i++){ s+=a*snoise(p); p*=2.02; a*=0.5;} return s; }
+`;
+
+function buildValveScene(containerId, opts) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return null;
+  const W = wrap.clientWidth || opts.w, H = opts.h;
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: opts.transparent === true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  if (opts.shadows) { renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; }
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  wrap.appendChild(renderer.domElement);
+  renderer.domElement.style.display = 'block';
+  renderer.domElement.style.width = '100%';
+  renderer.domElement.style.height = '100%';
+  renderer.domElement.style.touchAction = 'none';
+
+  const scene = new THREE.Scene();
+  if (!opts.transparent) {
+    scene.background = new THREE.Color(opts.bg);
+    scene.fog = new THREE.Fog(opts.bg, 2.0, 4.4);
+  }
+
+  const camera = new THREE.PerspectiveCamera(opts.fov, W / H, 0.02, 20);
+
+  (function buildEnv() {
+    const c = document.createElement('canvas'); c.width = 256; c.height = 128;
+    const g = c.getContext('2d');
+    const grd = g.createLinearGradient(0, 0, 0, 128);
+    grd.addColorStop(0.00, '#20262c');
+    grd.addColorStop(0.42, '#7d8a94');
+    grd.addColorStop(0.52, '#c8d2d8');
+    grd.addColorStop(1.00, '#0d1114');
+    g.fillStyle = grd; g.fillRect(0, 0, 256, 128);
+    g.fillStyle = 'rgba(255,255,255,.85)'; g.fillRect(30, 26, 70, 16);
+    g.fillStyle = 'rgba(255,255,255,.35)'; g.fillRect(170, 34, 54, 12);
+    const tex = new THREE.CanvasTexture(c);
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const pm = new THREE.PMREMGenerator(renderer);
+    scene.environment = pm.fromEquirectangular(tex).texture;
+    pm.dispose(); tex.dispose();
+  })();
+
+  const key = new THREE.DirectionalLight(0xffffff, 3.1);
+  key.position.set(0.85, 1.25, 0.75);
+  if (opts.shadows) {
+    key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
+    key.shadow.radius = 4; key.shadow.bias = -0.0006;
+    const scam = key.shadow.camera;
+    scam.left = -1.1; scam.right = 1.1; scam.top = 1.1; scam.bottom = -1.1; scam.near = 0.1; scam.far = 5;
+  }
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0xaebfc9, 2.0);
+  rim.position.set(-1.0, 0.55, -1.15);
+  scene.add(rim);
+  const fill = new THREE.PointLight(0xffe6cc, 0.6, 6);
+  fill.position.set(-0.4, -0.3, 1.0);
+  scene.add(fill);
+  scene.add(new THREE.HemisphereLight(0x8a95a0, 0x0a0d10, 0.45));
+
+  const nrm = getBrushedNormal();
+  const matSteel = new THREE.MeshPhysicalMaterial({ color: 0xb9c2c7, metalness: 0.92, roughness: 0.28, normalMap: nrm, normalScale: new THREE.Vector2(0.28, 0.28), clearcoat: 0.25, clearcoatRoughness: 0.4, side: THREE.DoubleSide });
+  const matSteelDark = new THREE.MeshPhysicalMaterial({ color: 0x7d868c, metalness: 0.85, roughness: 0.48, normalMap: nrm, normalScale: new THREE.Vector2(0.4, 0.4) });
+  const matBrass = new THREE.MeshPhysicalMaterial({ color: 0xc9a24a, metalness: 0.95, roughness: 0.24, normalMap: nrm, normalScale: new THREE.Vector2(0.15, 0.15) });
+  const matSeat = new THREE.MeshStandardMaterial({ color: 0x25292d, metalness: 0.1, roughness: 0.75 });
+  const matGlass = new THREE.MeshPhysicalMaterial({ color: 0xd8eef2, metalness: 0, roughness: 0.06, transparent: true, opacity: 0.18, depthWrite: false, clearcoat: 1, clearcoatRoughness: 0.05, side: THREE.DoubleSide, envMapIntensity: 1.6 });
+
+  const valve = new THREE.Group();
+  scene.add(valve);
+
+  const R_OUT = 0.055, R_IN = 0.045, R_W = 0.0425;
+  const HALF = 0.62, BODY_R = 0.10;
+  const CUT_START = Math.PI * 0.42, CUT_LEN = Math.PI * 1.5;
+
+  function named(mesh) { if (opts.shadows) { mesh.castShadow = true; mesh.receiveShadow = true; } return mesh; }
+
+  const bodyShell = named(new THREE.Mesh(new THREE.SphereGeometry(BODY_R, 48, 32, CUT_START, CUT_LEN), matSteel));
+  valve.add(bodyShell);
+  const bodyInner = new THREE.Mesh(new THREE.SphereGeometry(BODY_R - 0.008, 48, 32, CUT_START, CUT_LEN), matSteelDark);
+  bodyInner.material.side = THREE.BackSide;
+  valve.add(bodyInner);
+  const bodyGlass = new THREE.Mesh(new THREE.SphereGeometry(BODY_R - 0.0015, 24, 32, CUT_START + CUT_LEN, Math.PI * 0.5), matGlass);
+  valve.add(bodyGlass);
+
+  function boredBall(R, r) {
+    const h = Math.sqrt(R * R - r * r), pts = [];
+    pts.push(new THREE.Vector2(r, h));
+    pts.push(new THREE.Vector2(r, -h));
+    const p0 = Math.asin(r / R);
+    for (let i = 0; i <= 28; i++) {
+      const a = THREE.MathUtils.lerp(Math.PI - p0, p0, i / 28);
+      pts.push(new THREE.Vector2(Math.sin(a) * R, Math.cos(a) * R));
+    }
+    return new THREE.LatheGeometry(pts, 48);
+  }
+  const ballPivot = new THREE.Group();
+  valve.add(ballPivot);
+  const ball = named(new THREE.Mesh(boredBall(0.072, R_W + 0.001), matSteel));
+  ball.rotation.z = Math.PI / 2;
+  ballPivot.add(ball);
+
+  [-1, 1].forEach(s => {
+    const seat = named(new THREE.Mesh(new THREE.TorusGeometry(R_W + 0.006, 0.006, 12, 40), matSeat));
+    seat.position.x = s * 0.0735; seat.rotation.y = Math.PI / 2;
+    valve.add(seat);
+  });
+
+  const bonnet = named(new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.042, 0.05, 32), matSteelDark));
+  bonnet.position.y = BODY_R - 0.005; valve.add(bonnet);
+  const nut = named(new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.016, 6), matSteelDark));
+  nut.position.y = BODY_R + 0.03; valve.add(nut);
+  const stem = named(new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.011, 0.05, 20), matSteel));
+  stem.position.y = BODY_R + 0.055; valve.add(stem);
+  const stop = named(new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.02, 10), matSteelDark));
+  stop.position.set(0.03, BODY_R + 0.05, 0.03); valve.add(stop);
+
+  const lever = new THREE.Group();
+  lever.position.y = BODY_R + 0.078; valve.add(lever);
+  const arm = named(new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.011, 0.028), matBrass));
+  arm.position.x = 0.082; lever.add(arm);
+  const hub = named(new THREE.Mesh(new THREE.CylinderGeometry(0.021, 0.021, 0.018, 24), matBrass));
+  lever.add(hub);
+  const grip = named(new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.052, 20), matBrass));
+  grip.rotation.x = Math.PI / 2; grip.position.set(0.175, 0.004, 0); lever.add(grip);
+  const mark = named(new THREE.Mesh(new THREE.BoxGeometry(0.026, 0.0016, 0.004), matSeat));
+  mark.position.set(0.014, 0.0095, 0); lever.add(mark);
+
+  const FL_R = 0.096, FL_T = 0.016, FL_X = [0.128, 0.16];
+  FL_X.forEach(x => [-1, 1].forEach(s => {
+    const f = named(new THREE.Mesh(new THREE.CylinderGeometry(FL_R, FL_R, FL_T, 40), matSteelDark));
+    f.rotation.z = Math.PI / 2; f.position.x = s * x; valve.add(f);
+  }));
+  const NB = 8, BOLT_R = 0.074;
+  const boltGeo = new THREE.CylinderGeometry(0.0055, 0.0055, 0.062, 8); boltGeo.rotateZ(Math.PI / 2);
+  const bolts = new THREE.InstancedMesh(boltGeo, matSteel, NB * 2);
+  if (opts.shadows) { bolts.castShadow = bolts.receiveShadow = true; }
+  const headGeo = new THREE.CylinderGeometry(0.0105, 0.0105, 0.011, 6); headGeo.rotateZ(Math.PI / 2);
+  const heads = new THREE.InstancedMesh(headGeo, matBrass, NB * 4);
+  if (opts.shadows) heads.castShadow = true;
+  {
+    const d = new THREE.Object3D(); let bi = 0, hi = 0;
+    [-1, 1].forEach(s => {
+      for (let i = 0; i < NB; i++) {
+        const a = (i / NB) * Math.PI * 2 + Math.PI / NB;
+        const y = Math.cos(a) * BOLT_R, z = Math.sin(a) * BOLT_R, cx = s * 0.144;
+        d.position.set(cx, y, z); d.rotation.set(0, 0, 0); d.updateMatrix();
+        bolts.setMatrixAt(bi++, d.matrix);
+        [-0.031, 0.031].forEach(o => {
+          d.position.set(cx + o, y, z); d.rotation.x = a; d.updateMatrix();
+          heads.setMatrixAt(hi++, d.matrix);
+        });
+      }
+    });
+  }
+  valve.add(bolts, heads);
+
+  function pipeCut(x0, x1) {
+    const L = x1 - x0, pts = [
+      new THREE.Vector2(R_OUT, -L / 2), new THREE.Vector2(R_OUT, L / 2),
+      new THREE.Vector2(R_IN, L / 2), new THREE.Vector2(R_IN, -L / 2),
+      new THREE.Vector2(R_OUT, -L / 2)
+    ];
+    const g = new THREE.LatheGeometry(pts, 40, CUT_START, CUT_LEN);
+    const m = named(new THREE.Mesh(g, matSteel));
+    m.rotation.z = -Math.PI / 2; m.position.x = (x0 + x1) / 2;
+    return m;
+  }
+  const SG0 = 0.30, SG1 = 0.45;
+  valve.add(pipeCut(0.168, SG0), pipeCut(SG1, HALF), pipeCut(-HALF, -0.168));
+
+  const sg = named(new THREE.Mesh(new THREE.CylinderGeometry(R_OUT - 0.002, R_OUT - 0.002, SG1 - SG0, 48, 1, true), matGlass));
+  sg.rotation.z = Math.PI / 2; sg.position.x = (SG0 + SG1) / 2; sg.castShadow = false; valve.add(sg);
+  [SG0, SG1].forEach(x => {
+    const c = named(new THREE.Mesh(new THREE.CylinderGeometry(R_OUT + 0.006, R_OUT + 0.006, 0.014, 32), matBrass));
+    c.rotation.z = Math.PI / 2; c.position.x = x; valve.add(c);
+  });
+
+  const ledBase = named(new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.015, 0.012, 20), matSteelDark));
+  ledBase.position.set(-0.032, 0.062, 0.072); ledBase.rotation.set(0.9, 0, 0.35); valve.add(ledBase);
+  const ledMat = new THREE.MeshStandardMaterial({ color: 0x2a0a08, emissive: new THREE.Color(0xd94430), emissiveIntensity: 2.2, roughness: 0.3, metalness: 0 });
+  const led = new THREE.Mesh(new THREE.SphereGeometry(0.0088, 20, 14), ledMat);
+  valve.add(led);
+  led.position.copy(ledBase.position).add(new THREE.Vector3(-0.004, 0.008, 0.006));
+  const ledLight = new THREE.PointLight(0xd94430, 0.10, 0.30); ledLight.position.copy(led.position);
+  valve.add(ledLight);
+
+  if (!opts.transparent) {
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(1.5, 64), new THREE.MeshStandardMaterial({ color: 0x14100c, roughness: 0.95, metalness: 0 }));
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -BODY_R - 0.001;
+    if (opts.shadows) floor.receiveShadow = true;
+    scene.add(floor);
+  }
+
+  const waterUniforms = { uTime: { value: 0 }, uFlow: { value: 0 }, uTurb: { value: 0 }, uLevel: { value: 0 }, uFront: { value: 0 }, uWave: { value: 0 }, uR: { value: R_W }, uHalf: { value: HALF } };
+  const waterVert = `varying vec3 vLocal; varying vec3 vNrm; varying vec3 vView;
+void main(){ vLocal = position; vNrm = normalize(normalMatrix * normal); vec4 mv = modelViewMatrix * vec4(position,1.0); vView = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }`;
+  const waterFrag = `precision highp float;
+varying vec3 vLocal; varying vec3 vNrm; varying vec3 vView;
+uniform float uTime,uFlow,uTurb,uLevel,uFront,uWave,uR,uHalf;
+` + NOISE_GLSL + `
+void main(){
+  float rad = length(vLocal.yz) / uR;
+  float ang = atan(vLocal.z, vLocal.y);
+  float sx = vLocal.x;
+  float front = mix(0.085, uHalf + 0.002, uFront);
+  if (abs(sx) > front) discard;
+  float ripple = 0.004 * sin(sx*34.0 - uTime*3.0) * (0.35 + uFlow);
+  float surf = -uR + 2.0*uR*uLevel + ripple;
+  float below = smoothstep(surf, surf-0.004, vLocal.y);
+  if (uLevel < 0.995 && vLocal.y > surf) discard;
+  float speed = 0.5 + 3.4*uFlow;
+  vec3 q = vec3(sx*7.0 - uTime*speed, ang*1.6, uTime*0.35);
+  float n1 = fbm(q);
+  float n2 = snoise(q*2.7 + vec3(0.0, uTime*0.8, 0.0));
+  float turb = uTurb * (0.55 + 0.45*rad);
+  vec2 duv = vec2(n1, n2) * (0.35 + 1.15*turb);
+  vec3 deep = vec3(0.010, 0.135, 0.205);
+  vec3 shallow = vec3(0.230, 0.640, 0.700);
+  float depth = 1.0 - pow(rad, 1.55);
+  vec3 col = mix(shallow, deep, depth);
+  col *= 1.0 + 0.18*duv.x;
+  float caus = pow(max(0.0, 1.0 - abs(n1 + 0.25*duv.y)), 7.0);
+  col += vec3(0.45,0.85,0.92) * caus * (0.35 + 0.9*uFlow);
+  float streak = sin(ang*9.0 + sx*26.0 - uTime*speed*1.4 + duv.x*2.2);
+  col += vec3(0.10,0.26,0.30) * smoothstep(0.72,1.0,streak) * (1.0 - 0.55*uTurb);
+  float fres = pow(1.0 - abs(dot(normalize(vNrm), normalize(vView))), 2.6);
+  col += vec3(0.55,0.88,0.95) * fres * 0.55;
+  float wpos = uWave * (uHalf*1.25);
+  float wave = exp(-pow((abs(sx) - wpos)*16.0, 2.0)) * step(0.001, uWave);
+  col += vec3(0.7,0.95,1.0) * wave * 0.9;
+  float band = smoothstep(0.0, 1.0, below) * (1.0 - below);
+  col += vec3(0.5,0.8,0.85) * band * 1.2;
+  float alpha = 0.70 + 0.24*fres + 0.12*caus;
+  gl_FragColor = vec4(col, clamp(alpha, 0.0, 1.0));
+}`;
+  const waterGeo = new THREE.CylinderGeometry(R_W, R_W, HALF * 2, 48, 96, true);
+  waterGeo.rotateZ(Math.PI / 2);
+  const water = new THREE.Mesh(waterGeo, new THREE.ShaderMaterial({ uniforms: waterUniforms, vertexShader: waterVert, fragmentShader: waterFrag, transparent: true, side: THREE.DoubleSide, depthWrite: false }));
+  valve.add(water);
+
+  const causFrag = `precision highp float;
+varying vec3 vLocal;
+uniform float uTime,uFlow,uLevel,uSg0,uSg1,uR;
+` + NOISE_GLSL + `
+void main(){
+  float sx = vLocal.x;
+  float win = smoothstep(uSg0, uSg0+0.02, sx) * (1.0 - smoothstep(uSg1-0.02, uSg1, sx));
+  if (win < 0.01) discard;
+  float surf = -uR + 2.0*uR*uLevel;
+  if (vLocal.y > surf) discard;
+  vec3 q = vec3(sx*10.0 - uTime*(1.2+3.0*uFlow), atan(vLocal.z,vLocal.y)*2.2, uTime*0.6);
+  float n = fbm(q);
+  float c = pow(max(0.0,1.0-abs(n)), 9.0) + 0.55*pow(max(0.0,1.0-abs(n*1.7+0.4)), 12.0);
+  vec3 col = vec3(0.55,0.95,1.0) * c * (0.5 + 1.1*uFlow) * win;
+  gl_FragColor = vec4(col, 1.0);
+}`;
+  const causUniforms = { uTime: waterUniforms.uTime, uFlow: waterUniforms.uFlow, uLevel: waterUniforms.uLevel, uR: { value: R_W }, uSg0: { value: SG0 }, uSg1: { value: SG1 } };
+  const causGeo = new THREE.CylinderGeometry(R_W - 0.0012, R_W - 0.0012, HALF * 2, 40, 48, true);
+  causGeo.rotateZ(Math.PI / 2);
+  const caustics = new THREE.Mesh(causGeo, new THREE.ShaderMaterial({ uniforms: causUniforms, vertexShader: waterVert, fragmentShader: causFrag, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide }));
+  valve.add(caustics);
+
+  const N_P = opts.particles;
+  const pGeo = new THREE.SphereGeometry(0.0034, 8, 6);
+  const pMat = new THREE.MeshStandardMaterial({ color: 0xbfeef5, emissive: new THREE.Color(0x2f95a8), emissiveIntensity: 1.4, roughness: 0.35, transparent: true, opacity: 0.85 });
+  const parts = new THREE.InstancedMesh(pGeo, pMat, N_P);
+  parts.frustumCulled = false; valve.add(parts);
+  const P = [];
+  for (let i = 0; i < N_P; i++) {
+    const rr = Math.sqrt(Math.random()) * (R_W - 0.004);
+    P.push({ x: (Math.random() * 2 - 1) * HALF, r: rr, a: Math.random() * Math.PI * 2, k: 1 - Math.pow(rr / R_W, 2), j: 0.4 + Math.random() * 0.9, big: Math.random() < 0.18, ph: Math.random() * 9 });
+  }
+  const dummy = new THREE.Object3D();
+
+  const S = { aperture: 0, lever: 0, leverV: 0, ball: 0, level: 0, front: 0, flow: 0, flowShown: 0, led: 0, wave: 0, waveOn: false };
+  const MAX_FLOW = 640;
+
+  function applyAperture(pct) {
+    const prevOpen = S.aperture > 0;
+    S.aperture = Math.max(0, Math.min(100, pct)) / 100;
+    if (S.aperture > 0 && !prevOpen) { S.wave = 0; S.waveOn = true; }
+  }
+  function applyState(open) { applyAperture(open ? 100 : 0); }
+  applyAperture(0);
+
+  let azimuth = opts.azimuth, elevation = opts.elevation, dist = opts.dist;
+  let dragging = false, lastX = 0, lastY = 0, idle = 0;
+  const autoRotate = opts.autoRotate;
+
+  function updateCamera() {
+    camera.position.set(
+      Math.sin(elevation) * Math.sin(azimuth) * dist,
+      Math.cos(elevation) * dist + 0.02,
+      Math.sin(elevation) * Math.cos(azimuth) * dist);
+    camera.lookAt(0, 0.005, 0);
+  }
+  updateCamera();
+
+  if (opts.draggable) {
+    const el = renderer.domElement;
+    el.style.cursor = 'grab';
+    el.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; idle = 0; el.style.cursor = 'grabbing'; el.setPointerCapture(e.pointerId); });
+    el.addEventListener('pointerup', () => { dragging = false; el.style.cursor = 'grab'; });
+    el.addEventListener('pointerleave', () => { dragging = false; });
+    el.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX, dy = e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY; idle = 0;
+      azimuth -= dx * 0.0062;
+      elevation = THREE.MathUtils.clamp(elevation - dy * 0.0055, 0.22, Math.PI - 0.35);
+    });
+    el.addEventListener('wheel', e => {
+      e.preventDefault();
+      dist = THREE.MathUtils.clamp(dist * (1 + Math.sign(e.deltaY) * 0.08), 1.1, 5.5);
+      idle = 0;
+    }, { passive: false });
+  }
+
+  function resize() {
+    const w = wrap.clientWidth || opts.w;
+    const h = wrap.clientHeight || opts.h;
+    if (w < 10 || h < 10) return;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  }
+  resize();
+  if (window.ResizeObserver) { new ResizeObserver(resize).observe(wrap); }
+  else { window.addEventListener('resize', resize); }
+
+  const clock = new THREE.Clock();
+  const colClosed = new THREE.Color(0xd94430), colMid = new THREE.Color(0xd99a2e), colOpen = new THREE.Color(0x3ba85c), tmpCol = new THREE.Color();
+  const ease = (cur, tgt, rate, dt) => cur + (tgt - cur) * (1 - Math.exp(-rate * dt));
+
+  function tick() {
+    const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+
+    if (autoRotate && (!opts.draggable || (!dragging && (idle += dt) > 2.2))) azimuth += dt * (opts.draggable ? 0.13 : 0.09);
+    updateCamera();
+
+    const tgt = S.aperture;
+    S.leverV += (tgt - S.lever) * 190 * dt;
+    S.leverV *= Math.exp(-9.5 * dt);
+    S.lever += S.leverV * dt;
+    if (S.lever > 1) { S.lever = 1; S.leverV *= -0.22; }
+    if (S.lever < 0) { S.lever = 0; S.leverV *= -0.22; }
+    S.ball = ease(S.ball, S.lever, 7.0, dt);
+
+    lever.rotation.y = -(1 - S.lever) * Math.PI / 2;
+    ballPivot.rotation.y = -(1 - S.ball) * Math.PI / 2;
+
+    if (S.aperture > 0) {
+      S.front = ease(S.front, 1, 2.6, dt);
+      S.level = ease(S.level, 1, 3.4 * (0.25 + S.ball), dt);
+      if (S.waveOn) { S.wave += dt * 1.1; if (S.wave >= 1) { S.wave = 0; S.waveOn = false; } }
+    } else {
+      S.level = ease(S.level, 0, 1.35, dt);
+      S.wave = 0; S.waveOn = false;
+      if (S.level < 0.03) S.front = ease(S.front, 0, 2.2, dt);
+    }
+
+    const flowTgt = S.aperture * S.ball;
+    S.flow = ease(S.flow, flowTgt, 2.1, dt);
+    S.flowShown = ease(S.flowShown, flowTgt * MAX_FLOW, 1.7, dt);
+
+    waterUniforms.uTime.value = t;
+    waterUniforms.uFlow.value = S.flow;
+    waterUniforms.uTurb.value = THREE.MathUtils.smoothstep(S.flow, 0.32, 0.95);
+    waterUniforms.uLevel.value = S.level;
+    waterUniforms.uFront.value = S.front;
+    waterUniforms.uWave.value = S.waveOn ? S.wave : 0;
+    water.visible = caustics.visible = S.front > 0.02 && S.level > 0.01;
+
+    S.led = ease(S.led, S.aperture, 3.2, dt);
+    if (S.led <= 0) tmpCol.copy(colClosed);
+    else if (S.led >= 1) tmpCol.copy(colOpen);
+    else if (S.led < 0.5) tmpCol.copy(colClosed).lerp(colMid, S.led * 2);
+    else tmpCol.copy(colMid).lerp(colOpen, (S.led - 0.5) * 2);
+    ledMat.emissive.copy(tmpCol);
+    ledMat.emissiveIntensity = 1.7 + 0.7 * Math.sin(t * 2.1);
+    ledLight.color.copy(tmpCol);
+    ledLight.intensity = 0.09 + 0.04 * Math.sin(t * 2.1);
+
+    const vmax = 0.06 + S.flow * 1.45, turb = waterUniforms.uTurb.value;
+    const front = THREE.MathUtils.lerp(0.085, HALF, S.front);
+    const surfY = -R_W + 2 * R_W * S.level;
+    for (let i = 0; i < N_P; i++) {
+      const p = P[i];
+      p.x += vmax * p.k * p.j * dt;
+      if (p.x > front) { p.x = -front; p.a = Math.random() * Math.PI * 2; }
+      p.a += turb * (0.9 + p.k) * dt * 2.2;
+      const wob = turb * 0.006 * Math.sin(t * 6 + p.ph);
+      const rr = Math.max(0.001, p.r + wob);
+      const y = Math.cos(p.a) * rr, z = Math.sin(p.a) * rr;
+      const visible = Math.abs(p.x) < front && y < surfY - 0.002 && S.level > 0.02;
+      dummy.position.set(p.x, y, z);
+      const sc = visible ? (p.big ? 1.5 + turb * 0.9 : 1) : 0;
+      dummy.scale.set(sc * (1 + p.k * S.flow * 2.6), sc, sc);
+      dummy.rotation.set(0, 0, 0);
+      dummy.updateMatrix();
+      parts.setMatrixAt(i, dummy.matrix);
+    }
+    parts.instanceMatrix.needsUpdate = true;
+    parts.visible = S.level > 0.02;
+
+    renderer.render(scene, camera);
+  }
+
+  return { setOpen: applyState, setAperture: applyAperture, tick, resize, getFlowLmin: () => S.flowShown };
+}
+
+const mini = buildValveScene('valve3d-mini', { w: 76, h: 76, particles: 8, draggable: false, autoRotate: true, shadows: false, transparent: true, fov: 32, azimuth: -0.5, elevation: 1.2, dist: 2.0 });
+const full = buildValveScene('valve3d-full', { w: 560, h: 420, particles: 30, draggable: true, autoRotate: true, shadows: true, transparent: false, bg: 0x120d0a, fov: 36, azimuth: -0.55, elevation: 1.15, dist: 1.85 });
+if (mini) scenes.push(mini);
+if (full) scenes.push(full);
+
+window.setValveOpen3D = function(open) {
+  scenes.forEach(s => s.setOpen(open));
+};
+
+window.setValveAperture3D = function(pct) {
+  scenes.forEach(s => s.setAperture(pct));
+};
+
+window.resizeValve3D = function() {
+  if (full) requestAnimationFrame(() => { full.resize(); });
+};
+
+const flowLabel = document.getElementById('valve3d-flow-label');
+
+function loop() {
+  requestAnimationFrame(loop);
+  scenes.forEach(s => s.tick());
+  if (flowLabel && full) flowLabel.textContent = full.getFlowLmin().toFixed(2) + ' L/min';
+}
+loop();
+</script>
+</body>
+</html>
