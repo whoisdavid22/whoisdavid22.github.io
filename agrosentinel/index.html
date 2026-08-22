@@ -54,7 +54,8 @@ body {
 .statusbar { animation-delay: 0.2s; }
 
 /* -------- topbar -------- */
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; height: 58px; border-bottom: 1px solid var(--border); background: var(--bg-panel); position: sticky; top: 0; z-index: 100; gap: 1rem; box-shadow: var(--shadow); }
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; height: 58px; border-bottom: 1px solid var(--border); background: var(--bg-panel); position: sticky; top: 0; z-index: 100; gap: 1rem; box-shadow: var(--shadow); overflow: hidden; }
+.topbar > * { position: relative; z-index: 1; }
 .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .logo-mark { width: 30px; height: 30px; background: linear-gradient(135deg, var(--brand), var(--brand-dark)); border-radius: 9px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(94,32,51,0.35); transition: transform 0.3s var(--ease-spring); }
 .logo:hover .logo-mark { transform: rotate(-8deg) scale(1.06); }
@@ -189,6 +190,34 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .scrollable::-webkit-scrollbar-thumb, .tab-content ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
 
 .decision-section { padding: 1.4rem 1.6rem; border-bottom: 1px solid var(--border); position: relative; background: var(--bg-panel); }
+
+/* ===== FOTO CONTEXTUAL DINAMICA ===== */
+.decision-photo-wrap { position: relative; height: 150px; border-radius: 14px; overflow: hidden; margin-bottom: 1.1rem; box-shadow: 0 8px 24px rgba(35,22,13,0.14); }
+.decision-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.6s var(--ease), transform 8s linear; transform: scale(1.02); }
+.decision-photo-wrap.updating img { animation: photo-kenburns 8s ease-in-out infinite alternate; }
+@keyframes photo-kenburns { from { transform: scale(1.0); } to { transform: scale(1.08); } }
+.decision-photo-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,20,15,0.05) 0%, rgba(20,15,10,0.55) 100%); }
+.decision-photo-badge { position: absolute; left: 14px; bottom: 12px; padding: 5px 12px; border-radius: 20px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.03em; color: white; background: rgba(20,20,15,0.35); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.25); transition: background 0.4s, border-color 0.4s; }
+.decision-photo-badge.badge-normal { background: rgba(28,107,56,0.55); border-color: rgba(191,223,201,0.5); }
+.decision-photo-badge.badge-leve { background: rgba(184,121,31,0.55); border-color: rgba(237,212,166,0.5); }
+.decision-photo-badge.badge-severo { background: rgba(178,58,44,0.6); border-color: rgba(232,194,184,0.55); }
+
+/* ===== ANIMACIONES DE ENTRADA ===== */
+@keyframes fade-up-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in-refresh { animation: fade-up-in 0.5s var(--ease); }
+
+/* ===== FONDO ANIMADO ORGANICO (topbar / decorativo) ===== */
+.aurora-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; opacity: 0.5; }
+.aurora-blob { position: absolute; border-radius: 50%; filter: blur(40px); animation: aurora-float 18s ease-in-out infinite; }
+.aurora-blob.b1 { width: 240px; height: 240px; background: radial-gradient(circle, var(--brand-line), transparent 70%); top: -80px; left: 10%; animation-delay: 0s; }
+.aurora-blob.b2 { width: 200px; height: 200px; background: radial-gradient(circle, var(--green-line), transparent 70%); top: -60px; left: 55%; animation-delay: -6s; }
+.aurora-blob.b3 { width: 180px; height: 180px; background: radial-gradient(circle, #f0d5a8, transparent 70%); top: -50px; left: 80%; animation-delay: -12s; }
+@keyframes aurora-float { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(20px,15px) scale(1.08); } 66% { transform: translate(-15px,10px) scale(0.95); } }
+
+/* ===== TARJETAS CON MAS VIDA ===== */
+.pred-card, .chart-card, .ods-item, .compare-col { transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+.pred-card:hover, .chart-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(35,22,13,0.1); }
+.tab-btn-emoji { margin-right: 5px; font-size: 12px; filter: grayscale(0.15); }
 .loading-overlay { position: absolute; inset: 0; background: rgba(255,253,248,0.88); display: flex; align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity 0.25s; overflow: hidden; }
 .loading-overlay::before { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(125,44,68,0.06) 50%, transparent 70%); background-size: 200% 100%; }
 .loading-overlay.active { opacity: 1; pointer-events: all; }
@@ -434,6 +463,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 </div>
 
 <header class="topbar">
+  <div class="aurora-bg"><div class="aurora-blob b1"></div><div class="aurora-blob b2"></div><div class="aurora-blob b3"></div></div>
   <div class="logo">
     <div class="logo-mark">
       <svg viewBox="0 0 16 16"><path d="M8 2 C5 2 2 5 2 8 C2 11 5 14 8 14"/><path d="M8 5 L8 8 L10 10" stroke-linejoin="round"/><circle cx="8" cy="8" r="1" fill="white" stroke="none"/></svg>
@@ -663,17 +693,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <svg class="tab-nav-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="tab-nav-list" id="tab-nav-list"><div class="tab-nav-list-inner">
-        <button class="tab-btn active" onclick="switchTab('decision',this)"><span class="tab-btn-dot"></span>Decisión</button>
-        <button class="tab-btn" onclick="switchTab('valve3d',this)"><span class="tab-btn-dot"></span>Válvula 3D</button>
-        <button class="tab-btn" onclick="switchTab('compare',this)"><span class="tab-btn-dot"></span>Impacto y ODS</button>
-        <button class="tab-btn" onclick="switchTab('predictions',this)"><span class="tab-btn-dot"></span>Predicciones</button>
-        <button class="tab-btn" onclick="switchTab('charts',this)"><span class="tab-btn-dot"></span>Gráficas</button>
-        <button class="tab-btn" onclick="switchTab('map',this)"><span class="tab-btn-dot"></span>Mapa</button>
-        <button class="tab-btn" onclick="switchTab('edge',this)"><span class="tab-btn-dot"></span>Casos límite</button>
-        <button class="tab-btn" onclick="switchTab('simulador',this)"><span class="tab-btn-dot"></span>Simulador</button>
-        <button class="tab-btn" onclick="switchTab('red',this)"><span class="tab-btn-dot"></span>Red de Parcelas</button>
-        <button class="tab-btn" onclick="switchTab('historial',this)"><span class="tab-btn-dot"></span>Mi Historial</button>
-        <button class="tab-btn" onclick="switchTab('validacion',this)"><span class="tab-btn-dot"></span>Validación Histórica</button>
+        <button class="tab-btn active" onclick="switchTab('decision',this)"><span class="tab-btn-dot"></span>💧 Decisión</button>
+        <button class="tab-btn" onclick="switchTab('valve3d',this)"><span class="tab-btn-dot"></span>🔧 Válvula 3D</button>
+        <button class="tab-btn" onclick="switchTab('compare',this)"><span class="tab-btn-dot"></span>🌎 Impacto y ODS</button>
+        <button class="tab-btn" onclick="switchTab('predictions',this)"><span class="tab-btn-dot"></span>📈 Predicciones</button>
+        <button class="tab-btn" onclick="switchTab('charts',this)"><span class="tab-btn-dot"></span>📊 Gráficas</button>
+        <button class="tab-btn" onclick="switchTab('map',this)"><span class="tab-btn-dot"></span>🗺️ Mapa</button>
+        <button class="tab-btn" onclick="switchTab('edge',this)"><span class="tab-btn-dot"></span>⚡ Casos límite</button>
+        <button class="tab-btn" onclick="switchTab('simulador',this)"><span class="tab-btn-dot"></span>🧪 Simulador</button>
+        <button class="tab-btn" onclick="switchTab('red',this)"><span class="tab-btn-dot"></span>🌐 Red de Parcelas</button>
+        <button class="tab-btn" onclick="switchTab('historial',this)"><span class="tab-btn-dot"></span>🕘 Mi Historial</button>
+        <button class="tab-btn" onclick="switchTab('validacion',this)"><span class="tab-btn-dot"></span>🛰️ Validación Histórica</button>
       </div></div>
     </div>
 
@@ -681,6 +711,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       <div class="scrollable" style="flex:1;display:flex;flex-direction:column;">
         <div class="decision-section">
           <div class="loading-overlay" id="loading-overlay"><div class="spinner"></div></div>
+          <div class="decision-photo-wrap" id="decision-photo-wrap">
+            <img id="decision-photo" src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1200&q=70&auto=format&fit=crop" alt="Estado del cultivo">
+            <div class="decision-photo-overlay"></div>
+            <div class="decision-photo-badge" id="decision-photo-badge">Esperando análisis</div>
+          </div>
           <div class="section-label">Decisión autónoma</div>
           <div class="decision-header">
             <div class="decision-action" id="decision-action">Ajusta los sliders y presiona Analizar.</div>
@@ -1512,6 +1547,33 @@ function updateAlert(level) {
   if (level === 'NORMAL') { badge.className='alert-badge normal'; text.textContent=iconos.NORMAL+' NORMAL'; segs[0].style.background='var(--green)'; }
   else if (level === 'LEVE') { badge.className='alert-badge leve'; text.textContent=iconos.LEVE+' LEVE'; segs[0].style.background='var(--amber)'; segs[1].style.background='var(--amber)'; }
   else { badge.className='alert-badge severo'; text.textContent=iconos.SEVERO+' SEVERO'; segs.forEach(s => s.style.background='var(--red)'); }
+  updateDecisionPhoto(level);
+}
+
+const PHOTOS_POR_ALERTA = {
+  NORMAL:  { url: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1200&q=70&auto=format&fit=crop', label: 'Cultivo saludable' },
+  LEVE:    { url: 'https://images.unsplash.com/photo-1594771804886-a933bb2d609b?w=1200&q=70&auto=format&fit=crop', label: 'Estrés hídrico leve' },
+  SEVERO:  { url: 'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=1200&q=70&auto=format&fit=crop', label: 'Estrés hídrico severo' }
+};
+
+function updateDecisionPhoto(level) {
+  const img = document.getElementById('decision-photo');
+  const badge = document.getElementById('decision-photo-badge');
+  const wrap = document.getElementById('decision-photo-wrap');
+  const cfg = PHOTOS_POR_ALERTA[level] || PHOTOS_POR_ALERTA.NORMAL;
+  if (img && img.src !== cfg.url) {
+    img.style.opacity = '0';
+    setTimeout(() => { img.src = cfg.url; img.style.opacity = '1'; }, 200);
+  }
+  if (badge) {
+    badge.textContent = cfg.label;
+    badge.className = 'decision-photo-badge badge-' + level.toLowerCase();
+  }
+  if (wrap) {
+    wrap.classList.remove('updating');
+    void wrap.offsetWidth;
+    wrap.classList.add('updating');
+  }
 }
 
 function toggleReasoning() {
@@ -1691,6 +1753,13 @@ async function fetchData() {
     document.getElementById('decision-just').style.fontStyle = 'normal';
     document.getElementById('decision-just').style.color = 'var(--text-secondary)';
     renderReasoning(data.razonamiento);
+
+    const decisionSection = document.querySelector('.decision-section');
+    if (decisionSection) {
+      decisionSection.classList.remove('fade-in-refresh');
+      void decisionSection.offsetWidth;
+      decisionSection.classList.add('fade-in-refresh');
+    }
 
     const faoBadge = document.getElementById('fao56-badge');
     if (faoBadge && typeof data.et0_mm === 'number') {
@@ -2276,8 +2345,8 @@ async function runValidacionHistorica() {
 // ===== TOGGLE DE IDIOMA (EN/ES) =====
 let currentLang = 'es';
 
-const TAB_LABELS_EN = ['Decision', 'Valve 3D', 'Impact & SDGs', 'Predictions', 'Charts', 'Map', 'Edge Cases', 'Simulator', 'Parcel Network', 'My History', 'Historical Validation'];
-const TAB_LABELS_ES = ['Decisión', 'Válvula 3D', 'Impacto y ODS', 'Predicciones', 'Gráficas', 'Mapa', 'Casos límite', 'Simulador', 'Red de Parcelas', 'Mi Historial', 'Validación Histórica'];
+const TAB_LABELS_EN = ['💧 Decision', '🔧 Valve 3D', '🌎 Impact & SDGs', '📈 Predictions', '📊 Charts', '🗺️ Map', '⚡ Edge Cases', '🧪 Simulator', '🌐 Parcel Network', '🕘 My History', '🛰️ Historical Validation'];
+const TAB_LABELS_ES = ['💧 Decisión', '🔧 Válvula 3D', '🌎 Impacto y ODS', '📈 Predicciones', '📊 Gráficas', '🗺️ Mapa', '⚡ Casos límite', '🧪 Simulador', '🌐 Red de Parcelas', '🕘 Mi Historial', '🛰️ Validación Histórica'];
 
 const SLIDER_LABELS_EN = ['NDVI', 'Temperature', 'Soil moisture', 'Precipitation', 'Days without rain', 'Phenological stage', 'Soil type', 'Crop', 'Solar radiation', 'Minimum', 'Maximum'];
 const SLIDER_LABELS_ES = ['NDVI', 'Temperatura', 'Humedad del suelo', 'Precipitación', 'Días sin lluvia', 'Etapa fenológica', 'Tipo de suelo', 'Cultivo', 'Radiación solar', 'Mínima', 'Máxima'];
@@ -2891,18 +2960,42 @@ void main(){
   return { setOpen: applyState, setAperture: applyAperture, tick, resize, getFlowLmin: () => S.flowShown };
 }
 
-const mini = buildValveScene('valve3d-mini', { w: 76, h: 76, particles: 8, draggable: false, autoRotate: true, shadows: false, transparent: true, fov: 32, azimuth: -0.5, elevation: 1.2, dist: 2.0 });
 const full = buildValveScene('valve3d-full', { w: 560, h: 420, particles: 30, draggable: true, autoRotate: true, shadows: true, transparent: false, bg: 0x120d0a, fov: 36, azimuth: -0.55, elevation: 1.15, dist: 1.85 });
-if (mini) scenes.push(mini);
 if (full) scenes.push(full);
 
 window.setValveOpen3D = function(open) {
   scenes.forEach(s => s.setOpen(open));
+  updateMiniValveIcon(open ? 100 : 0);
 };
 
 window.setValveAperture3D = function(pct) {
   scenes.forEach(s => s.setAperture(pct));
+  updateMiniValveIcon(pct);
 };
+
+function updateMiniValveIcon(pct) {
+  const wrap = document.getElementById('valve3d-mini');
+  if (!wrap) return;
+  const isOpen = pct > 0;
+  const angle = 90 - (pct / 100) * 90; // 90deg = cerrada, 0deg = abierta
+  wrap.innerHTML = `
+    <svg viewBox="0 0 76 76" width="76" height="76" style="display:block">
+      <circle cx="38" cy="38" r="30" fill="none" stroke="${isOpen ? 'var(--green)' : 'var(--red-line)'}" stroke-width="2" opacity="0.5"/>
+      <line x1="8" y1="38" x2="26" y2="38" stroke="var(--brand-line)" stroke-width="4" stroke-linecap="round"/>
+      <line x1="50" y1="38" x2="68" y2="38" stroke="var(--brand-line)" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="38" cy="38" r="14" fill="${isOpen ? 'var(--green-dim)' : 'var(--red-dim)'}" stroke="${isOpen ? 'var(--green)' : 'var(--red)'}" stroke-width="1.5"/>
+      <g style="transform-origin:38px 38px; transform: rotate(${angle}deg); transition: transform 0.5s var(--ease-spring, ease)">
+        <line x1="38" y1="24" x2="38" y2="52" stroke="${isOpen ? 'var(--green-dark)' : 'var(--red)'}" stroke-width="3.5" stroke-linecap="round"/>
+      </g>
+      <circle cx="38" cy="38" r="3" fill="${isOpen ? 'var(--green-dark)' : 'var(--red)'}"/>
+      ${isOpen ? `
+      <circle cx="38" cy="38" r="30" fill="none" stroke="var(--green)" stroke-width="2" opacity="0">
+        <animate attributeName="r" values="16;32" dur="1.6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0" dur="1.6s" repeatCount="indefinite"/>
+      </circle>` : ''}
+    </svg>`;
+}
+updateMiniValveIcon(0);
 
 window.resizeValve3D = function() {
   if (full) requestAnimationFrame(() => { full.resize(); });
