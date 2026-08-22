@@ -44,7 +44,7 @@ body {
   background-attachment: fixed;
 }
 ::selection { background: var(--brand); color: #fff; }
- 
+
 /* -------- entrance choreography -------- */
 @keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .topbar, .left-panel > *, .statusbar { animation: rise-in 0.5s var(--ease) both; }
@@ -52,7 +52,7 @@ body {
 .left-panel > *:nth-child(2) { animation-delay: 0.08s; }
 .left-panel > *:nth-child(3) { animation-delay: 0.14s; }
 .statusbar { animation-delay: 0.2s; }
- 
+
 /* -------- topbar -------- */
 .topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; height: 58px; border-bottom: 1px solid var(--border); background: var(--bg-panel); position: sticky; top: 0; z-index: 100; gap: 1rem; box-shadow: var(--shadow); }
 .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
@@ -76,7 +76,7 @@ body {
 .auto-controls { display: flex; align-items: center; gap: 6px; }
 .auto-controls select { background: var(--bg-panel); color: var(--text-secondary); border: 1px solid var(--border-strong); border-radius: 7px; font-family: var(--mono); font-size: 10.5px; padding: 5px 6px; cursor: pointer; }
 .auto-countdown { font-family: var(--mono); font-size: 11px; color: var(--text-muted); min-width: 34px; }
- 
+
 /* -------- layout -------- */
 .hero-strip { position: relative; height: 108px; overflow: hidden; flex-shrink: 0; }
 .hero-strip img { width: 100%; height: 100%; object-fit: cover; object-position: center 60%; display: block; }
@@ -91,7 +91,7 @@ body {
 .left-panel { border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; background: var(--bg-panel); }
 .left-panel::-webkit-scrollbar { width: 5px; }
 .left-panel::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
- 
+
 /* -------- valve status console -------- */
 .valve-section { padding: 1.35rem 1.5rem; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
 .section-label { font-size: 10px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 6px; }
@@ -112,7 +112,7 @@ body {
 .valve-state-text { font-family: var(--mono); font-size: 18px; font-weight: 600; letter-spacing: 0.04em; transition: color 0.4s; }
 .valve-state-text.open { color: var(--green-dark); } .valve-state-text.closed { color: var(--red); }
 .valve-sublabel { font-size: 10.5px; color: var(--text-muted); font-family: var(--mono); margin-top: 2px; }
- 
+
 /* -------- alert gauge -------- */
 .alert-section { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); }
 .alert-bar { display: flex; gap: 4px; margin-bottom: 0.6rem; }
@@ -122,7 +122,7 @@ body {
 .alert-badge.leve { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-line); }
 .alert-badge.severo { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-line); animation: alert-pulse 1.4s ease-in-out infinite; }
 @keyframes alert-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(178,58,44,0.25)} 50%{box-shadow:0 0 0 5px rgba(178,58,44,0)} }
- 
+
 /* -------- input console -------- */
 .input-section { padding: 1.1rem 1.5rem; }
 .slider-group { margin-bottom: 1.1rem; min-width: 0; }
@@ -162,7 +162,7 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .limiting-factor-badge { width: 32px; height: 32px; border-radius: 50%; background: var(--red); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; font-weight: 700; }
 .limiting-factor-text { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; }
 .limiting-factor-text b { color: var(--red); font-family: var(--mono); text-transform: capitalize; }
- 
+
 /* -------- right stage -------- */
 .right-panel { display: flex; flex-direction: column; overflow: hidden; }
 .tab-nav { position: relative; border-bottom: 1px solid var(--border); background: var(--bg-panel); flex-shrink: 0; z-index: 50; }
@@ -187,7 +187,7 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .scrollable { overflow-y: auto; }
 .scrollable::-webkit-scrollbar, .tab-content ::-webkit-scrollbar { width: 5px; }
 .scrollable::-webkit-scrollbar-thumb, .tab-content ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
- 
+
 .decision-section { padding: 1.4rem 1.6rem; border-bottom: 1px solid var(--border); position: relative; background: var(--bg-panel); }
 .loading-overlay { position: absolute; inset: 0; background: rgba(255,253,248,0.88); display: flex; align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity 0.25s; overflow: hidden; }
 .loading-overlay::before { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(125,44,68,0.06) 50%, transparent 70%); background-size: 200% 100%; }
@@ -217,7 +217,7 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .reasoning-weight.medio { background: var(--amber-dim); color: var(--amber); }
 .reasoning-weight.bajo { background: var(--green-dim); color: var(--green-dark); }
 .reasoning-analysis { font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; }
- 
+
 .predictions-section { padding: 1.1rem 1.6rem; border-bottom: 1px solid var(--border); }
 .pred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 0.8rem; }
 .pred-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 11px; padding: 11px 13px; transition: transform 0.2s, box-shadow 0.2s; }
@@ -225,7 +225,7 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .pred-card-label { font-size: 9px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
 .pred-card-value { font-size: 20px; font-family: var(--mono); font-weight: 700; line-height: 1; transition: color 0.3s; }
 .pred-card-sub { font-size: 10px; color: var(--text-muted); font-family: var(--mono); margin-top: 4px; }
- 
+
 .log-section { flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 0 1.6rem 1rem; }
 .log-header { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
 .log-count { font-size: 10px; font-family: var(--mono); color: var(--text-muted); }
@@ -238,14 +238,14 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .log-action { font-size: 11.5px; color: var(--text-secondary); }
 .log-alert-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
 .log-empty { text-align: center; padding: 2.2rem 0; color: var(--text-muted); font-size: 12px; font-family: var(--mono); }
- 
+
 .charts-tab, .pred-tab, .map-tab, .edge-tab, .compare-tab { flex: 1; overflow-y: auto; padding: 1.35rem 1.6rem; display: flex; flex-direction: column; gap: 1.1rem; }
 .chart-card, .pred-big-card, .field-map, .ods-card, .edge-card, .compare-header-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 13px; padding: 1.15rem; box-shadow: var(--shadow); transition: box-shadow 0.25s; }
 .chart-card:hover, .pred-big-card:hover, .field-map:hover, .ods-card:hover { box-shadow: var(--shadow-lift); }
 .chart-card-title, .pred-big-title { font-size: 10px; font-family: var(--mono); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.8rem; }
 .chart-wrapper { position: relative; height: 155px; }
 .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
- 
+
 .timeline-item { display: grid; grid-template-columns: 80px 16px 1fr; gap: 0.75rem; align-items: start; padding: 8px 0; }
 .timeline-time { font-size: 11px; font-family: var(--mono); font-weight: 600; color: var(--text-muted); text-align: right; padding-top: 2px; }
 .timeline-dot-col { display: flex; flex-direction: column; align-items: center; }
@@ -254,14 +254,14 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .timeline-content { padding-bottom: 8px; }
 .timeline-label { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
 .timeline-desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; line-height: 1.5; }
- 
+
 .humidity-forecast { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; margin-top: 0.8rem; }
 .forecast-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .forecast-bar-wrap { height: 84px; display: flex; align-items: flex-end; width: 100%; background: var(--bg-card); border-radius: 4px; overflow: hidden; }
 .forecast-bar { width: 100%; border-radius: 4px 4px 0 0; transition: height 0.7s var(--ease); }
 .forecast-val { font-size: 9px; font-family: var(--mono); font-weight: 600; color: var(--text-secondary); }
 .forecast-hour { font-size: 9px; font-family: var(--mono); color: var(--text-muted); }
- 
+
 .field-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; margin-top: 0.8rem; }
 .field-cell { aspect-ratio: 1; border-radius: 5px; cursor: pointer; transition: transform 0.2s var(--ease-spring), box-shadow 0.2s; }
 .field-cell:hover { transform: scale(1.14); z-index: 2; position: relative; box-shadow: 0 3px 10px rgba(35,22,13,0.18); }
@@ -276,12 +276,12 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .map-stat-val { font-size: 20px; font-family: var(--mono); font-weight: 700; }
 .map-stat-lbl { font-size: 9px; font-family: var(--mono); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
 .field-tooltip { position: fixed; background: var(--text-primary); border-radius: 7px; padding: 6px 10px; font-size: 10px; font-family: var(--mono); color: white; pointer-events: none; z-index: 999; display: none; box-shadow: var(--shadow-lift); }
- 
+
 .edge-case-btn { display: block; width: 100%; text-align: left; padding: 13px 15px; margin-bottom: 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 11px; cursor: pointer; transition: all 0.18s var(--ease); }
 .edge-case-btn:hover { border-color: var(--brand-line); background: var(--brand-dim); transform: translateX(3px); }
 .edge-case-title { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
 .edge-case-desc { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
- 
+
 .photo-banner { position: relative; border-radius: 13px; overflow: hidden; height: 140px; box-shadow: var(--shadow); }
 .photo-banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .photo-banner-caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.9rem 1.1rem; background: linear-gradient(0deg, rgba(46,32,19,0.82) 0%, rgba(46,32,19,0.35) 65%, transparent 100%); color: #fffdf8; font-size: 12px; line-height: 1.5; }
@@ -304,7 +304,7 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .water-saved-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--blue); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .water-saved-icon svg { width: 16px; height: 16px; stroke: white; fill: none; stroke-width: 2; }
 .water-saved-text { font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; }
- 
+
 .ods-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
 .ods-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px; background: var(--bg-card); border-radius: 11px; border: 1px solid var(--border); transition: transform 0.2s; }
 .ods-item:hover { transform: translateY(-2px); }
@@ -314,12 +314,12 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .ods-badge.ods13 { background: #3f7e44; }
 .ods-title { font-size: 12px; font-weight: 700; color: var(--text-primary); }
 .ods-desc { font-size: 11px; color: var(--text-secondary); margin-top: 3px; line-height: 1.5; }
- 
+
 .statusbar { display: flex; align-items: center; gap: 1.5rem; padding: 0 1.5rem; height: 32px; border-top: 1px solid var(--border); background: var(--bg-panel); font-size: 10px; font-family: var(--mono); color: var(--text-muted); flex-shrink: 0; }
 .status-item { display: flex; align-items: center; gap: 5px; }
 .status-dot { width: 5px; height: 5px; border-radius: 50%; }
 .status-dot.ok { background: var(--green); } .status-dot.error { background: var(--red); }
- 
+
 .copilot-btn { position: fixed; right: 22px; bottom: 22px; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--brand-dark)); border: none; box-shadow: 0 4px 16px rgba(35,22,13,0.28); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 500; transition: transform 0.2s var(--ease-spring); }
 .copilot-btn:hover { transform: scale(1.08) rotate(-4deg); }
 .copilot-btn svg { width: 24px; height: 24px; stroke: white; fill: none; stroke-width: 2; }
@@ -338,7 +338,7 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .copilot-input-row input { flex: 1; padding: 9px 11px; border-radius: 9px; border: 1px solid var(--border-strong); font-size: 12px; font-family: var(--sans); background: var(--bg-card); color: var(--text-primary); }
 .copilot-input-row button { padding: 9px 13px; border-radius: 9px; border: none; background: var(--brand); color: white; font-size: 12px; cursor: pointer; transition: filter 0.15s; }
 .copilot-input-row button:hover { filter: brightness(1.1); }
- 
+
 /* -------- login gate -------- */
 .login-screen { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; background: var(--bg); background-image: radial-gradient(ellipse 900px 600px at 20% 10%, rgba(125,44,68,0.08), transparent 60%), radial-gradient(ellipse 800px 600px at 85% 90%, rgba(38,138,74,0.07), transparent 55%); animation: rise-in 0.4s var(--ease); }
 .login-screen.hidden { display: none; }
@@ -355,10 +355,34 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
 .login-status.error { color: var(--red); }
 .login-guest-btn { width: 100%; margin-top: 0.6rem; padding: 9px; border-radius: 9px; border: 1px dashed var(--border-strong); background: transparent; color: var(--text-secondary); font-family: var(--mono); font-size: 10.5px; cursor: pointer; transition: all 0.15s; }
 .login-guest-btn:hover { border-color: var(--brand-line); color: var(--brand-dark); background: var(--brand-dim); }
- 
+
 .session-chip { display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 11px; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border); font-family: var(--mono); font-size: 11px; color: var(--text-secondary); }
 .session-logout { width: 20px; height: 20px; border-radius: 50%; border: none; background: var(--bg-card-alt); color: var(--text-muted); cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
 .session-logout:hover { background: var(--red-dim); color: var(--red); }
+
+/* ===== RESPONSIVO (móvil / tablet) ===== */
+@media (max-width: 900px) {
+  .main { grid-template-columns: 1fr; height: auto; }
+  .left-panel { order: 2; max-height: none; border-right: none; border-top: 1px solid var(--border); }
+  .right-panel { order: 1; }
+  .topbar { flex-wrap: wrap; height: auto; padding: 10px 14px; gap: 8px; }
+  .topbar-right { flex-wrap: wrap; gap: 6px; width: 100%; justify-content: flex-start; }
+  .tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab-bar::-webkit-scrollbar { height: 3px; }
+  .decision-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .decision-action { max-width: 100%; font-size: 15px; }
+  #valve3d-full { height: 280px !important; }
+  .pred-grid, .charts-grid, .ods-grid, .map-stats, .compare-cols { grid-template-columns: 1fr !important; }
+  .compare-vs { display: none; }
+  .field-grid { grid-template-columns: repeat(8, 1fr); }
+  .copilot-panel { width: 92vw; right: 4vw; }
+  body { font-size: 14px; }
+}
+@media (max-width: 480px) {
+  .valve-visual { flex-direction: column; align-items: flex-start; }
+  .slider-group { margin-bottom: 12px; }
+  .logo-sub { display: none; }
+}
 </style>
 </head>
 <body>
@@ -376,23 +400,23 @@ FORM: Redesign per explicit user request ("frontend desde cero, con animaciones,
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review,
   the verdict, DESIGN.md, and every shipping raster carrying its provenance.
 -->
- 
+
 <div class="login-screen" id="login-screen">
   <div class="login-card">
     <div class="login-logo">
       <div class="logo-mark"><svg viewBox="0 0 16 16"><path d="M8 2 C5 2 2 5 2 8 C2 11 5 14 8 14"/><path d="M8 5 L8 8 L10 10" stroke-linejoin="round"/><circle cx="8" cy="8" r="1" fill="white" stroke="none"/></svg></div>
       <div><div class="logo-text">AgroSentinel</div><div class="logo-sub" id="login-title">Iniciar sesión</div></div>
     </div>
- 
+
     <button class="login-guest-btn" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0 0 1.1rem;border-style:solid;background:#ffffff;color:#1a1a1a;font-family:var(--sans);font-size:13px;font-weight:500" onclick="loginWithGoogle()">
       <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.4 0 6.4 1.2 8.8 3.5l6.5-6.5C35.3 2.7 30 0.5 24 0.5 14.9 0.5 7.1 5.9 3.4 13.7l7.6 5.9C12.7 13.5 17.9 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.5 3-2.2 5.5-4.7 7.2l7.3 5.7c4.3-4 6.8-9.9 6.8-17.4z"/><path fill="#FBBC05" d="M11 28.6c-.5-1.5-.8-3-.8-4.6s.3-3.1.8-4.6l-7.6-5.9C1.5 16.7.5 20.2.5 24s1 7.3 2.9 10.5l7.6-5.9z"/><path fill="#34A853" d="M24 47.5c6 0 11.3-2 15.1-5.4l-7.3-5.7c-2 1.4-4.6 2.2-7.8 2.2-6.1 0-11.3-4-13-9.6l-7.6 5.9C7.1 42.1 14.9 47.5 24 47.5z"/></svg>
       Continuar con Google
     </button>
- 
+
     <div style="display:flex;align-items:center;gap:10px;margin:0 0 1.1rem;font-size:10px;color:var(--text-muted);font-family:var(--mono)">
       <div style="flex:1;height:1px;background:var(--border)"></div>o con correo<div style="flex:1;height:1px;background:var(--border)"></div>
     </div>
- 
+
     <div class="login-field">
       <label class="slider-label">Correo electrónico</label>
       <input type="email" id="login-user" class="login-input" placeholder="tu@correo.com" autocomplete="username">
@@ -408,7 +432,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     </div>
   </div>
 </div>
- 
+
 <header class="topbar">
   <div class="logo">
     <div class="logo-mark">
@@ -420,6 +444,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     </div>
   </div>
   <div class="topbar-right">
+    <button class="topbar-btn" id="lang-toggle-btn" onclick="toggleLanguage()">EN</button>
     <div class="auto-controls">
       <button class="topbar-btn" id="auto-btn" onclick="toggleAuto()">Auto: OFF</button>
       <select id="auto-interval" onchange="updateInterval()">
@@ -430,6 +455,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       <span class="auto-countdown" id="auto-countdown"></span>
     </div>
     <button class="topbar-btn" id="demo-btn" style="border-color:#8f5da6;color:#8f5da6" onclick="runDemoMode()">Modo demo</button>
+    <button class="topbar-btn" id="qr-btn" onclick="toggleQR()" title="Mostrar código QR para probar en tu celular">QR</button>
     <button class="topbar-btn export-btn" onclick="exportPDF()">Exportar PDF</button>
     <div class="live-indicator">
       <div class="live-dot"></div>
@@ -441,7 +467,16 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     </div>
   </div>
 </header>
- 
+
+<div id="qr-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;align-items:center;justify-content:center" onclick="if(event.target===this)toggleQR()">
+  <div style="background:white;border-radius:16px;padding:2rem;text-align:center;max-width:320px">
+    <div style="font-family:var(--mono);font-weight:700;font-size:13px;margin-bottom:12px;color:var(--text-primary)">Escanea para abrir AgroSentinel</div>
+    <img id="qr-img" src="" alt="Código QR del dashboard" style="width:220px;height:220px;border-radius:8px">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-top:12px;word-break:break-all" id="qr-url-label"></div>
+    <button class="topbar-btn" id="qr-close-btn" style="margin-top:14px" onclick="toggleQR()">Cerrar</button>
+  </div>
+</div>
+
 <div class="hero-strip">
   <img src="https://images.unsplash.com/photo-1600412173573-3418330a4c72?w=1600&q=70&auto=format&fit=crop" alt="Paisaje agrícola de Costa Rica" loading="eager" onerror="this.closest('.hero-strip').classList.add('hero-strip-noimg')">
   <div class="hero-strip-overlay"></div>
@@ -450,7 +485,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     <span class="hero-strip-title">Agricultura de precisión, decidida por IA</span>
   </div>
 </div>
- 
+
 <div class="main">
   <aside class="left-panel">
     <div class="valve-section">
@@ -467,7 +502,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
     </div>
- 
+
     <div class="alert-section">
       <div class="section-label">Nivel de alerta</div>
       <div class="alert-bar">
@@ -477,40 +512,40 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       </div>
       <div class="alert-badge normal" id="alert-badge"><span id="alert-text">EN ESPERA</span></div>
     </div>
- 
+
     <div class="input-section">
       <div class="section-label">Datos de entrada del campo</div>
- 
+
       <div class="slider-group">
         <div class="slider-header"><span class="slider-label">NDVI</span><span class="slider-value-display"><span id="val-ndvi">0.60</span></span></div>
         <input type="range" min="0" max="100" value="60" id="sl-ndvi" oninput="updateSlider('ndvi',this.value/100)">
         <div class="slider-range"><span>0.00 Muerto</span><span>1.00 Óptimo</span></div>
       </div>
- 
+
       <div class="slider-group">
         <div class="slider-header"><span class="slider-label">Temperatura</span><span class="slider-value-display"><span id="val-temp">25.0</span><span class="unit">°C</span></span></div>
         <input type="range" min="0" max="500" value="250" id="sl-temp" oninput="updateSlider('temp',this.value/10)">
         <div class="slider-range"><span>0°C</span><span>50°C</span></div>
       </div>
- 
+
       <div class="slider-group">
         <div class="slider-header"><span class="slider-label">Humedad del suelo</span><span class="slider-value-display"><span id="val-hum">50</span><span class="unit">%</span></span></div>
         <input type="range" min="0" max="100" value="50" id="sl-hum" oninput="updateSlider('hum',this.value)">
         <div class="slider-range"><span>0% Seco</span><span>100% Saturado</span></div>
       </div>
- 
+
       <div class="slider-group">
         <div class="slider-header"><span class="slider-label">Precipitación</span><span class="slider-value-display"><span id="val-prec">5.0</span><span class="unit">mm</span></span></div>
         <input type="range" min="0" max="300" value="50" id="sl-prec" oninput="updateSlider('prec',this.value/10)">
         <div class="slider-range"><span>0 mm</span><span>30 mm</span></div>
       </div>
- 
+
       <div class="slider-group">
         <div class="slider-header"><span class="slider-label">Días sin lluvia</span><span class="slider-value-display"><span id="val-dias">5</span><span class="unit"> días</span></span></div>
         <input type="range" min="0" max="30" value="5" id="sl-dias" oninput="updateSlider('dias',this.value)">
         <div class="slider-range"><span>0 días</span><span>30 días</span></div>
       </div>
- 
+
       <div class="slider-group">
         <div class="slider-header"><span class="slider-label">Etapa fenológica</span></div>
         <select id="sl-etapa" class="field-select" onchange="currentData.etapa_fenologica=this.value">
@@ -522,7 +557,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </select>
         <div class="slider-range"><span>Ajusta la sensibilidad al estrés hídrico</span><span></span></div>
       </div>
- 
+
       <div class="slider-group">
         <div class="slider-header"><span class="slider-label">Tipo de suelo</span></div>
         <select id="sl-tipo-suelo" class="field-select" onchange="currentData.tipo_suelo=this.value">
@@ -534,8 +569,21 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </select>
         <div class="slider-range"><span>Define cuánta agua retiene el suelo (FAO-56)</span><span></span></div>
       </div>
- 
-      <div class="optional-toggle" onclick="toggleOptionalData()">
+
+      <div class="slider-group">
+        <div class="slider-header"><span class="slider-label">Cultivo</span></div>
+        <select id="sl-cultivo" class="field-select" onchange="currentData.cultivo=this.value">
+          <option value="generico" selected>Genérico (hortaliza/hilera)</option>
+          <option value="cafe">Café</option>
+          <option value="frijol">Frijol</option>
+          <option value="tomate">Tomate</option>
+          <option value="chile">Chile dulce</option>
+          <option value="maiz">Maíz</option>
+        </select>
+        <div class="slider-range"><span>Usa el coeficiente Kc real de FAO-56 para ese cultivo</span><span></span></div>
+      </div>
+
+      <div class="optional-toggle" id="optional-toggle-label" onclick="toggleOptionalData()">
         <span>Datos opcionales avanzados</span>
         <span id="optional-arrow">▾</span>
       </div>
@@ -548,7 +596,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           <input type="range" min="0" max="350" value="180" id="sl-radiacion" oninput="updateSlider('radiacion',this.value/10)">
           <div class="slider-range"><span>0</span><span>35 MJ/m²/día</span></div>
         </div>
- 
+
         <div class="opt-check-row">
           <label class="opt-check"><input type="checkbox" id="chk-temp-rango" onchange="toggleOptField('temprango')"> Tengo temperatura mínima y máxima del día (mejora el cálculo de ET0)</label>
         </div>
@@ -565,7 +613,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           </div>
           <div class="slider-range" style="margin-top:4px"><span>Sin esto, se asume un rango diario típico de 10°C</span><span></span></div>
         </div>
- 
+
         <div class="opt-check-row">
           <label class="opt-check"><input type="checkbox" id="chk-dron" onchange="toggleOptField('dron')"> Tengo imágenes de dron / multiespectrales</label>
         </div>
@@ -577,7 +625,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           <button class="topbar-btn" style="width:100%" onclick="analyzeImage()" id="img-analyze-btn">Analizar imagen con Claude</button>
           <div id="img-result" style="margin-top:8px;font-size:11.5px;color:var(--text-secondary);line-height:1.6;display:none;padding:8px;background:var(--bg-card);border-radius:7px;border-left:3px solid var(--accent)"></div>
         </div>
- 
+
         <div class="opt-check-row">
           <label class="opt-check"><input type="checkbox" id="chk-nasa" onchange="toggleOptField('nasa')"> Enriquecer con datos climáticos NASA POWER</label>
         </div>
@@ -593,9 +641,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           Estos datos son opcionales — el análisis funciona sin ellos, pero mejora la precisión si están disponibles.
         </div>
       </div></div>
- 
+
       <button class="analyze-btn" id="analyze-btn" onclick="fetchData()">Analizar con Claude AI</button>
- 
+
       <div class="preset-row">
         <button class="preset-btn" onclick="applyPreset('optimo')">Óptimo</button>
         <button class="preset-btn" onclick="applyPreset('leve')">Leve</button>
@@ -604,7 +652,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       </div>
     </div>
   </aside>
- 
+
   <main class="right-panel">
     <div class="tab-nav" id="tab-nav">
       <button class="tab-nav-trigger" id="tab-nav-trigger" onclick="toggleTabMenu()">
@@ -624,9 +672,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <button class="tab-btn" onclick="switchTab('edge',this)"><span class="tab-btn-dot"></span>Casos límite</button>
         <button class="tab-btn" onclick="switchTab('simulador',this)"><span class="tab-btn-dot"></span>Simulador</button>
         <button class="tab-btn" onclick="switchTab('red',this)"><span class="tab-btn-dot"></span>Red de Parcelas</button>
+        <button class="tab-btn" onclick="switchTab('historial',this)"><span class="tab-btn-dot"></span>Mi Historial</button>
+        <button class="tab-btn" onclick="switchTab('validacion',this)"><span class="tab-btn-dot"></span>Validación Histórica</button>
       </div></div>
     </div>
- 
+
     <div class="tab-content active" id="tab-decision">
       <div class="scrollable" style="flex:1;display:flex;flex-direction:column;">
         <div class="decision-section">
@@ -637,6 +687,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
             <div class="decision-meta">
               <div class="decision-time" id="decision-time">—</div>
               <div style="font-size:9px;font-family:var(--mono);color:var(--text-muted);margin-top:2px">claude-sonnet-4-6</div>
+              <div id="confianza-badge" style="display:none;margin-top:5px;padding:2px 8px;border-radius:5px;font-family:var(--mono);font-size:9.5px;font-weight:700"></div>
             </div>
           </div>
           <div class="decision-justification" id="decision-just" style="color:var(--text-muted);font-style:italic">
@@ -655,7 +706,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           <div class="reasoning-panel" id="reasoning-panel"></div>
           <div id="limiting-factor-wrap"></div>
         </div>
- 
+
         <div class="predictions-section">
           <div class="section-label">Predicciones del agente</div>
           <div class="pred-grid">
@@ -671,7 +722,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
             </div>
           </div>
         </div>
- 
+
         <div class="log-section">
           <div class="log-header">
             <div class="section-label" style="margin:0">Historial de decisiones</div>
@@ -681,7 +732,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
     </div>
- 
+
     <div class="tab-content" id="tab-valve3d">
       <div style="flex:1;overflow-y:auto;padding:1.35rem 1.6rem;display:flex;flex-direction:column;gap:1rem;">
         <div class="chart-card" style="padding:1rem;">
@@ -703,7 +754,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
     </div>
- 
+
     <div class="tab-content" id="tab-compare">
       <div class="compare-tab">
         <div class="photo-banner">
@@ -731,14 +782,17 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           </div>
           <div class="water-saved-banner">
             <div class="water-saved-icon"><svg viewBox="0 0 24 24"><path d="M12 2 C12 2 5 10 5 15 a7 7 0 0 0 14 0 C19 10 12 2 12 2 Z"/></svg></div>
-            <div class="water-saved-text">Ahorro estimado de agua con riego basado en datos reales: <b id="water-saved-val">— litros/m²</b> comparado con riego por cronograma fijo en este ciclo.</div>
+            <div class="water-saved-text">Ahorro estimado de agua con riego basado en datos reales: <b id="water-saved-val">— litros/m²</b> comparado con riego por cronograma fijo en este ciclo. <span id="water-saved-colones" style="color:var(--text-muted)"></span></div>
           </div>
           <div class="water-saved-banner" style="margin-top:8px;background:var(--green-dim);border-color:var(--green-line)">
             <div class="water-saved-icon" style="background:var(--green)"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg></div>
-            <div class="water-saved-text">Ahorro acumulado en esta sesión (<span id="acumulado-count">0</span> análisis): <b id="water-saved-acumulado" style="color:var(--green-dark)">0 litros/m²</b></div>
+            <div class="water-saved-text">Ahorro acumulado en esta sesión (<span id="acumulado-count">0</span> análisis): <b id="water-saved-acumulado" style="color:var(--green-dark)">0 litros/m²</b> <span id="water-saved-acumulado-colones" style="color:var(--text-muted)"></span></div>
+          </div>
+          <div style="font-size:9.5px;color:var(--text-muted);margin-top:6px;line-height:1.5;padding:0 4px">
+            Valor en colones basado en el canon de aprovechamiento de agua para uso agropecuario en Costa Rica (₡1.29/m³, tarifa regulatoria vigente). No incluye costo de bombeo/energía ni el valor de la cosecha que se protege al evitar el estrés hídrico — el impacto económico real suele ser mayor.
           </div>
         </div>
- 
+
         <div class="ods-card">
           <div class="section-label" style="margin-bottom:0">Alineación con Objetivos de Desarrollo Sostenible</div>
           <div class="ods-grid">
@@ -762,7 +816,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
     </div>
- 
+
     <div class="tab-content" id="tab-predictions">
       <div class="pred-tab">
         <div class="pred-big-card">
@@ -783,7 +837,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
     </div>
- 
+
     <div class="tab-content" id="tab-charts">
       <div class="charts-tab">
         <div class="chart-card">
@@ -802,7 +856,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
     </div>
- 
+
     <div class="tab-content" id="tab-map">
       <div class="map-tab">
         <div class="field-map">
@@ -827,7 +881,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
     </div>
- 
+
     <div class="tab-content" id="tab-edge">
       <div class="edge-tab">
         <div class="edge-card">
@@ -835,22 +889,22 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           <div style="font-size:11.5px;color:var(--text-secondary);margin-bottom:1rem;line-height:1.6">
             Estos escenarios ponen a prueba cómo Claude resuelve tensión entre variables que apuntan en direcciones opuestas, en vez de aplicar reglas fijas.
           </div>
- 
+
           <button class="edge-case-btn" onclick="applyEdgeCase('ndvi_alto_hum_baja')">
             <div class="edge-case-title">NDVI alto, humedad crítica</div>
             <div class="edge-case-desc">La vegetación aún se ve saludable, pero el suelo ya está en niveles peligrosos. ¿El agente actúa preventivamente o espera a que el NDVI caiga?</div>
           </button>
- 
+
           <button class="edge-case-btn" onclick="applyEdgeCase('lluvia_reciente_dias_altos')">
             <div class="edge-case-title">Lluvia reciente alta, pero muchos días sin lluvia previos</div>
             <div class="edge-case-desc">Llovió fuerte hoy después de tres semanas de sequía. ¿Es suficiente para cerrar la válvula o el daño acumulado ya requiere riego?</div>
           </button>
- 
+
           <button class="edge-case-btn" onclick="applyEdgeCase('temp_extrema_hum_ok')">
             <div class="edge-case-title">Temperatura extrema con humedad aceptable</div>
             <div class="edge-case-desc">El suelo tiene humedad suficiente hoy, pero el calor es extremo. ¿El agente anticipa la evapotranspiración acelerada?</div>
           </button>
- 
+
           <button class="edge-case-btn" onclick="applyEdgeCase('todo_limite')">
             <div class="edge-case-title">Todos los valores justo en el límite</div>
             <div class="edge-case-desc">Cada variable está exactamente en el borde entre NORMAL y LEVE. Caso de máxima ambigüedad para observar el desempate del modelo.</div>
@@ -858,7 +912,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
     </div>
- 
+
     <div class="tab-content" id="tab-simulador">
       <div class="pred-tab">
         <div class="pred-big-card">
@@ -894,7 +948,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
     </div>
- 
+
     <div class="tab-content" id="tab-red">
       <div class="pred-tab">
         <div class="pred-big-card">
@@ -919,7 +973,42 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
     </div>
- 
+
+    <div class="tab-content" id="tab-historial">
+      <div class="pred-tab">
+        <div class="pred-big-card">
+          <div class="pred-big-title">Mi historial real (Supabase)</div>
+          <div style="font-size:11.5px;color:var(--text-secondary);margin-bottom:1rem;line-height:1.6">
+            A diferencia de la pestaña "Gráficas" (que solo muestra los análisis de esta sesión), aquí se consultan directamente tus lecturas guardadas en la base de datos, sin importar cuándo las hiciste — hoy, ayer, o hace semanas.
+          </div>
+          <button class="topbar-btn" onclick="cargarHistorialReal()">Cargar mi historial</button>
+          <div class="chart-wrapper" style="height:220px;margin-top:1rem;"><canvas id="chart-historial"></canvas></div>
+          <div id="historial-status" style="margin-top:0.75rem;font-size:11.5px;color:var(--text-muted)"></div>
+          <div id="historial-tabla" style="margin-top:1rem;max-height:260px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-validacion">
+      <div class="pred-tab">
+        <div class="pred-big-card">
+          <div class="pred-big-title">Validación con clima histórico real (NASA POWER)</div>
+          <div style="font-size:11.5px;color:var(--text-secondary);margin-bottom:1rem;line-height:1.6">
+            Esto no usa datos simulados ni le pregunta nada a Claude: toma temperatura y radiación solar <b>reales</b> de los últimos días para tus coordenadas (fuente: NASA POWER), y corre la fórmula FAO-56 día por día para mostrar cómo se hubiera comportado la humedad del suelo — y cuántas veces el sistema hubiera decidido regar — en condiciones reales de campo.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem">
+            <input type="text" id="val-lat" placeholder="Latitud (ej. 9.93)" style="padding:8px 10px;border-radius:7px;border:1px solid var(--border-strong);font-size:12px;background:var(--bg-card);color:var(--text-primary)">
+            <input type="text" id="val-lon" placeholder="Longitud (ej. -84.08)" style="padding:8px 10px;border-radius:7px;border:1px solid var(--border-strong);font-size:12px;background:var(--bg-card);color:var(--text-primary)">
+            <select id="val-dias" class="field-select"><option value="30">Últimos 30 días</option><option value="60">Últimos 60 días</option><option value="90">Últimos 90 días</option></select>
+          </div>
+          <button class="topbar-btn" onclick="runValidacionHistorica()">Correr validación histórica</button>
+          <div id="val-status" style="margin-top:0.75rem;font-size:11.5px;color:var(--text-muted)"></div>
+          <div class="chart-wrapper" style="height:240px;margin-top:1rem;"><canvas id="chart-validacion"></canvas></div>
+          <div id="val-resumen" style="margin-top:0.75rem;font-size:12px;color:var(--text-secondary);line-height:1.7"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="statusbar">
       <div class="status-item"><div class="status-dot ok" id="api-dot"></div><span id="api-status">API Claude</span></div>
       <div class="status-item"><div class="status-dot ok"></div><span>n8n workflow</span></div>
@@ -927,9 +1016,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     </div>
   </main>
 </div>
- 
+
 <div class="field-tooltip" id="field-tooltip"></div>
- 
+
 <button class="copilot-btn" onclick="toggleCopilot()" title="Preguntar al agente">
   <svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-7 7c0 2.1.9 3.9 2.3 5.2L7 21l4.2-1.5a7 7 0 1 0 .8-13.5Z"/><circle cx="9" cy="10" r="1" fill="white" stroke="none"/><circle cx="12" cy="10" r="1" fill="white" stroke="none"/><circle cx="15" cy="10" r="1" fill="white" stroke="none"/></svg>
 </button>
@@ -946,7 +1035,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     <button onclick="sendCopilotMessage()">Enviar</button>
   </div>
 </div>
- 
+
 <script>
 const WEBHOOK_URL = 'https://innowgp13.app.n8n.cloud/webhook/agente-hidrico';
 const SHARED_SHARE_URL = ''; // Completar con la URL de 'red-compartir' cuando publiques el flujo en n8n (ver README)
@@ -969,12 +1058,12 @@ function resetMapToSimulation() {
   if (mapNote) mapNote.textContent = 'Simulación basada en el promedio del campo';
   updateMapFromData();
 }
- 
+
 let fieldZones = [];
 let lastResponse = null;
- 
-let currentData = { ndvi: 0.60, temperatura_c: 25.0, humedad_suelo_pct: 50, precipitacion_mm: 5.0, dias_sin_lluvia: 5, etapa_fenologica: 'vegetativo', tipo_suelo: 'franco' };
- 
+
+let currentData = { ndvi: 0.60, temperatura_c: 25.0, humedad_suelo_pct: 50, precipitacion_mm: 5.0, dias_sin_lluvia: 5, etapa_fenologica: 'vegetativo', tipo_suelo: 'franco', cultivo: 'generico' };
+
 function updateSlider(key, value) {
   const v = parseFloat(value);
   if (key === 'ndvi') { currentData.ndvi = v; document.getElementById('val-ndvi').textContent = v.toFixed(2); }
@@ -988,14 +1077,14 @@ function updateSlider(key, value) {
   document.getElementById('status-sensors').textContent = `NDVI: ${currentData.ndvi.toFixed(2)} | Temp: ${currentData.temperatura_c.toFixed(1)}°C | Hum: ${currentData.humedad_suelo_pct}%`;
   updateMapFromData();
 }
- 
+
 function toggleOptionalData() {
   const panel = document.getElementById('optional-panel');
   const arrow = document.getElementById('optional-arrow');
   panel.classList.toggle('active');
   arrow.textContent = panel.classList.contains('active') ? '▴' : '▾';
 }
- 
+
 function toggleOptField(name) {
   if (name === 'radiacion') {
     const on = document.getElementById('chk-radiacion').checked;
@@ -1022,7 +1111,7 @@ function toggleOptField(name) {
     if (!on) { delete currentData.lat; delete currentData.lon; }
   }
 }
- 
+
 function useMyLocation() {
   if (!navigator.geolocation) { alert('Tu navegador no soporta geolocalización.'); return; }
   navigator.geolocation.getCurrentPosition(pos => {
@@ -1032,15 +1121,15 @@ function useMyLocation() {
     currentData.lon = pos.coords.longitude;
   }, () => alert('No se pudo obtener tu ubicación. Ingrésala manualmente.'));
 }
- 
+
 document.addEventListener('input', function(e) {
   if (e.target && e.target.id === 'txt-lat') currentData.lat = parseFloat(e.target.value) || undefined;
   if (e.target && e.target.id === 'txt-lon') currentData.lon = parseFloat(e.target.value) || undefined;
 });
- 
+
 let cropImageBase64 = null;
 let cropImageMediaType = null;
- 
+
 function previewCropImage(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -1055,7 +1144,7 @@ function previewCropImage(event) {
   };
   reader.readAsDataURL(file);
 }
- 
+
 async function analyzeImage() {
   const resultBox = document.getElementById('img-result');
   const btn = document.getElementById('img-analyze-btn');
@@ -1090,15 +1179,15 @@ async function analyzeImage() {
     btn.disabled = false; btn.textContent = 'Analizar imagen con Claude';
   }
 }
- 
+
 let usingImageZones = false;
- 
+
 const REGION_RANGES = {
   noroeste: { rows: [0,2], cols: [0,2] }, norte:    { rows: [0,2], cols: [3,4] }, noreste:  { rows: [0,2], cols: [5,7] },
   oeste:    { rows: [3,4], cols: [0,2] }, centro:   { rows: [3,4], cols: [3,4] }, este:     { rows: [3,4], cols: [5,7] },
   suroeste: { rows: [5,7], cols: [0,2] }, sur:      { rows: [5,7], cols: [3,4] }, sureste:  { rows: [5,7], cols: [5,7] }
 };
- 
+
 function applyImageZonesToMap(zonas) {
   const cells = document.querySelectorAll('.field-cell');
   if (!cells.length) return;
@@ -1123,20 +1212,20 @@ function applyImageZonesToMap(zonas) {
   const mapNote = document.getElementById('map-source-note');
   if (mapNote) mapNote.textContent = 'Mapa basado en el análisis real de la imagen subida.';
 }
- 
+
 document.addEventListener('input', function(e) {
   if (e.target && e.target.id === 'txt-dron') {
     currentData.observacion_dron = e.target.value || undefined;
   }
 });
- 
+
 document.addEventListener('DOMContentLoaded', function() {
   const chkRed = document.getElementById('chk-red-share');
   if (chkRed) chkRed.addEventListener('change', function() {
     document.getElementById('red-cuenca-field').style.display = this.checked ? 'block' : 'none';
   });
 });
- 
+
 function setSliders(d) {
   currentData = {...currentData, ...d};
   document.getElementById('sl-ndvi').value = Math.round(d.ndvi*100);
@@ -1152,7 +1241,7 @@ function setSliders(d) {
   document.getElementById('status-sensors').textContent = `NDVI: ${d.ndvi.toFixed(2)} | Temp: ${d.temperatura_c.toFixed(1)}°C | Hum: ${d.humedad_suelo_pct}%`;
   updateMapFromData();
 }
- 
+
 function applyPreset(name) {
   const presets = {
     optimo:  { ndvi:0.78, temperatura_c:23.5, humedad_suelo_pct:70, precipitacion_mm:14, dias_sin_lluvia:1 },
@@ -1162,38 +1251,63 @@ function applyPreset(name) {
   };
   setSliders(presets[name]);
 }
- 
+
 let demoRunning = false;
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
- 
+
 async function runDemoMode() {
   if (demoRunning) return;
   demoRunning = true;
   const btn = document.getElementById('demo-btn');
   btn.disabled = true;
   const originalText = btn.textContent;
- 
+
   const pasos = [
-    { label: 'Paso 1/3 — Estrés severo', preset: 'severo', espera: 4000 },
-    { label: 'Paso 2/3 — Riego aplicado, mejora parcial', preset: 'leve', espera: 4000 },
-    { label: 'Paso 3/3 — Cultivo normalizado', preset: 'optimo', espera: 0 }
+    { label: 'Paso 1/3 — Estrés severo', preset: 'severo', espera: 4000,
+      narracion: 'El campo entra en estrés hídrico severo: poca humedad, muchos días sin lluvia. Observa cómo el sistema detecta la condición y decide abrir la válvula automáticamente.' },
+    { label: 'Paso 2/3 — Riego aplicado, mejora parcial', preset: 'leve', espera: 4000,
+      narracion: 'Tras el riego, la humedad del suelo mejora a un nivel leve. El sistema reduce el porcentaje de apertura de la válvula, dosificando el riego según la nueva necesidad real.' },
+    { label: 'Paso 3/3 — Cultivo normalizado', preset: 'optimo', espera: 0,
+      narracion: 'El cultivo alcanza condiciones óptimas. El sistema cierra la válvula por completo, evitando desperdiciar agua cuando ya no hace falta regar.' }
   ];
- 
+
   document.querySelectorAll('.tab-btn').forEach(b => { if (b.getAttribute('onclick').indexOf("'decision'") !== -1) b.click(); });
- 
+  showDemoNarration('Iniciando demostración automática...');
+
   for (const paso of pasos) {
     btn.textContent = paso.label;
+    showDemoNarration(paso.narracion);
     applyPreset(paso.preset);
     await sleep(700);
     await fetchData();
     if (paso.espera) await sleep(paso.espera);
   }
- 
+
+  showDemoNarration('Demostración completa. El ciclo percibir → decidir → actuar ocurrió sin intervención humana en los tres pasos.');
+  await sleep(3500);
+  hideDemoNarration();
+
   btn.textContent = originalText;
   btn.disabled = false;
   demoRunning = false;
 }
- 
+
+function showDemoNarration(texto) {
+  let box = document.getElementById('demo-narration');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'demo-narration';
+    box.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:600px;width:92%;background:#1c1330;color:#fff;padding:14px 18px;border-radius:12px;font-family:var(--sans);font-size:13px;line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:2500;border-left:4px solid #8f5da6';
+    document.body.appendChild(box);
+  }
+  box.textContent = texto;
+  box.style.display = 'block';
+}
+function hideDemoNarration() {
+  const box = document.getElementById('demo-narration');
+  if (box) box.style.display = 'none';
+}
+
 function applyEdgeCase(name) {
   const cases = {
     ndvi_alto_hum_baja:        { ndvi:0.75, temperatura_c:29.0, humedad_suelo_pct:19, precipitacion_mm:0, dias_sin_lluvia:11 },
@@ -1205,7 +1319,7 @@ function applyEdgeCase(name) {
   document.querySelectorAll('.tab-btn').forEach(b => { if (b.getAttribute('onclick').indexOf("'decision'") !== -1) b.click(); });
   fetchData();
 }
- 
+
 const chartLabels = [], humHistory = [], ndviHistory = [], tempHistory = [], precHistory = [];
 const chartDefaults = {
   responsive: true, maintainAspectRatio: false,
@@ -1241,28 +1355,28 @@ function updateCharts() {
   precHistory.push(currentData.precipitacion_mm);
   chartMain.update(); chartTemp.update(); chartPrec.update();
 }
- 
+
 function computePredictions(data, nivel_alerta, claudeData) {
   const hum = parseFloat(data.humedad_suelo_pct);
   const temp = parseFloat(data.temperatura_c);
   const ndvi = parseFloat(data.ndvi);
   const dias = parseFloat(data.dias_sin_lluvia);
- 
+
   const etRate = (temp > 35 ? 3.5 : temp > 28 ? 2.5 : temp > 22 ? 1.8 : 1.2) + (dias > 10 ? 0.5 : 0);
   const humIn24 = Math.max(0, hum - etRate).toFixed(1);
- 
+
   let diasCriticos = claudeData && claudeData.dias_sin_intervencion !== undefined ? claudeData.dias_sin_intervencion : null;
   if (diasCriticos === null) {
     diasCriticos = hum > 25 ? Math.round((hum - 25) / etRate) : 0;
   }
- 
+
   document.getElementById('pred-dias').textContent = diasCriticos + 'd';
   document.getElementById('pred-dias').style.color = diasCriticos <= 1 ? 'var(--red)' : diasCriticos <= 5 ? 'var(--amber)' : 'var(--green-dark)';
   document.getElementById('pred-dias-sub').textContent = diasCriticos <= 1 ? 'Ya en estrés crítico' : 'Sin intervención, estimado IA';
   document.getElementById('pred-hum24').textContent = humIn24 + '%';
   document.getElementById('pred-hum24').style.color = humIn24 < 30 ? 'var(--red)' : humIn24 < 50 ? 'var(--amber)' : 'var(--blue)';
   document.getElementById('pred-hum24-sub').textContent = humIn24 < 30 ? 'Nivel crítico proyectado' : 'Dentro del rango';
- 
+
   const bars = document.getElementById('forecast-bars');
   bars.innerHTML = '';
   for (let h = 0; h <= 7; h++) {
@@ -1275,7 +1389,7 @@ function computePredictions(data, nivel_alerta, claudeData) {
       <div class="forecast-hour">+${h}h</div>
     </div>`;
   }
- 
+
   const timeline = document.getElementById('risk-timeline');
   const events = [];
   if (hum > 25) {
@@ -1287,14 +1401,14 @@ function computePredictions(data, nivel_alerta, claudeData) {
     events.push({ label: 'Estrés crítico activo', time: 'Ahora', desc: 'Se requiere intervención inmediata', color: '#b23a2c' });
   }
   events.push({ label: 'Revisión recomendada', time: 'En 24 horas', desc: 'Verificar condiciones del cultivo', color: '#2d6e8f' });
- 
+
   timeline.innerHTML = events.map((ev, i) => `
     <div class="timeline-item">
       <div class="timeline-time">${ev.time}</div>
       <div class="timeline-dot-col"><div class="timeline-dot" style="background:${ev.color}"></div>${i < events.length-1 ? '<div class="timeline-line"></div>' : ''}</div>
       <div class="timeline-content"><div class="timeline-label">${ev.label}</div><div class="timeline-desc">${ev.desc}</div></div>
     </div>`).join('');
- 
+
   const irrWin = document.getElementById('irrigation-window');
   if (nivel_alerta === 'NORMAL') {
     irrWin.innerHTML = `<span style="color:var(--green-dark);font-weight:600">Sin necesidad de riego en este momento.</span><br><br>
@@ -1307,15 +1421,23 @@ function computePredictions(data, nivel_alerta, claudeData) {
     <span style="color:var(--text-secondary)">Humedad en ${hum}% — por debajo del punto de marchitez permanente para la mayoría de cultivos.<br>NDVI ${ndvi.toFixed(2)} indica posible daño foliar — evaluar cultivo en campo.</span>`;
   }
 }
- 
+
+const PRECIO_AGUA_COLONES_M3 = 1.29; // Canon de aprovechamiento de agua, uso agropecuario, Costa Rica
+
+function litrosAColones(litros) {
+  return (litros / 1000) * PRECIO_AGUA_COLONES_M3;
+}
+
 function updateImpact(claudeData, nivel_alerta) {
   const diasNo = claudeData && claudeData.dias_sin_intervencion !== undefined ? claudeData.dias_sin_intervencion : '—';
   const litros = claudeData && claudeData.litros_ahorrados_estimados !== undefined ? claudeData.litros_ahorrados_estimados : 0;
   document.getElementById('cmp-dias-no').textContent = diasNo === 0 ? 'Crítico ahora' : diasNo + ' días';
   document.getElementById('water-saved-val').textContent = litros + ' litros/m²';
   document.getElementById('cmp-agua-yes').textContent = litros > 0 ? ('−' + litros + ' L/m²') : 'Riego activado';
+  const colones = litrosAColones(litros);
+  document.getElementById('water-saved-colones').textContent = litros > 0 ? `(≈ ₡${colones.toFixed(2)} por m² de parcela)` : '';
 }
- 
+
 function initMap() {
   const grid = document.getElementById('field-grid');
   grid.innerHTML = '';
@@ -1362,7 +1484,7 @@ function showTooltip(e, zone, idx) {
   t.style.display = 'block'; t.style.left = (e.clientX + 12) + 'px'; t.style.top = (e.clientY - 10) + 'px';
 }
 function hideTooltip() { document.getElementById('field-tooltip').style.display = 'none'; }
- 
+
 function updateValve(state, aperturePct) {
   const text = document.getElementById('valve-text');
   const sub = document.getElementById('valve-sub');
@@ -1370,11 +1492,11 @@ function updateValve(state, aperturePct) {
   const isOpen = state === 'ABIERTA';
   const pct = (typeof aperturePct === 'number' && !isNaN(aperturePct)) ? Math.max(0, Math.min(100, aperturePct)) : (isOpen ? 100 : 0);
   const isPartial = pct > 0 && pct < 100;
- 
+
   text.className = pct > 0 ? 'valve-state-text open' : 'valve-state-text closed';
   text.textContent = pct === 0 ? 'CERRADA' : pct === 100 ? 'ABIERTA' : `ABIERTA ${Math.round(pct)}%`;
   sub.textContent = pct === 0 ? 'Sin flujo activo' : isPartial ? 'Riego dosificado' : 'Riego activo';
- 
+
   if (label3d) {
     label3d.textContent = pct === 0 ? 'CERRADA' : pct === 100 ? 'ABIERTA' : `ABIERTA ${Math.round(pct)}%`;
     label3d.style.color = pct === 0 ? 'var(--red)' : isPartial ? 'var(--amber)' : 'var(--green-dark)';
@@ -1386,11 +1508,12 @@ function updateAlert(level) {
   const text = document.getElementById('alert-text');
   const segs = [document.getElementById('seg-1'),document.getElementById('seg-2'),document.getElementById('seg-3')];
   segs.forEach(s => s.style.background = 'var(--border-strong)');
-  if (level === 'NORMAL') { badge.className='alert-badge normal'; text.textContent='NORMAL'; segs[0].style.background='var(--green)'; }
-  else if (level === 'LEVE') { badge.className='alert-badge leve'; text.textContent='LEVE'; segs[0].style.background='var(--amber)'; segs[1].style.background='var(--amber)'; }
-  else { badge.className='alert-badge severo'; text.textContent='SEVERO'; segs.forEach(s => s.style.background='var(--red)'); }
+  const iconos = { NORMAL: '✓', LEVE: '▲', SEVERO: '⛔' };
+  if (level === 'NORMAL') { badge.className='alert-badge normal'; text.textContent=iconos.NORMAL+' NORMAL'; segs[0].style.background='var(--green)'; }
+  else if (level === 'LEVE') { badge.className='alert-badge leve'; text.textContent=iconos.LEVE+' LEVE'; segs[0].style.background='var(--amber)'; segs[1].style.background='var(--amber)'; }
+  else { badge.className='alert-badge severo'; text.textContent=iconos.SEVERO+' SEVERO'; segs.forEach(s => s.style.background='var(--red)'); }
 }
- 
+
 function toggleReasoning() {
   const panel = document.getElementById('reasoning-panel');
   const arrow = document.getElementById('reasoning-arrow');
@@ -1412,7 +1535,7 @@ function renderReasoning(razonamiento) {
     </div>`).join('') + '</div>';
   renderLimitingFactor(razonamiento);
 }
- 
+
 function renderLimitingFactor(razonamiento) {
   const wrap = document.getElementById('limiting-factor-wrap');
   if (!razonamiento || !Array.isArray(razonamiento) || razonamiento.length === 0) { wrap.innerHTML = ''; return; }
@@ -1425,7 +1548,7 @@ function renderLimitingFactor(razonamiento) {
       <div class="limiting-factor-text">Factor limitante identificado: <b>${top.factor}</b><br>${top.analisis || ''}</div>
     </div>`;
 }
- 
+
 function addLogEntry(data) {
   const now = new Date();
   const time = now.toLocaleTimeString('es-CR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -1441,7 +1564,7 @@ function addLogEntry(data) {
   container.insertBefore(entry, container.firstChild);
   document.getElementById('log-count').textContent = logEntries.length + ' registro' + (logEntries.length !== 1 ? 's' : '');
 }
- 
+
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -1450,7 +1573,17 @@ function switchTab(name, btn) {
   if (name === 'valve3d' && window.resizeValve3D) window.resizeValve3D();
 }
 window.addEventListener('resize', () => { if (window.resizeValve3D) window.resizeValve3D(); });
- 
+
+function toggleQR() {
+  const modal = document.getElementById('qr-modal');
+  const showing = modal.style.display === 'flex';
+  if (showing) { modal.style.display = 'none'; return; }
+  const url = window.location.href.split('?')[0];
+  document.getElementById('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(url);
+  document.getElementById('qr-url-label').textContent = url;
+  modal.style.display = 'flex';
+}
+
 function toggleAuto() {
   autoActive = !autoActive;
   const btn = document.getElementById('auto-btn');
@@ -1465,10 +1598,10 @@ function startAutoCountdown() {
   countdownTimer = setInterval(() => { cd--; document.getElementById('auto-countdown').textContent = cd + 's'; if (cd <= 0) clearInterval(countdownTimer); }, 1000);
   autoTimer = setTimeout(() => { if (autoActive) { fetchData(); startAutoCountdown(); } }, autoInterval * 1000);
 }
- 
+
 const FAILSAFE_MINUTES = 5;
 let failsafeTimer = null;
- 
+
 function scheduleFailsafe(valvula) {
   if (failsafeTimer) { clearTimeout(failsafeTimer); failsafeTimer = null; }
   if (valvula !== 'ABIERTA') return;
@@ -1476,7 +1609,7 @@ function scheduleFailsafe(valvula) {
     triggerFailsafeClose();
   }, FAILSAFE_MINUTES * 60 * 1000);
 }
- 
+
 function triggerFailsafeClose() {
   updateValve('CERRADA');
   updateAlert('NORMAL');
@@ -1486,7 +1619,7 @@ function triggerFailsafeClose() {
   document.getElementById('decision-just').style.color = 'var(--amber)';
   addLogEntry({ valvula: 'CERRADA', nivel_alerta: 'NORMAL', accion: 'Failsafe: cierre automático por inactividad del agente' });
 }
- 
+
 async function fetchData() {
   if (isLoading) return;
   isLoading = true;
@@ -1494,17 +1627,19 @@ async function fetchData() {
   const overlay = document.getElementById('loading-overlay');
   btn.disabled = true; btn.textContent = 'Analizando...';
   overlay.classList.add('active');
- 
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 20000);
- 
+
   try {
     const paramsObj = {
       ndvi: currentData.ndvi, temperatura_c: currentData.temperatura_c,
       humedad_suelo_pct: currentData.humedad_suelo_pct, precipitacion_mm: currentData.precipitacion_mm,
       dias_sin_lluvia: currentData.dias_sin_lluvia,
       etapa_fenologica: currentData.etapa_fenologica || 'vegetativo',
-      tipo_suelo: currentData.tipo_suelo || 'franco'
+      tipo_suelo: currentData.tipo_suelo || 'franco',
+      cultivo: currentData.cultivo || 'generico',
+      idioma: currentLang
     };
     if (currentData.radiacion_solar !== undefined) paramsObj.radiacion_solar = currentData.radiacion_solar;
     if (currentData.temperatura_min_c !== undefined) paramsObj.temperatura_min_c = currentData.temperatura_min_c;
@@ -1519,7 +1654,7 @@ async function fetchData() {
       paramsObj.decisiones_previas = JSON.stringify(decisionesHistorial.slice(-3));
     }
     const params = new URLSearchParams(paramsObj);
- 
+
     let res;
     try {
       res = await fetch(WEBHOOK_URL + '?' + params.toString(), { signal: controller.signal });
@@ -1530,11 +1665,11 @@ async function fetchData() {
       throw { tipo: 'red', mensaje: 'No se pudo contactar a n8n. Verifica tu conexión a internet o que la URL del webhook sea correcta.' };
     }
     clearTimeout(timeoutId);
- 
+
     if (!res.ok) {
       throw { tipo: 'http', mensaje: `n8n respondió con error HTTP ${res.status}. Revisa el nodo HTTP Request en n8n (posible problema con la API key de Anthropic o el body enviado).` };
     }
- 
+
     let data;
     try {
       data = await res.json();
@@ -1542,13 +1677,13 @@ async function fetchData() {
     } catch (parseErr) {
       throw { tipo: 'json', mensaje: 'La respuesta de n8n no vino en formato JSON válido. Revisa el nodo Code que limpia la respuesta de Claude — probablemente Claude devolvió texto con formato inesperado.' };
     }
- 
+
     if (!data || !data.valvula) {
       throw { tipo: 'estructura', mensaje: 'La respuesta llegó pero no tiene el formato esperado (falta el campo "valvula"). Revisa el prompt de Claude en n8n.' };
     }
- 
+
     lastResponse = data;
- 
+
     updateValve(data.valvula, data.porcentaje_apertura);
     updateAlert(data.nivel_alerta);
     document.getElementById('decision-action').textContent = data.accion;
@@ -1556,7 +1691,7 @@ async function fetchData() {
     document.getElementById('decision-just').style.fontStyle = 'normal';
     document.getElementById('decision-just').style.color = 'var(--text-secondary)';
     renderReasoning(data.razonamiento);
- 
+
     const faoBadge = document.getElementById('fao56-badge');
     if (faoBadge && typeof data.et0_mm === 'number') {
       faoBadge.style.display = 'block';
@@ -1566,51 +1701,127 @@ async function fetchData() {
     } else if (faoBadge) {
       faoBadge.style.display = 'none';
     }
- 
+
+    const confBadge = document.getElementById('confianza-badge');
+    if (confBadge) {
+      if (data.confianza) {
+        const nivelConf = (data.confianza || '').toUpperCase();
+        const colores = { ALTA: ['var(--green-dim)', 'var(--green-dark)'], MEDIA: ['var(--amber-dim)', 'var(--amber)'], BAJA: ['var(--red-dim)', 'var(--red)'] };
+        const [bg, fg] = colores[nivelConf] || colores.MEDIA;
+        confBadge.style.display = 'inline-block';
+        confBadge.style.background = bg;
+        confBadge.style.color = fg;
+        confBadge.textContent = 'Confianza: ' + nivelConf;
+        confBadge.title = data.confianza_motivo || '';
+      } else {
+        confBadge.style.display = 'none';
+      }
+    }
+
     const now = new Date();
     const timeStr = now.toLocaleTimeString('es-CR');
     document.getElementById('decision-time').textContent = timeStr;
     document.getElementById('last-update').textContent = timeStr;
     document.getElementById('api-dot').className = 'status-dot ok';
     document.getElementById('api-status').textContent = 'API Claude — OK';
- 
+
     addLogEntry(data);
     guardarLecturaSupabase(currentData, data);
     updateCharts();
     updateMapFromData();
     computePredictions(currentData, data.nivel_alerta, data);
     updateImpact(data, data.nivel_alerta);
- 
+
     decisionesHistorial.push({ valvula: data.valvula, nivel_alerta: data.nivel_alerta, accion: data.accion });
     if (decisionesHistorial.length > 3) decisionesHistorial.shift();
- 
+
     if (typeof data.litros_ahorrados_estimados === 'number') {
       aguaAhorradaAcumulada += data.litros_ahorrados_estimados;
       analisisAcumulados++;
       const countEl = document.getElementById('acumulado-count');
       const valEl = document.getElementById('water-saved-acumulado');
+      const colonesEl = document.getElementById('water-saved-acumulado-colones');
       if (countEl) countEl.textContent = analisisAcumulados;
       if (valEl) valEl.textContent = Math.round(aguaAhorradaAcumulada) + ' litros/m²';
+      if (colonesEl) colonesEl.textContent = `(≈ ₡${litrosAColones(aguaAhorradaAcumulada).toFixed(2)} por m²)`;
     }
- 
+
     scheduleFailsafe(data.valvula);
- 
+
   } catch (err) {
     clearTimeout(timeoutId);
     const info = err && err.tipo ? err : { tipo: 'desconocido', mensaje: (err && err.message) || 'Error desconocido al contactar el agente.' };
     const etiquetas = { timeout: 'Tiempo de espera agotado', red: 'Sin conexión con n8n', http: 'Error de n8n / Claude', json: 'Respuesta mal formada', estructura: 'Formato inesperado', desconocido: 'Error' };
-    document.getElementById('decision-action').textContent = etiquetas[info.tipo] || 'Error de conexión con el agente';
-    document.getElementById('decision-just').textContent = info.mensaje;
-    document.getElementById('decision-just').style.fontStyle = 'italic';
-    document.getElementById('decision-just').style.color = 'var(--red)';
     document.getElementById('api-dot').className = 'status-dot error';
     document.getElementById('api-status').textContent = 'API Claude — ' + (etiquetas[info.tipo] || 'Error');
+    runOfflineFallback(info, etiquetas[info.tipo] || 'Error de conexión');
   } finally {
     isLoading = false; btn.disabled = false; btn.textContent = 'Analizar';
     overlay.classList.remove('active');
   }
 }
- 
+
+// ===== MODO OFFLINE: recomendación básica sin Claude, calculada localmente =====
+function calcularFAO56Local(d) {
+  const KC_TABLE_GENERICO = { germinacion: 0.40, vegetativo: 0.75, floracion: 1.05, fructificacion: 1.05, maduracion: 0.85 };
+  const KC_POR_CULTIVO = {
+    generico: KC_TABLE_GENERICO,
+    cafe:    { germinacion: 0.90, vegetativo: 0.95, floracion: 1.00, fructificacion: 1.05, maduracion: 0.95 },
+    frijol:  { germinacion: 0.40, vegetativo: 0.75, floracion: 1.05, fructificacion: 1.00, maduracion: 0.35 },
+    tomate:  { germinacion: 0.60, vegetativo: 0.80, floracion: 1.15, fructificacion: 1.15, maduracion: 0.80 },
+    chile:   { germinacion: 0.60, vegetativo: 0.85, floracion: 1.05, fructificacion: 1.05, maduracion: 0.90 },
+    maiz:    { germinacion: 0.30, vegetativo: 0.75, floracion: 1.20, fructificacion: 1.15, maduracion: 0.60 }
+  };
+  const TAW_TABLE = { arenoso: 80, franco_arenoso: 150, franco: 210, franco_arcilloso: 180, arcilloso: 160 };
+  const ROOT_TABLE = { germinacion: 0.15, vegetativo: 0.40, floracion: 0.60, fructificacion: 0.70, maduracion: 0.70 };
+
+  const rangoTermico = 10; // supuesto por defecto sin datos min/max
+  const Ra_mm_aprox = 15; // aproximacion conservadora sin coordenadas/NASA
+  const ET0 = 0.0023 * (d.temperatura_c + 17.8) * Math.sqrt(rangoTermico) * Ra_mm_aprox;
+  const tablaKc = KC_POR_CULTIVO[d.cultivo] || KC_TABLE_GENERICO;
+  const Kc = tablaKc[d.etapa_fenologica] || 0.75;
+  const ETc = ET0 * Kc;
+
+  const tawPorMetro = TAW_TABLE[d.tipo_suelo] || 210;
+  const raiz = ROOT_TABLE[d.etapa_fenologica] || 0.40;
+  const TAW_total = tawPorMetro * raiz;
+  const aguaAhora = TAW_total * (d.humedad_suelo_pct / 100);
+  const umbralCritico = TAW_total * 0.5;
+  const diasCriticos = ETc > 0 ? Math.max(0, Math.floor((aguaAhora - umbralCritico) / ETc)) : 99;
+
+  let nivel = 'NORMAL', aperturaPct = 0;
+  if (diasCriticos <= 1) { nivel = 'SEVERO'; aperturaPct = 80; }
+  else if (diasCriticos <= 4) { nivel = 'LEVE'; aperturaPct = 35; }
+
+  return { et0: ET0, etc: ETc, taw: TAW_total, diasCriticos, nivel, aperturaPct };
+}
+
+function runOfflineFallback(errorInfo, etiquetaError) {
+  const calc = calcularFAO56Local(currentData);
+  const valvula = calc.aperturaPct > 0 ? 'ABIERTA' : 'CERRADA';
+
+  document.getElementById('decision-action').textContent = `[MODO OFFLINE] ${valvula} ${calc.aperturaPct > 0 ? calc.aperturaPct + '%' : ''}`;
+  document.getElementById('decision-just').innerHTML = `<b style="color:var(--amber)">Sin conexión con Claude/n8n (${etiquetaError}).</b> Esta es una recomendación básica calculada localmente con la fórmula FAO-56 (sin el razonamiento de IA). Días estimados hasta estrés crítico: ${calc.diasCriticos}. Reintenta cuando se restablezca la conexión para obtener el análisis completo.`;
+  document.getElementById('decision-just').style.fontStyle = 'italic';
+  document.getElementById('decision-just').style.color = 'var(--amber)';
+
+  updateValve(valvula, calc.aperturaPct);
+  updateAlert(calc.nivel);
+
+  const faoBadge = document.getElementById('fao56-badge');
+  if (faoBadge) {
+    faoBadge.style.display = 'block';
+    document.getElementById('fao-et0').textContent = calc.et0.toFixed(2);
+    document.getElementById('fao-etc').textContent = calc.etc.toFixed(2);
+    document.getElementById('fao-taw').textContent = calc.taw.toFixed(1);
+  }
+
+  const toggle = document.getElementById('reasoning-toggle');
+  if (toggle) toggle.style.display = 'none';
+  const limWrap = document.getElementById('limiting-factor-wrap');
+  if (limWrap) limWrap.innerHTML = '';
+}
+
 function exportPDF() {
   if (logEntries.length === 0) { alert('No hay registros. Realiza al menos un análisis primero.'); return; }
   const { jsPDF } = window.jspdf;
@@ -1622,21 +1833,21 @@ function exportPDF() {
   doc.text('Monitor de Estres Hidrico — Reporte de Decisiones IA', 20, 29);
   doc.text('Generado: ' + new Date().toLocaleString('es-CR'), 20, 35);
   doc.setDrawColor(125,44,68); doc.setLineWidth(0.3); doc.line(20,39,190,39);
- 
+
   doc.setTextColor(107,86,66); doc.setFontSize(8);
   doc.text('DATOS INGRESADOS (ultimo analisis)', 20, 47);
   doc.setTextColor(46,32,19); doc.setFontSize(9);
   const d = currentData;
   doc.text(`NDVI: ${d.ndvi.toFixed(2)}   Temp: ${d.temperatura_c}°C   Hum suelo: ${d.humedad_suelo_pct}%   Precip: ${d.precipitacion_mm}mm   Dias sin lluvia: ${d.dias_sin_lluvia}`, 20, 54);
- 
+
   if (lastResponse && lastResponse.litros_ahorrados_estimados !== undefined) {
     doc.setTextColor(45,110,143); doc.setFontSize(9);
     doc.text(`Ahorro estimado de agua: ${lastResponse.litros_ahorrados_estimados} litros/m2`, 20, 60);
   }
- 
+
   doc.line(20,64,190,64);
   doc.setTextColor(107,86,66); doc.setFontSize(8); doc.text('HISTORIAL DE DECISIONES', 20, 71);
- 
+
   let y = 79;
   logEntries.slice(0,16).forEach((entry, i) => {
     if (y > 270) return;
@@ -1654,42 +1865,42 @@ function exportPDF() {
     y += 13;
     if (i < logEntries.length-1) { doc.setDrawColor(230,220,198); doc.setLineWidth(0.1); doc.line(20,y-3,190,y-3); }
   });
- 
+
   doc.setTextColor(163,146,124); doc.setFontSize(7);
   doc.text('AgroSentinel — Intel InNow Technology Fest 2026', 20, 287);
   doc.save('AgroSentinel_Reporte_' + new Date().toISOString().slice(0,10) + '.pdf');
 }
- 
+
 let simChart = null;
 function runSimulation() {
   const days = parseInt(document.getElementById('sl-sim-dias').value);
   const rainFactor = parseFloat(document.getElementById('sl-sim-lluvia').value);
   const freq = parseInt(document.getElementById('sl-sim-freq').value);
   const irrigAmt = parseFloat(document.getElementById('sl-sim-mm').value);
- 
+
   const temp = currentData.temperatura_c;
   const etRate = (temp > 35 ? 3.5 : temp > 28 ? 2.5 : temp > 22 ? 1.8 : 1.2) + (currentData.dias_sin_lluvia > 10 ? 0.5 : 0);
   const dailyRainGain = rainFactor * 3;
- 
+
   const labels = [];
   const sinRiego = [];
   const conRiego = [];
   let humSin = currentData.humedad_suelo_pct;
   let humCon = currentData.humedad_suelo_pct;
   let diaCriticoSin = null, diaCriticoCon = null;
- 
+
   for (let d = 0; d <= days; d++) {
     labels.push('D' + d);
     sinRiego.push(Math.round(humSin * 10) / 10);
     conRiego.push(Math.round(humCon * 10) / 10);
     if (humSin < 25 && diaCriticoSin === null) diaCriticoSin = d;
     if (humCon < 25 && diaCriticoCon === null) diaCriticoCon = d;
- 
+
     humSin = Math.min(100, Math.max(0, humSin - etRate + dailyRainGain));
     humCon = Math.min(100, Math.max(0, humCon - etRate + dailyRainGain));
     if (d > 0 && d % freq === 0) humCon = Math.min(100, humCon + irrigAmt);
   }
- 
+
   const ctx = document.getElementById('chart-sim');
   if (simChart) simChart.destroy();
   simChart = new Chart(ctx, {
@@ -1707,13 +1918,13 @@ function runSimulation() {
       }
     }
   });
- 
+
   const summary = document.getElementById('sim-summary');
   const txtSin = diaCriticoSin !== null ? `día ${diaCriticoSin}` : `no se alcanza en ${days} días`;
   const txtCon = diaCriticoCon !== null ? `día ${diaCriticoCon}` : `no se alcanza en ${days} días`;
   summary.innerHTML = `<b style="color:var(--red)">Sin riego:</b> estrés crítico proyectado en ${txtSin}.<br><b style="color:var(--green-dark)">Con riego cada ${freq} días (+${irrigAmt}%):</b> estrés crítico proyectado en ${txtCon}.`;
 }
- 
+
 function shareToNetwork() {
   const checked = document.getElementById('chk-red-share').checked;
   const status = document.getElementById('red-status');
@@ -1732,7 +1943,7 @@ function shareToNetwork() {
   }).then(r => r.ok ? status.textContent = 'Lectura compartida con la red de tu cuenca.' : Promise.reject())
     .catch(() => status.textContent = 'No se pudo enviar la lectura. Verifica el endpoint "red-compartir".');
 }
- 
+
 function fetchNetworkStats() {
   const status = document.getElementById('red-status');
   if (!SHARED_STATS_URL) {
@@ -1755,11 +1966,11 @@ function fetchNetworkStats() {
     status.innerHTML = `<div style="font-size:10.5px;color:var(--text-muted);margin-bottom:6px;font-family:var(--mono)">Total de lecturas (30 días): ${data.total_lecturas}</div>${rows}`;
   }).catch(() => status.textContent = 'No se pudo consultar la red compartida. Verifica el endpoint "red-stats".');
 }
- 
+
 function toggleCopilot() {
   document.getElementById('copilot-panel').classList.toggle('open');
 }
- 
+
 function addCopilotMsg(text, who) {
   const box = document.getElementById('copilot-messages');
   const div = document.createElement('div');
@@ -1768,19 +1979,19 @@ function addCopilotMsg(text, who) {
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
 }
- 
+
 async function sendCopilotMessage() {
   const input = document.getElementById('copilot-input');
   const msg = input.value.trim();
   if (!msg) return;
   addCopilotMsg(msg, 'user');
   input.value = '';
- 
+
   if (!CHAT_WEBHOOK_URL) {
     addCopilotMsg('El chat aún no está conectado — falta publicar el webhook del copiloto en n8n (ver README del proyecto). Mientras tanto, esta ventana funciona pero no tiene a quién preguntarle.', 'bot');
     return;
   }
- 
+
   addCopilotMsg('Pensando...', 'bot');
   try {
     const res = await fetch(CHAT_WEBHOOK_URL, {
@@ -1804,33 +2015,33 @@ async function sendCopilotMessage() {
     addCopilotMsg('No se pudo conectar con el copiloto. Verifica el webhook en n8n.', 'bot');
   }
 }
- 
+
 initMap();
 updateMapFromData();
 document.getElementById('status-sensors').textContent = `NDVI: ${currentData.ndvi.toFixed(2)} | Temp: ${currentData.temperatura_c}°C | Hum: ${currentData.humedad_suelo_pct}%`;
 </script>
- 
- 
+
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 // ===== SUPABASE AUTH =====
 const SUPABASE_URL = 'https://facjhtaljvpaadckwxlq.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_vx6W8FtzXRYZeQSG7DPSDA_qaiA0D_g';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
- 
+
 let authMode = 'login';
 let currentUser = null;
- 
+
 function showApp() { document.getElementById('login-screen').classList.add('hidden'); }
 function showLogin() { document.getElementById('login-screen').classList.remove('hidden'); }
- 
+
 function setSessionChip(nombre) {
   const chip = document.getElementById('session-chip');
   const userEl = document.getElementById('session-user');
   if (nombre) { userEl.textContent = nombre; chip.style.display = 'flex'; }
   else { chip.style.display = 'none'; }
 }
- 
+
 function toggleAuthMode() {
   authMode = authMode === 'login' ? 'register' : 'login';
   const title = document.getElementById('login-title');
@@ -1844,7 +2055,7 @@ function toggleAuthMode() {
   document.getElementById('login-status').textContent = '';
   document.getElementById('login-status').className = 'login-status';
 }
- 
+
 async function attemptLogin() {
   const email = document.getElementById('login-user').value.trim();
   const pass = document.getElementById('login-pass').value;
@@ -1852,16 +2063,16 @@ async function attemptLogin() {
   const btn = document.getElementById('login-btn');
   status.className = 'login-status';
   status.textContent = '';
- 
+
   if (!email || !pass) {
     status.textContent = 'Ingresá tu correo y contraseña.';
     status.classList.add('error');
     return;
   }
- 
+
   btn.disabled = true;
   btn.textContent = 'Procesando...';
- 
+
   try {
     if (authMode === 'login') {
       const { error } = await sb.auth.signInWithPassword({ email, password: pass });
@@ -1880,16 +2091,16 @@ async function attemptLogin() {
     btn.textContent = authMode === 'login' ? 'Iniciar sesión' : 'Registrarme';
   }
 }
- 
+
 async function loginWithGoogle() {
   await sb.auth.signInWithOAuth({ provider: 'google' });
 }
- 
+
 async function logout() {
   await sb.auth.signOut();
   location.reload();
 }
- 
+
 sb.auth.onAuthStateChange((event, session) => {
   if (session && session.user) {
     currentUser = session.user;
@@ -1901,7 +2112,7 @@ sb.auth.onAuthStateChange((event, session) => {
     showLogin();
   }
 });
- 
+
 sb.auth.getSession().then(({ data }) => {
   if (data.session && data.session.user) {
     currentUser = data.session.user;
@@ -1911,11 +2122,12 @@ sb.auth.getSession().then(({ data }) => {
     showLogin();
   }
 });
- 
+
 async function guardarLecturaSupabase(datos, decision) {
   if (!currentUser) return;
   try {
     await sb.from('Lecturas').insert({
+      user_id: currentUser.id,
       ndvi: datos.ndvi,
       temperatura_c: datos.temperatura_c,
       humedad_suelo_pct: datos.humedad_suelo_pct,
@@ -1929,10 +2141,214 @@ async function guardarLecturaSupabase(datos, decision) {
     console.warn('No se pudo guardar la lectura en Supabase:', err);
   }
 }
+
+// ===== MI HISTORIAL REAL (Supabase) =====
+let chartHistorial = null;
+async function cargarHistorialReal() {
+  const status = document.getElementById('historial-status');
+  const tablaDiv = document.getElementById('historial-tabla');
+  if (!currentUser) { status.textContent = 'Debes iniciar sesión para ver tu historial.'; return; }
+  status.textContent = 'Consultando Supabase...';
+  try {
+    const { data, error } = await sb.from('Lecturas')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: true })
+      .limit(200);
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      status.textContent = 'Aún no tienes lecturas guardadas. Haz un análisis en la pestaña "Decisión" primero.';
+      const ctx = document.getElementById('chart-historial');
+      if (chartHistorial) { chartHistorial.destroy(); chartHistorial = null; }
+      tablaDiv.innerHTML = '';
+      return;
+    }
+    status.textContent = `${data.length} lecturas encontradas (todas tus sesiones, no solo la actual).`;
+
+    const labels = data.map(r => new Date(r.created_at).toLocaleDateString('es-CR', { day: '2-digit', month: '2-digit' }));
+    const humedades = data.map(r => r.humedad_suelo_pct);
+    const ndvis = data.map(r => (r.ndvi || 0) * 100);
+
+    const ctx = document.getElementById('chart-historial');
+    if (chartHistorial) chartHistorial.destroy();
+    chartHistorial = new Chart(ctx, {
+      type: 'line',
+      data: { labels, datasets: [
+        { label: 'Humedad %', data: humedades, borderColor: '#1a9e4a', backgroundColor: 'rgba(26,158,74,0.08)', tension: 0.3, pointRadius: 2, fill: true },
+        { label: 'NDVI×100', data: ndvis, borderColor: '#2874a6', backgroundColor: 'rgba(40,116,166,0.08)', tension: 0.3, pointRadius: 2, fill: true }
+      ]},
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true } }, scales: { y: { min: 0, max: 100 } } }
+    });
+
+    const filas = data.slice(-15).reverse().map(r => `
+      <div style="display:grid;grid-template-columns:100px 70px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
+        <span style="color:var(--text-muted);font-family:var(--mono)">${new Date(r.created_at).toLocaleString('es-CR')}</span>
+        <span style="font-family:var(--mono);font-weight:700;color:${r.valvula==='ABIERTA'?'var(--green-dark)':'var(--red)'}">${r.valvula}</span>
+        <span style="color:var(--text-secondary)">${r.accion || ''}</span>
+      </div>`).join('');
+    tablaDiv.innerHTML = `<div style="font-size:10px;color:var(--text-muted);font-family:var(--mono);margin-bottom:6px">Últimas 15 lecturas:</div>${filas}`;
+  } catch (err) {
+    status.textContent = 'Error al consultar Supabase: ' + err.message;
+  }
+}
+
+// ===== VALIDACIÓN HISTÓRICA CON NASA POWER (deterministico, sin Claude) =====
+let chartValidacion = null;
+async function runValidacionHistorica() {
+  const status = document.getElementById('val-status');
+  const resumen = document.getElementById('val-resumen');
+  const lat = parseFloat(document.getElementById('val-lat').value);
+  const lon = parseFloat(document.getElementById('val-lon').value);
+  const dias = parseInt(document.getElementById('val-dias').value);
+
+  if (isNaN(lat) || isNaN(lon)) { status.textContent = 'Ingresa latitud y longitud válidas.'; return; }
+
+  status.textContent = 'Consultando NASA POWER (datos climáticos históricos reales)...';
+  resumen.innerHTML = '';
+
+  const hoy = new Date();
+  const fin = new Date(hoy); fin.setDate(fin.getDate() - 1);
+  const inicio = new Date(hoy); inicio.setDate(inicio.getDate() - dias);
+  const fmt = d => d.toISOString().slice(0,10).replace(/-/g,'');
+
+  const url = `https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN&community=AG&longitude=${lon}&latitude=${lat}&start=${fmt(inicio)}&end=${fmt(fin)}&format=JSON`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('NASA POWER respondió con error HTTP ' + res.status);
+    const data = await res.json();
+    const params = data.properties.parameter;
+    const fechas = Object.keys(params.T2M).filter(k => params.T2M[k] > -900);
+
+    if (fechas.length === 0) throw new Error('No se recibieron datos válidos para esas coordenadas.');
+
+    // Simulación FAO-56 dia por dia (deterministico, mismo motor que el modo offline)
+    const KC = 0.75; // generico vegetativo, para esta validacion de referencia
+    const TAW_total = 210 * 0.40; // suelo franco, raiz vegetativa, valores por defecto
+    let humedad = 70; // arranca en buen estado
+    const labels = [], serieHumedad = [], riegoDias = [];
+    let totalRiegos = 0;
+
+    fechas.forEach(fecha => {
+      const tmean = params.T2M[fecha];
+      const precip = params.PRECTOTCORR[fecha] > -900 ? params.PRECTOTCORR[fecha] : 0;
+      const rad = params.ALLSKY_SFC_SW_DWN[fecha] > -900 ? params.ALLSKY_SFC_SW_DWN[fecha] : 15;
+      const Ra_mm = (rad * 0.0864) / 2.45 * 10; // aproximacion de conversion kWh/m2/dia a mm/dia equivalente
+      const ET0 = Math.max(0, 0.0023 * (tmean + 17.8) * Math.sqrt(10) * Math.max(Ra_mm, 3));
+      const ETc = ET0 * KC;
+
+      let aguaMM = TAW_total * (humedad / 100);
+      aguaMM = aguaMM - ETc + (precip * 0.8);
+      aguaMM = Math.max(0, Math.min(TAW_total, aguaMM));
+      humedad = (aguaMM / TAW_total) * 100;
+
+      const necesitaRiego = humedad < 50; // p=0.5 umbral FAO-56
+      if (necesitaRiego) { totalRiegos++; humedad = Math.min(100, humedad + 25); } // riego repone parcialmente
+
+      labels.push(fecha.slice(4,6) + '/' + fecha.slice(6,8));
+      serieHumedad.push(Math.round(humedad * 10) / 10);
+      riegoDias.push(necesitaRiego ? 1 : 0);
+    });
+
+    const ctx = document.getElementById('chart-validacion');
+    if (chartValidacion) chartValidacion.destroy();
+    chartValidacion = new Chart(ctx, {
+      type: 'line',
+      data: { labels, datasets: [
+        { label: 'Humedad simulada %', data: serieHumedad, borderColor: '#1a9e4a', backgroundColor: 'rgba(26,158,74,0.08)', tension: 0.25, pointRadius: 0, fill: true, yAxisID: 'y' }
+      ]},
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: true } },
+        scales: { x: { ticks: { maxTicksLimit: 12 } }, y: { min: 0, max: 100 } }
+      }
+    });
+
+    status.textContent = `Simulación de ${fechas.length} días completada con datos climáticos reales de NASA POWER (lat ${lat}, lon ${lon}).`;
+    resumen.innerHTML = `Con este clima real, el sistema hubiera activado el riego en <b style="color:var(--green-dark)">${totalRiegos} de ${fechas.length} días</b> (${Math.round(totalRiegos/fechas.length*100)}%). Esto es una simulación determinística (fórmula FAO-56, sin IA) usada para validar que la lógica de decisión responde de forma sensata ante condiciones climáticas reales, no solo ante escenarios manuales.`;
+  } catch (err) {
+    status.textContent = 'Error al ejecutar la validación: ' + err.message;
+  }
+}
 // ===== FIN SUPABASE AUTH =====
+
+// ===== TOGGLE DE IDIOMA (EN/ES) =====
+let currentLang = 'es';
+
+const TAB_LABELS_EN = ['Decision', 'Valve 3D', 'Impact & SDGs', 'Predictions', 'Charts', 'Map', 'Edge Cases', 'Simulator', 'Parcel Network', 'My History', 'Historical Validation'];
+const TAB_LABELS_ES = ['Decisión', 'Válvula 3D', 'Impacto y ODS', 'Predicciones', 'Gráficas', 'Mapa', 'Casos límite', 'Simulador', 'Red de Parcelas', 'Mi Historial', 'Validación Histórica'];
+
+const SLIDER_LABELS_EN = ['NDVI', 'Temperature', 'Soil moisture', 'Precipitation', 'Days without rain', 'Phenological stage', 'Soil type', 'Crop', 'Solar radiation', 'Minimum', 'Maximum'];
+const SLIDER_LABELS_ES = ['NDVI', 'Temperatura', 'Humedad del suelo', 'Precipitación', 'Días sin lluvia', 'Etapa fenológica', 'Tipo de suelo', 'Cultivo', 'Radiación solar', 'Mínima', 'Máxima'];
+
+function toggleLanguage() {
+  currentLang = currentLang === 'es' ? 'en' : 'es';
+  document.getElementById('lang-toggle-btn').textContent = currentLang === 'es' ? 'EN' : 'ES';
+  applyTranslation(currentLang);
+}
+
+function applyTranslation(lang) {
+  const isEN = lang === 'en';
+
+  // Pestañas (mismo orden en que aparecen en el DOM)
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  tabBtns.forEach((btn, i) => {
+    const dot = btn.querySelector('.tab-btn-dot');
+    const label = isEN ? TAB_LABELS_EN[i] : TAB_LABELS_ES[i];
+    if (label) {
+      btn.innerHTML = '';
+      if (dot) btn.appendChild(dot.cloneNode(true));
+      btn.appendChild(document.createTextNode(label));
+      if (btn.classList.contains('active')) {
+        const cur = document.getElementById('tab-nav-current');
+        if (cur) cur.textContent = label;
+      }
+    }
+  });
+
+  // Etiquetas de los sliders del panel izquierdo
+  const sliderLabels = document.querySelectorAll('.slider-label');
+  sliderLabels.forEach((el, i) => {
+    const label = isEN ? SLIDER_LABELS_EN[i] : SLIDER_LABELS_ES[i];
+    if (label) el.textContent = label;
+  });
+
+  // Botones y textos clave de la interfaz
+  const map = [
+    ['analyze-btn', isEN ? 'Analyze with Claude AI' : 'Analizar con Claude AI'],
+    ['qr-btn', 'QR'],
+    ['qr-close-btn', isEN ? 'Close' : 'Cerrar'],
+    ['tab-nav-eyebrow', isEN ? 'Section' : 'Sección']
+  ];
+  map.forEach(([id, text]) => { const el = document.getElementById(id); if (el) el.textContent = text; });
+
+  const eyebrow = document.querySelector('.tab-nav-eyebrow');
+  if (eyebrow) eyebrow.textContent = isEN ? 'Section' : 'Sección';
+
+  const exportBtn = document.querySelector('.export-btn');
+  if (exportBtn) exportBtn.textContent = isEN ? 'Export PDF' : 'Exportar PDF';
+
+  const optToggleLabel = document.getElementById('optional-toggle-label');
+  if (optToggleLabel) {
+    const span = optToggleLabel.querySelector('span');
+    if (span) span.textContent = isEN ? 'Advanced optional data' : 'Datos opcionales avanzados';
+  }
+
+  const demoBtn = document.getElementById('demo-btn');
+  if (demoBtn && !demoRunning) demoBtn.textContent = isEN ? 'Demo mode' : 'Modo demo';
+
+  const autoBtn = document.getElementById('auto-btn');
+  if (autoBtn) autoBtn.textContent = autoBtn.textContent.replace(/Auto:\s*(ON|OFF)/, (m, state) => 'Auto: ' + state);
+
+  const logoSub = document.querySelector('.logo-sub');
+  if (logoSub) logoSub.textContent = isEN ? 'Autonomous AI Water-Stress Monitor' : 'Monitor de Estrés Hídrico — IA Autónoma';
+
+  document.documentElement.lang = isEN ? 'en' : 'es';
+}
+
 </script>
- 
- 
+
+
 <!--
   Capa de animación (aditiva, no toca la lógica de negocio de arriba):
   indicador deslizante de tabs, fill-track en vivo de los sliders, y un
@@ -1953,7 +2369,7 @@ async function guardarLecturaSupabase(datos, decision) {
     if (tabNavCurrent && btn) tabNavCurrent.textContent = btn.textContent.trim();
     tabNav.classList.remove('open');
   };
- 
+
   function syncFill(input) {
     const min = parseFloat(input.min) || 0, max = parseFloat(input.max) || 100;
     const pct = ((parseFloat(input.value) - min) / (max - min)) * 100;
@@ -1970,14 +2386,14 @@ async function guardarLecturaSupabase(datos, decision) {
       if (n.nodeType === 1 && n.matches && n.matches('input[type=range]')) wireFillTrack(n);
     }));
   }).observe(document.body, { childList: true, subtree: true });
- 
+
   // setSliders() sets .value programmatically (presets, edge cases, demo mode) — that
   // does not fire an 'input' event, so the fill-track needs an explicit re-sync here.
   if (typeof window.setSliders === 'function') {
     const _origSetSliders = window.setSliders;
     window.setSliders = function(d) { _origSetSliders(d); syncAllFills(); };
   }
- 
+
   function pulseOnChange(id) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -1997,7 +2413,7 @@ async function guardarLecturaSupabase(datos, decision) {
   ['pred-dias','pred-hum24','map-ok','map-leve','map-sev','decision-time'].forEach(pulseOnChange);
 })();
 </script>
- 
+
 <!--
   Válvula 3D — implementación adaptada del handoff de Claude Design
   ("Válvula de bola interactiva 3D"), integrada a la API existente
@@ -2009,9 +2425,9 @@ async function guardarLecturaSupabase(datos, decision) {
 </script>
 <script type="module">
 import * as THREE from 'three';
- 
+
 const scenes = [];
- 
+
 let sharedNormalMap = null;
 function getBrushedNormal() {
   if (sharedNormalMap) return sharedNormalMap;
@@ -2030,7 +2446,7 @@ function getBrushedNormal() {
   sharedNormalMap = t;
   return t;
 }
- 
+
 const NOISE_GLSL = `
 vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
 vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
@@ -2059,12 +2475,12 @@ float snoise(vec3 v){
 }
 float fbm(vec3 p){ float a=0.5,s=0.0; for(int i=0;i<4;i++){ s+=a*snoise(p); p*=2.02; a*=0.5;} return s; }
 `;
- 
+
 function buildValveScene(containerId, opts) {
   const wrap = document.getElementById(containerId);
   if (!wrap) return null;
   const W = wrap.clientWidth || opts.w, H = opts.h;
- 
+
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: opts.transparent === true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(W, H);
@@ -2077,15 +2493,15 @@ function buildValveScene(containerId, opts) {
   renderer.domElement.style.width = '100%';
   renderer.domElement.style.height = '100%';
   renderer.domElement.style.touchAction = 'none';
- 
+
   const scene = new THREE.Scene();
   if (!opts.transparent) {
     scene.background = new THREE.Color(opts.bg);
     scene.fog = new THREE.Fog(opts.bg, 2.0, 4.4);
   }
- 
+
   const camera = new THREE.PerspectiveCamera(opts.fov, W / H, 0.02, 20);
- 
+
   (function buildEnv() {
     const c = document.createElement('canvas'); c.width = 256; c.height = 128;
     const g = c.getContext('2d');
@@ -2104,7 +2520,7 @@ function buildValveScene(containerId, opts) {
     scene.environment = pm.fromEquirectangular(tex).texture;
     pm.dispose(); tex.dispose();
   })();
- 
+
   const key = new THREE.DirectionalLight(0xffffff, 3.1);
   key.position.set(0.85, 1.25, 0.75);
   if (opts.shadows) {
@@ -2122,23 +2538,23 @@ function buildValveScene(containerId, opts) {
   fill.position.set(-0.4, -0.3, 1.0);
   scene.add(fill);
   scene.add(new THREE.HemisphereLight(0x8a95a0, 0x0a0d10, 0.45));
- 
+
   const nrm = getBrushedNormal();
   const matSteel = new THREE.MeshPhysicalMaterial({ color: 0xb9c2c7, metalness: 0.92, roughness: 0.28, normalMap: nrm, normalScale: new THREE.Vector2(0.28, 0.28), clearcoat: 0.25, clearcoatRoughness: 0.4, side: THREE.DoubleSide });
   const matSteelDark = new THREE.MeshPhysicalMaterial({ color: 0x7d868c, metalness: 0.85, roughness: 0.48, normalMap: nrm, normalScale: new THREE.Vector2(0.4, 0.4) });
   const matBrass = new THREE.MeshPhysicalMaterial({ color: 0xc9a24a, metalness: 0.95, roughness: 0.24, normalMap: nrm, normalScale: new THREE.Vector2(0.15, 0.15) });
   const matSeat = new THREE.MeshStandardMaterial({ color: 0x25292d, metalness: 0.1, roughness: 0.75 });
   const matGlass = new THREE.MeshPhysicalMaterial({ color: 0xd8eef2, metalness: 0, roughness: 0.06, transparent: true, opacity: 0.18, depthWrite: false, clearcoat: 1, clearcoatRoughness: 0.05, side: THREE.DoubleSide, envMapIntensity: 1.6 });
- 
+
   const valve = new THREE.Group();
   scene.add(valve);
- 
+
   const R_OUT = 0.055, R_IN = 0.045, R_W = 0.0425;
   const HALF = 0.62, BODY_R = 0.10;
   const CUT_START = Math.PI * 0.42, CUT_LEN = Math.PI * 1.5;
- 
+
   function named(mesh) { if (opts.shadows) { mesh.castShadow = true; mesh.receiveShadow = true; } return mesh; }
- 
+
   const bodyShell = named(new THREE.Mesh(new THREE.SphereGeometry(BODY_R, 48, 32, CUT_START, CUT_LEN), matSteel));
   valve.add(bodyShell);
   const bodyInner = new THREE.Mesh(new THREE.SphereGeometry(BODY_R - 0.008, 48, 32, CUT_START, CUT_LEN), matSteelDark);
@@ -2146,7 +2562,7 @@ function buildValveScene(containerId, opts) {
   valve.add(bodyInner);
   const bodyGlass = new THREE.Mesh(new THREE.SphereGeometry(BODY_R - 0.0015, 24, 32, CUT_START + CUT_LEN, Math.PI * 0.5), matGlass);
   valve.add(bodyGlass);
- 
+
   function boredBall(R, r) {
     const h = Math.sqrt(R * R - r * r), pts = [];
     pts.push(new THREE.Vector2(r, h));
@@ -2163,13 +2579,13 @@ function buildValveScene(containerId, opts) {
   const ball = named(new THREE.Mesh(boredBall(0.072, R_W + 0.001), matSteel));
   ball.rotation.z = Math.PI / 2;
   ballPivot.add(ball);
- 
+
   [-1, 1].forEach(s => {
     const seat = named(new THREE.Mesh(new THREE.TorusGeometry(R_W + 0.006, 0.006, 12, 40), matSeat));
     seat.position.x = s * 0.0735; seat.rotation.y = Math.PI / 2;
     valve.add(seat);
   });
- 
+
   const bonnet = named(new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.042, 0.05, 32), matSteelDark));
   bonnet.position.y = BODY_R - 0.005; valve.add(bonnet);
   const nut = named(new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.016, 6), matSteelDark));
@@ -2178,7 +2594,7 @@ function buildValveScene(containerId, opts) {
   stem.position.y = BODY_R + 0.055; valve.add(stem);
   const stop = named(new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.02, 10), matSteelDark));
   stop.position.set(0.03, BODY_R + 0.05, 0.03); valve.add(stop);
- 
+
   const lever = new THREE.Group();
   lever.position.y = BODY_R + 0.078; valve.add(lever);
   const arm = named(new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.011, 0.028), matBrass));
@@ -2189,7 +2605,7 @@ function buildValveScene(containerId, opts) {
   grip.rotation.x = Math.PI / 2; grip.position.set(0.175, 0.004, 0); lever.add(grip);
   const mark = named(new THREE.Mesh(new THREE.BoxGeometry(0.026, 0.0016, 0.004), matSeat));
   mark.position.set(0.014, 0.0095, 0); lever.add(mark);
- 
+
   const FL_R = 0.096, FL_T = 0.016, FL_X = [0.128, 0.16];
   FL_X.forEach(x => [-1, 1].forEach(s => {
     const f = named(new THREE.Mesh(new THREE.CylinderGeometry(FL_R, FL_R, FL_T, 40), matSteelDark));
@@ -2218,7 +2634,7 @@ function buildValveScene(containerId, opts) {
     });
   }
   valve.add(bolts, heads);
- 
+
   function pipeCut(x0, x1) {
     const L = x1 - x0, pts = [
       new THREE.Vector2(R_OUT, -L / 2), new THREE.Vector2(R_OUT, L / 2),
@@ -2232,14 +2648,14 @@ function buildValveScene(containerId, opts) {
   }
   const SG0 = 0.30, SG1 = 0.45;
   valve.add(pipeCut(0.168, SG0), pipeCut(SG1, HALF), pipeCut(-HALF, -0.168));
- 
+
   const sg = named(new THREE.Mesh(new THREE.CylinderGeometry(R_OUT - 0.002, R_OUT - 0.002, SG1 - SG0, 48, 1, true), matGlass));
   sg.rotation.z = Math.PI / 2; sg.position.x = (SG0 + SG1) / 2; sg.castShadow = false; valve.add(sg);
   [SG0, SG1].forEach(x => {
     const c = named(new THREE.Mesh(new THREE.CylinderGeometry(R_OUT + 0.006, R_OUT + 0.006, 0.014, 32), matBrass));
     c.rotation.z = Math.PI / 2; c.position.x = x; valve.add(c);
   });
- 
+
   const ledBase = named(new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.015, 0.012, 20), matSteelDark));
   ledBase.position.set(-0.032, 0.062, 0.072); ledBase.rotation.set(0.9, 0, 0.35); valve.add(ledBase);
   const ledMat = new THREE.MeshStandardMaterial({ color: 0x2a0a08, emissive: new THREE.Color(0xd94430), emissiveIntensity: 2.2, roughness: 0.3, metalness: 0 });
@@ -2248,14 +2664,14 @@ function buildValveScene(containerId, opts) {
   led.position.copy(ledBase.position).add(new THREE.Vector3(-0.004, 0.008, 0.006));
   const ledLight = new THREE.PointLight(0xd94430, 0.10, 0.30); ledLight.position.copy(led.position);
   valve.add(ledLight);
- 
+
   if (!opts.transparent) {
     const floor = new THREE.Mesh(new THREE.CircleGeometry(1.5, 64), new THREE.MeshStandardMaterial({ color: 0x14100c, roughness: 0.95, metalness: 0 }));
     floor.rotation.x = -Math.PI / 2; floor.position.y = -BODY_R - 0.001;
     if (opts.shadows) floor.receiveShadow = true;
     scene.add(floor);
   }
- 
+
   const waterUniforms = { uTime: { value: 0 }, uFlow: { value: 0 }, uTurb: { value: 0 }, uLevel: { value: 0 }, uFront: { value: 0 }, uWave: { value: 0 }, uR: { value: R_W }, uHalf: { value: HALF } };
   const waterVert = `varying vec3 vLocal; varying vec3 vNrm; varying vec3 vView;
 void main(){ vLocal = position; vNrm = normalize(normalMatrix * normal); vec4 mv = modelViewMatrix * vec4(position,1.0); vView = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }`;
@@ -2302,7 +2718,7 @@ void main(){
   waterGeo.rotateZ(Math.PI / 2);
   const water = new THREE.Mesh(waterGeo, new THREE.ShaderMaterial({ uniforms: waterUniforms, vertexShader: waterVert, fragmentShader: waterFrag, transparent: true, side: THREE.DoubleSide, depthWrite: false }));
   valve.add(water);
- 
+
   const causFrag = `precision highp float;
 varying vec3 vLocal;
 uniform float uTime,uFlow,uLevel,uSg0,uSg1,uR;
@@ -2324,7 +2740,7 @@ void main(){
   causGeo.rotateZ(Math.PI / 2);
   const caustics = new THREE.Mesh(causGeo, new THREE.ShaderMaterial({ uniforms: causUniforms, vertexShader: waterVert, fragmentShader: causFrag, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide }));
   valve.add(caustics);
- 
+
   const N_P = opts.particles;
   const pGeo = new THREE.SphereGeometry(0.0034, 8, 6);
   const pMat = new THREE.MeshStandardMaterial({ color: 0xbfeef5, emissive: new THREE.Color(0x2f95a8), emissiveIntensity: 1.4, roughness: 0.35, transparent: true, opacity: 0.85 });
@@ -2336,10 +2752,10 @@ void main(){
     P.push({ x: (Math.random() * 2 - 1) * HALF, r: rr, a: Math.random() * Math.PI * 2, k: 1 - Math.pow(rr / R_W, 2), j: 0.4 + Math.random() * 0.9, big: Math.random() < 0.18, ph: Math.random() * 9 });
   }
   const dummy = new THREE.Object3D();
- 
+
   const S = { aperture: 0, lever: 0, leverV: 0, ball: 0, level: 0, front: 0, flow: 0, flowShown: 0, led: 0, wave: 0, waveOn: false };
   const MAX_FLOW = 640;
- 
+
   function applyAperture(pct) {
     const prevOpen = S.aperture > 0;
     S.aperture = Math.max(0, Math.min(100, pct)) / 100;
@@ -2347,11 +2763,11 @@ void main(){
   }
   function applyState(open) { applyAperture(open ? 100 : 0); }
   applyAperture(0);
- 
+
   let azimuth = opts.azimuth, elevation = opts.elevation, dist = opts.dist;
   let dragging = false, lastX = 0, lastY = 0, idle = 0;
   const autoRotate = opts.autoRotate;
- 
+
   function updateCamera() {
     camera.position.set(
       Math.sin(elevation) * Math.sin(azimuth) * dist,
@@ -2360,7 +2776,7 @@ void main(){
     camera.lookAt(0, 0.005, 0);
   }
   updateCamera();
- 
+
   if (opts.draggable) {
     const el = renderer.domElement;
     el.style.cursor = 'grab';
@@ -2380,7 +2796,7 @@ void main(){
       idle = 0;
     }, { passive: false });
   }
- 
+
   function resize() {
     const w = wrap.clientWidth || opts.w;
     const h = wrap.clientHeight || opts.h;
@@ -2392,17 +2808,17 @@ void main(){
   resize();
   if (window.ResizeObserver) { new ResizeObserver(resize).observe(wrap); }
   else { window.addEventListener('resize', resize); }
- 
+
   const clock = new THREE.Clock();
   const colClosed = new THREE.Color(0xd94430), colMid = new THREE.Color(0xd99a2e), colOpen = new THREE.Color(0x3ba85c), tmpCol = new THREE.Color();
   const ease = (cur, tgt, rate, dt) => cur + (tgt - cur) * (1 - Math.exp(-rate * dt));
- 
+
   function tick() {
     const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
- 
+
     if (autoRotate && (!opts.draggable || (!dragging && (idle += dt) > 2.2))) azimuth += dt * (opts.draggable ? 0.13 : 0.09);
     updateCamera();
- 
+
     const tgt = S.aperture;
     S.leverV += (tgt - S.lever) * 190 * dt;
     S.leverV *= Math.exp(-9.5 * dt);
@@ -2410,10 +2826,10 @@ void main(){
     if (S.lever > 1) { S.lever = 1; S.leverV *= -0.22; }
     if (S.lever < 0) { S.lever = 0; S.leverV *= -0.22; }
     S.ball = ease(S.ball, S.lever, 7.0, dt);
- 
+
     lever.rotation.y = -(1 - S.lever) * Math.PI / 2;
     ballPivot.rotation.y = -(1 - S.ball) * Math.PI / 2;
- 
+
     if (S.aperture > 0) {
       S.front = ease(S.front, 1, 2.6, dt);
       S.level = ease(S.level, 1, 3.4 * (0.25 + S.ball), dt);
@@ -2423,11 +2839,11 @@ void main(){
       S.wave = 0; S.waveOn = false;
       if (S.level < 0.03) S.front = ease(S.front, 0, 2.2, dt);
     }
- 
+
     const flowTgt = S.aperture * S.ball;
     S.flow = ease(S.flow, flowTgt, 2.1, dt);
     S.flowShown = ease(S.flowShown, flowTgt * MAX_FLOW, 1.7, dt);
- 
+
     waterUniforms.uTime.value = t;
     waterUniforms.uFlow.value = S.flow;
     waterUniforms.uTurb.value = THREE.MathUtils.smoothstep(S.flow, 0.32, 0.95);
@@ -2435,7 +2851,7 @@ void main(){
     waterUniforms.uFront.value = S.front;
     waterUniforms.uWave.value = S.waveOn ? S.wave : 0;
     water.visible = caustics.visible = S.front > 0.02 && S.level > 0.01;
- 
+
     S.led = ease(S.led, S.aperture, 3.2, dt);
     if (S.led <= 0) tmpCol.copy(colClosed);
     else if (S.led >= 1) tmpCol.copy(colOpen);
@@ -2445,7 +2861,7 @@ void main(){
     ledMat.emissiveIntensity = 1.7 + 0.7 * Math.sin(t * 2.1);
     ledLight.color.copy(tmpCol);
     ledLight.intensity = 0.09 + 0.04 * Math.sin(t * 2.1);
- 
+
     const vmax = 0.06 + S.flow * 1.45, turb = waterUniforms.uTurb.value;
     const front = THREE.MathUtils.lerp(0.085, HALF, S.front);
     const surfY = -R_W + 2 * R_W * S.level;
@@ -2467,32 +2883,32 @@ void main(){
     }
     parts.instanceMatrix.needsUpdate = true;
     parts.visible = S.level > 0.02;
- 
+
     renderer.render(scene, camera);
   }
- 
+
   return { setOpen: applyState, setAperture: applyAperture, tick, resize, getFlowLmin: () => S.flowShown };
 }
- 
+
 const mini = buildValveScene('valve3d-mini', { w: 76, h: 76, particles: 8, draggable: false, autoRotate: true, shadows: false, transparent: true, fov: 32, azimuth: -0.5, elevation: 1.2, dist: 2.0 });
 const full = buildValveScene('valve3d-full', { w: 560, h: 420, particles: 30, draggable: true, autoRotate: true, shadows: true, transparent: false, bg: 0x120d0a, fov: 36, azimuth: -0.55, elevation: 1.15, dist: 1.85 });
 if (mini) scenes.push(mini);
 if (full) scenes.push(full);
- 
+
 window.setValveOpen3D = function(open) {
   scenes.forEach(s => s.setOpen(open));
 };
- 
+
 window.setValveAperture3D = function(pct) {
   scenes.forEach(s => s.setAperture(pct));
 };
- 
+
 window.resizeValve3D = function() {
   if (full) requestAnimationFrame(() => { full.resize(); });
 };
- 
+
 const flowLabel = document.getElementById('valve3d-flow-label');
- 
+
 function loop() {
   requestAnimationFrame(loop);
   scenes.forEach(s => s.tick());
