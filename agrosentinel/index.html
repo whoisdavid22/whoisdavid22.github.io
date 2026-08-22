@@ -237,12 +237,6 @@ input[type=range]::-moz-range-track { height: 5px; border-radius: 3px; backgroun
   .tab-btn .tab-btn-dot { display: none; }
 }
 
-/* ===== INSIGNIA CIRCULAR ===== */
-.verified-badge { width: 48px; height: 48px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--green-line), var(--green)); display: flex; align-items: center; justify-content: center; margin-left: 6px; flex-shrink: 0; box-shadow: 0 3px 10px rgba(38,138,74,0.4); cursor: default; position: relative; }
-.verified-badge::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px dashed var(--green); animation: badge-spin 14s linear infinite; }
-.verified-badge-text { font-family: var(--mono); font-size: 6.5px; font-weight: 700; color: white; text-align: center; line-height: 1.3; letter-spacing: 0.02em; }
-@keyframes badge-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@media (max-width: 640px) { .verified-badge { display: none; } }
 .loading-overlay { position: absolute; inset: 0; background: rgba(255,253,248,0.88); display: flex; align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity 0.25s; overflow: hidden; }
 .loading-overlay::before { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(125,44,68,0.06) 50%, transparent 70%); background-size: 200% 100%; }
 .loading-overlay.active { opacity: 1; pointer-events: all; }
@@ -508,9 +502,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     <div>
       <div class="logo-text">AgroSentinel</div>
       <div class="logo-sub">Monitor de Estrés Hídrico — IA Autónoma</div>
-    </div>
-    <div class="verified-badge" title="Las decisiones de riego se calculan con la metodología FAO Irrigation and Drainage Paper No. 56">
-      <span class="verified-badge-text">FAO·56<br>VERIFIED</span>
     </div>
   </div>
   <div class="topbar-right">
