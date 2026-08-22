@@ -3024,18 +3024,23 @@ function updateMiniValveIcon(pct) {
   if (!wrap) return;
   const isOpen = pct > 0;
   const angle = 90 - (pct / 100) * 90; // 90deg = cerrada, 0deg = abierta
+  const ringColor = isOpen ? 'var(--green)' : 'var(--red-line)';
+  const innerFill = isOpen ? 'var(--green-dim)' : 'var(--red-dim)';
+  const innerStroke = isOpen ? 'var(--green)' : 'var(--red)';
+  const handleColor = isOpen ? 'var(--green-dark)' : 'var(--red)';
+  const dotColor = isOpen ? 'var(--green-dark)' : 'var(--red)';
   wrap.innerHTML = `
     <svg viewBox="0 0 76 76" width="76" height="76" style="display:block">
-      <circle cx="38" cy="38" r="30" fill="none" stroke="${isOpen ? 'var(--green)' : 'var(--red-line)'}" stroke-width="2" opacity="0.5"/>
-      <line x1="8" y1="38" x2="26" y2="38" stroke="var(--brand-line)" stroke-width="4" stroke-linecap="round"/>
-      <line x1="50" y1="38" x2="68" y2="38" stroke="var(--brand-line)" stroke-width="4" stroke-linecap="round"/>
-      <circle cx="38" cy="38" r="14" fill="${isOpen ? 'var(--green-dim)' : 'var(--red-dim)'}" stroke="${isOpen ? 'var(--green)' : 'var(--red)'}" stroke-width="1.5"/>
-      <g style="transform-origin:38px 38px; transform: rotate(${angle}deg); transition: transform 0.5s var(--ease-spring, ease)">
-        <line x1="38" y1="24" x2="38" y2="52" stroke="${isOpen ? 'var(--green-dark)' : 'var(--red)'}" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="38" cy="38" r="30" fill="none" style="stroke:${ringColor}" stroke-width="2" opacity="0.5"/>
+      <line x1="8" y1="38" x2="26" y2="38" style="stroke:var(--brand-line)" stroke-width="4" stroke-linecap="round"/>
+      <line x1="50" y1="38" x2="68" y2="38" style="stroke:var(--brand-line)" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="38" cy="38" r="14" style="fill:${innerFill};stroke:${innerStroke}" stroke-width="1.5"/>
+      <g style="transform-origin:38px 38px; transform: rotate(${angle}deg); transition: transform 0.5s ease">
+        <line x1="38" y1="24" x2="38" y2="52" style="stroke:${handleColor}" stroke-width="3.5" stroke-linecap="round"/>
       </g>
-      <circle cx="38" cy="38" r="3" fill="${isOpen ? 'var(--green-dark)' : 'var(--red)'}"/>
+      <circle cx="38" cy="38" r="3" style="fill:${dotColor}"/>
       ${isOpen ? `
-      <circle cx="38" cy="38" r="30" fill="none" stroke="var(--green)" stroke-width="2" opacity="0">
+      <circle cx="38" cy="38" r="30" fill="none" style="stroke:var(--green)" stroke-width="2" opacity="0">
         <animate attributeName="r" values="16;32" dur="1.6s" repeatCount="indefinite"/>
         <animate attributeName="opacity" values="0.5;0" dur="1.6s" repeatCount="indefinite"/>
       </circle>` : ''}
