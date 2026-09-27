@@ -2,17 +2,17 @@
 
 AgroSentinel is a project we built for the Intel InNow Technology Fest 2026, aimed at solving a pretty concrete problem: on many farms, irrigation happens out of habit, not because anyone actually checked whether the crop needs water that day. That means sometimes crops get overwatered and water gets wasted, and other times a crop goes through water stress without anyone noticing in time.
 
-The idea behind the project is simple: build a system that watches the crop all the time, decides when to irrigate using the same logic an agronomist would use, and acts on its own, without anyone having to be paying attention all day.
+The idea behind the project is simple: build a system that watches the crop all the time, decides when to irrigate using the same logic an agronomist would use, and acts on its own, without anyone having to be paying attention all day
 
 You can try it here: [whoisdavid22.github.io/agrosentinel](https://whoisdavid22.github.io/agrosentinel/)
 
 ## How it works, in simple terms
 
-The system takes in field data: how much moisture is in the soil, the temperature, whether it has rained, what growth stage the crop is in, what type of soil it is, and what's being planted. That data can be entered by hand, but it can also come from an aerial photo that gets analyzed automatically, or just from sending a message on Telegram.
+The system takes in field data: how much moisture is in the soil, the temperature, whether it has rained, what growth stage the crop is in, what type of soil it is, and what's being planted. That data can be entered by hand, but it can also come from an aerial photo that gets analyzed automatically, or just from sending a message on Telegram
 
-Before asking the AI anything, we calculate how much water the crop needs that day using real agronomic formulas. We don't let the AI make up those numbers — we first run the math with real methodology (the same one agricultural engineers use), and only after that do we hand those results to Claude so it can decide what to do with that information. Claude then decides how open the irrigation valve should be, explains why it made that decision, and even says how confident it is in its answer.
+Before asking the AI anything, we calculate how much water the crop needs that day using real agronomic formulas. We don't let the AI make up those numbers, we first run the math with real methodology, and only after that do we hand those results to Claude so it can decide what to do with that information. Claude then decides how open the irrigation valve should be, explains why it made that decision, and even says how confident it is in its answer
 
-One part we really like is that the system doesn't always ask for the same external data. Before deciding, Claude evaluates whether it actually needs to check the rain forecast or NASA's data, and only pulls that information when it genuinely helps make a better decision. It's not a fixed process that always does the same thing — the agent itself decides what information it needs.
+One part we really like is that the system doesn't always ask for the same external data. Before deciding, Claude evaluates whether it actually needs to check the rain forecast or NASA's data, and only pulls that information when it genuinely helps make a better decision. It's not a fixed process that always does the same thing the agent itself decides what information it needs
 
 ## What it does besides irrigate
 
@@ -34,7 +34,7 @@ The calculations for how much water a crop needs follow the FAO-56 methodology, 
 
 ## Why it matters to us
 
-This project connects directly with three Sustainable Development Goals: Zero Hunger, because it helps prevent crop loss from water shortages that go unnoticed too long; Clean Water and Sanitation, because irrigation becomes something that responds to actual need instead of a fixed schedule; and Climate Action, because it helps crops adapt better to an increasingly unpredictable climate.
+This project connects directly with three Sustainable Development Goals, Zero Hunger, because it helps prevent crop loss from water shortages that go unnoticed too long; Clean Water and Sanitation, because irrigation becomes something that responds to actual need instead of a fixed schedule; and Climate Action, because it helps crops adapt better to an increasingly unpredictable climate.
 
 ## If you want to try it
 
