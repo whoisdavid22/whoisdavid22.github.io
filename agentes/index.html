@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agente AgroSentinel</title>
+<style>
+  :root{
+    --bg:#0B1418; --panel:#122026; --line:#1E3139; --ink:#EAF2F0; --dim:#7FA0A8;
+    --verde:#3FD37F; --ambar:#FFB547; --rojo:#FF6B5A; --teal:#5FD3C4; --violeta:#A98BE0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg); color:var(--ink); overflow:hidden;
+    font-family:'Segoe UI',Inter,system-ui,sans-serif;
+    display:flex; flex-direction:column;
+    padding:clamp(14px,2.4vmin,30px); gap:clamp(10px,1.6vmin,20px);
+  }
+
+  /* ---------- encabezado ---------- */
+  header{display:flex; align-items:center; gap:clamp(10px,1.6vmin,20px); flex:none}
+  .punto{
+    width:clamp(20px,3.2vmin,40px); aspect-ratio:1; border-radius:50%;
+    background:var(--dim); flex:none; transition:background .5s, box-shadow .5s;
+  }
+  .punto.leve{background:var(--verde); box-shadow:0 0 clamp(14px,2.4vmin,30px) var(--verde)}
+  .punto.moderado{background:var(--ambar); box-shadow:0 0 clamp(14px,2.4vmin,30px) var(--ambar)}
+  .punto.severo{background:var(--rojo); box-shadow:0 0 clamp(14px,2.4vmin,30px) var(--rojo); animation:latido 1.1s infinite}
+  @keyframes latido{50%{opacity:.35}}
+  h1{font-size:clamp(22px,4.4vmin,56px); font-weight:800; letter-spacing:.02em; line-height:1}
+  .nivel{margin-left:auto; font-size:clamp(12px,1.9vmin,24px); font-weight:700; letter-spacing:.14em; color:var(--dim)}
+
+  /* ---------- lecturas ---------- */
+  .lecturas{display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(8px,1.3vmin,16px); flex:none}
+  .celda{background:var(--panel); border:1px solid var(--line); border-radius:clamp(8px,1.3vmin,16px); padding:clamp(9px,1.5vmin,18px)}
+  .celda .k{font-size:clamp(9px,1.25vmin,15px); letter-spacing:.13em; color:var(--dim); text-transform:uppercase}
+  .celda .v{font-size:clamp(20px,3.6vmin,44px); font-weight:700; font-variant-numeric:tabular-nums; margin-top:.18em}
+  .celda .v small{font-size:.48em; font-weight:600; color:var(--dim); margin-left:.18em}
+
+  /* ---------- argumento ---------- */
+  .burbuja{
+    flex:1; min-height:0; background:var(--panel); border:1px solid var(--line);
+    border-radius:clamp(10px,1.7vmin,22px); padding:clamp(14px,2.2vmin,28px);
+    display:flex; flex-direction:column; gap:clamp(8px,1.2vmin,14px); position:relative; overflow:hidden;
+  }
+  .etiqueta{font-size:clamp(9px,1.25vmin,15px); letter-spacing:.16em; color:var(--teal); font-weight:700}
+  .texto{
+    flex:1; min-height:0; overflow:hidden;
+    font-size:clamp(15px,2.45vmin,31px); line-height:1.44; font-weight:500;
+  }
+  .cursor{display:inline-block; width:.07em; height:1em; background:var(--teal); vertical-align:-.12em; animation:parpadeo .9s steps(2) infinite}
+  @keyframes parpadeo{50%{opacity:0}}
+  .pensando{display:flex; align-items:center; gap:.6em; color:var(--dim); font-size:clamp(14px,2.2vmin,28px)}
+  .pensando i{width:.42em; aspect-ratio:1; border-radius:50%; background:var(--teal); display:inline-block; animation:salto 1.2s infinite}
+  .pensando i:nth-child(2){animation-delay:.18s} .pensando i:nth-child(3){animation-delay:.36s}
+  @keyframes salto{0%,70%,100%{opacity:.25; transform:translateY(0)}35%{opacity:1; transform:translateY(-.32em)}}
+
+  .veto{
+    border-left:3px solid var(--violeta); background:rgba(169,139,224,.1);
+    padding:clamp(8px,1.3vmin,16px) clamp(10px,1.6vmin,20px); border-radius:0 8px 8px 0;
+    font-size:clamp(12px,1.85vmin,23px); line-height:1.4; color:#DCCDF5;
+  }
+  .veto b{color:var(--violeta)}
+
+  /* ---------- pedido y veredicto ---------- */
+  .pie{display:grid; grid-template-columns:1fr 1fr; gap:clamp(8px,1.3vmin,16px); flex:none}
+  .caja{background:var(--panel); border:1px solid var(--line); border-radius:clamp(8px,1.3vmin,16px); padding:clamp(10px,1.7vmin,20px)}
+  .caja.destacada{border-color:var(--teal); background:rgba(95,211,196,.09)}
+  .caja .k{font-size:clamp(9px,1.25vmin,15px); letter-spacing:.13em; color:var(--dim); text-transform:uppercase}
+  .caja .v{font-size:clamp(23px,4.2vmin,52px); font-weight:800; font-variant-numeric:tabular-nums; margin-top:.1em; line-height:1.05}
+  .caja .v small{font-size:.42em; font-weight:600; color:var(--dim); margin-left:.14em}
+  .caja .n{font-size:clamp(10px,1.45vmin,18px); color:var(--dim); margin-top:.25em}
+  .oculto{opacity:.26}
+
+  /* ---------- barra de ronda ---------- */
+  .barra{height:3px; background:var(--line); border-radius:2px; overflow:hidden; flex:none}
+  .barra i{display:block; height:100%; background:var(--teal); width:0; transition:width .9s linear}
+
+  .pie-nota{font-size:clamp(9px,1.2vmin,14px); color:var(--dim); text-align:center; flex:none; letter-spacing:.06em}
+
+  @media (orientation:portrait){
+    .lecturas{grid-template-columns:repeat(3,1fr)}
+    .pie{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="punto" id="punto"></div>
+  <h1 id="titulo">PARCELA A</h1>
+  <div class="nivel" id="nivel">EN ESPERA</div>
+</header>
+
+<div class="lecturas">
+  <div class="celda"><div class="k">Humedad suelo</div><div class="v" id="hum">--<small>%</small></div></div>
+  <div class="celda"><div class="k">Temperatura</div><div class="v" id="tmp">--<small>°C</small></div></div>
+  <div class="celda"><div class="k">Días a estrés</div><div class="v" id="dias">--</div></div>
+</div>
+
+<div class="burbuja">
+  <div class="etiqueta" id="etiqueta">ARGUMENTO DEL AGENTE</div>
+  <div class="texto" id="texto"></div>
+  <div class="veto" id="veto" style="display:none"></div>
+</div>
+
+<div class="pie">
+  <div class="caja" id="cajaPedido">
+    <div class="k">Pide</div>
+    <div class="v" id="pedido">--<small>ml</small></div>
+    <div class="n" id="pedidoNota">esperando al agente</div>
+  </div>
+  <div class="caja" id="cajaVeredicto">
+    <div class="k">El mediador concede</div>
+    <div class="v" id="concede">--<small>ml</small></div>
+    <div class="n" id="concedeNota">la cuenca aún no reparte</div>
+  </div>
+</div>
+
+<div class="barra"><i id="progreso"></i></div>
+<div class="pie-nota" id="notaPie">AgroSentinel · negociación de cuenca</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ---------------------------------------------------------------
+  // Configuracion
+  // ---------------------------------------------------------------
+  const params  = new URLSearchParams(location.search);
+  const PARCELA = (params.get("parcela") || "A").toUpperCase() === "B" ? "B" : "A";
+  const MODO    = (params.get("modo") || "real").toLowerCase();   // real | ensayo
+  const RONDA_MS = Number(params.get("ronda") || 45000);
+
+  const HOST  = "https://daiaminds.app.n8n.cloud/webhook/agente-hidrico";
+  const TOKEN = "Agrosentinel-$VD-1234";
+  const USER  = "65002887-a20e-40e1-8689-7f86c00372ba";
+
+  // Escenarios fijos por ronda: ambas tablets calculan los mismos numeros,
+  // asi el veredicto coincide en las dos pantallas sin hablar entre si.
+  const ESCENARIOS = [
+    { A:{hum:55, tmp:26, dias:4, etapa:"vegetativo"}, B:{hum:28, tmp:29, dias:11, etapa:"floracion"} },
+    { A:{hum:34, tmp:31, dias:9, etapa:"vegetativo"}, B:{hum:30, tmp:31, dias:10, etapa:"floracion"} },
+    { A:{hum:29, tmp:33, dias:13, etapa:"vegetativo"}, B:{hum:58, tmp:27, dias:3,  etapa:"floracion"} }
+  ];
+
+  // Guion de respaldo: se usa en modo ensayo y si la red falla.
+  const GUION = {
+    A:[
+      "Puedo esperar. Con 55% de humedad y el perfil aún por encima del umbral de agotamiento, me quedan cuatro días de margen. Cedo el turno a la parcela vecina.",
+      "Estoy justo en el límite. La ETc de 3.6 mm al día y nueve sin lluvia me dejan sin reserva mañana. Pido lo mínimo para no cruzar el punto crítico.",
+      "Necesito riego inmediato. El agua fácilmente disponible se agotó y llevo trece días sin lluvia; cada hora sin reponer me cuesta rendimiento."
+    ],
+    B:[
+      "Necesito agua ahora. Estoy en floración, la etapa más sensible al estrés hídrico, con 28% de humedad y once días sin lluvia. Esto no puede esperar.",
+      "Mi demanda es mayor que la de la parcela vecina: en floración el coeficiente de cultivo es 1.05 contra 0.75. Con 30% de humedad pido prioridad.",
+      "Puedo ceder esta ronda. Con 58% de humedad tengo margen suficiente y la parcela vecina está en condición crítica."
+    ]
+  };
+
+  const $ = id => document.getElementById(id);
+  const esperar = ms => new Promise(r => setTimeout(r, ms));
+
+  // ---------------------------------------------------------------
+  // Fisica compartida: deterministica, identica en ambas tablets
+  // ---------------------------------------------------------------
+  const TAW_SUELO = 210, RAIZ = { vegetativo:0.40, floracion:0.60 };
+  const AGUA_RONDA = 150;   // ml disponibles en el tanque por ronda
+
+  function deficit(p) {
+    const taw = TAW_SUELO * (RAIZ[p.etapa] || 0.40);
+    return Math.max(0, taw - taw * (p.hum / 100));
+  }
+
+  function reparto(esc) {
+    const dA = deficit(esc.A), dB = deficit(esc.B), total = dA + dB;
+    if (total <= 0) return { A:0, B:0 };
+    return {
+      A: Math.round(AGUA_RONDA * dA / total),
+      B: Math.round(AGUA_RONDA * dB / total)
+    };
+  }
+
+  // ---------------------------------------------------------------
+  // Llamada real al agente
+  // ---------------------------------------------------------------
+  async function consultarAgente(p) {
+    const url = HOST
+      + "?ndvi=0.60"
+      + "&temperatura_c="     + p.tmp
+      + "&humedad_suelo_pct=" + p.hum
+      + "&precipitacion_mm=0"
+      + "&dias_sin_lluvia="   + p.dias
+      + "&etapa_fenologica="  + p.etapa
+      + "&tipo_suelo=franco&cultivo=generico&idioma=es"
+      + "&token="   + encodeURIComponent(TOKEN)
+      + "&user_id=" + USER;
+
+    const ctrl = new AbortController();
+    const corte = setTimeout(() => ctrl.abort(), 38000);
+    try {
+      const r = await fetch(url, { signal: ctrl.signal });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const d = await r.json();
+      if (!d || !d.valvula) throw new Error("respuesta vacía");
+      return d;
+    } finally {
+      clearTimeout(corte);
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // Escritura progresiva
+  // ---------------------------------------------------------------
+  let escrituraId = 0;
+  async function escribir(el, txt) {
+    const mio = ++escrituraId;
+    el.textContent = "";
+    const cursor = document.createElement("span");
+    cursor.className = "cursor";
+    el.appendChild(cursor);
+    for (let i = 0; i < txt.length; i++) {
+      if (mio !== escrituraId) return;
+      cursor.insertAdjacentText("beforebegin", txt[i]);
+      await esperar(txt[i] === "." ? 150 : 22);
+    }
+    await esperar(600);
+    if (mio === escrituraId) cursor.remove();
+  }
+
+  function pensando(el) {
+    escrituraId++;
+    el.innerHTML = '<div class="pensando">Razonando<i></i><i></i><i></i></div>';
+  }
+
+  // ---------------------------------------------------------------
+  // Pintado
+  // ---------------------------------------------------------------
+  function nivelClase(n) {
+    const v = (n || "").toUpperCase();
+    return v === "SEVERO" ? "severo" : v === "MODERADO" ? "moderado" : "leve";
+  }
+
+  function pintarLecturas(p) {
+    $("hum").innerHTML  = p.hum + '<small>%</small>';
+    $("tmp").innerHTML  = p.tmp + '<small>°C</small>';
+    $("dias").textContent = "–";
+  }
+
+  function reiniciar() {
+    $("punto").className = "punto";
+    $("nivel").textContent = "MIDIENDO";
+    $("veto").style.display = "none";
+    $("cajaPedido").classList.add("oculto");
+    $("cajaVeredicto").classList.add("oculto");
+    $("pedido").innerHTML = '--<small>ml</small>';
+    $("pedidoNota").textContent = "esperando al agente";
+    $("concede").innerHTML = '--<small>ml</small>';
+    $("concedeNota").textContent = "la cuenca aún no reparte";
+  }
+
+  // ---------------------------------------------------------------
+  // Una ronda
+  // ---------------------------------------------------------------
+  let rondaActual = -1;
+
+  async function correrRonda(n) {
+    const esc = ESCENARIOS[n % ESCENARIOS.length];
+    const mia = esc[PARCELA];
+    const cuota = reparto(esc)[PARCELA];
+
+    reiniciar();
+    pintarLecturas(mia);
+    $("texto").textContent = "";
+
+    await esperar(2600);
+    if (rondaActual !== n) return;
+
+    pensando($("texto"));
+    $("nivel").textContent = "CONSULTANDO AL AGENTE";
+
+    let d = null;
+    if (MODO === "real") {
+      try { d = await consultarAgente(mia); }
+      catch (e) { console.warn("agente no respondió:", e.message); }
+    } else {
+      await esperar(3200);
+    }
+    if (rondaActual !== n) return;
+
+    // Nivel de alerta y días de margen
+    const nivel = d ? d.nivel_alerta : (mia.hum < 35 ? "SEVERO" : mia.hum < 50 ? "MODERADO" : "LEVE");
+    const dias  = d && d.dias_sin_intervencion !== undefined ? d.dias_sin_intervencion
+                                                            : Math.max(0, Math.round((mia.hum - 50) / 5));
+    $("punto").className = "punto " + nivelClase(nivel);
+    $("nivel").textContent = (nivel || "LEVE").toUpperCase();
+    $("dias").textContent = dias;
+
+    // Argumento
+    const argumento = (d && d.justificacion) ? d.justificacion
+                                             : GUION[PARCELA][n % GUION[PARCELA].length];
+    $("etiqueta").textContent = d ? "ARGUMENTO DEL AGENTE · EN VIVO" : "ARGUMENTO DEL AGENTE";
+    escribir($("texto"), argumento);
+
+    // Pedido
+    const pedido = Math.round(AGUA_RONDA * ((d ? d.porcentaje_apertura : 60) / 100));
+    $("cajaPedido").classList.remove("oculto");
+    $("pedido").innerHTML = pedido + '<small>ml</small>';
+    $("pedidoNota").textContent = d ? ("apertura " + d.porcentaje_apertura + "% · " + (d.accion || "").toLowerCase())
+                                    : "estimado por la parcela";
+
+    // Guardarrail
+    if (d && d.guardarrail && d.guardarrail.desacuerdo && (d.guardarrail.vetos || []).length) {
+      const v = d.guardarrail.vetos.find(x => x.severidad === "veto") || d.guardarrail.vetos[0];
+      $("veto").innerHTML = "<b>El guardarraíl corrigió al modelo.</b> " + v.motivo;
+      $("veto").style.display = "block";
+    }
+
+    // Veredicto del mediador
+    await esperar(5200);
+    if (rondaActual !== n) return;
+    $("cajaVeredicto").classList.remove("oculto");
+    $("cajaVeredicto").classList.add("destacada");
+    $("concede").innerHTML = cuota + '<small>ml</small>';
+    const seg = (cuota / 12).toFixed(1);
+    $("concedeNota").textContent = "bomba " + seg + " s · reparto por déficit real";
+  }
+
+  // ---------------------------------------------------------------
+  // Reloj compartido: las dos tablets avanzan juntas sin hablarse
+  // ---------------------------------------------------------------
+  function latido() {
+    const ahora = Date.now();
+    const n = Math.floor(ahora / RONDA_MS);
+    const avance = (ahora % RONDA_MS) / RONDA_MS;
+    $("progreso").style.width = (avance * 100).toFixed(1) + "%";
+    if (n !== rondaActual) {
+      rondaActual = n;
+      correrRonda(n);
+    }
+  }
+
+  $("titulo").textContent = "PARCELA " + PARCELA;
+  $("notaPie").textContent = MODO === "real"
+    ? "AgroSentinel · razonamiento en vivo con Gemini · lecturas simuladas"
+    : "AgroSentinel · modo ensayo";
+  document.title = "Parcela " + PARCELA + " · AgroSentinel";
+
+  latido();
+  setInterval(latido, 900);
+})();
+</script>
+</body>
+</html>
